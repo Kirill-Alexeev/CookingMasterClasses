@@ -4,13 +4,13 @@ from .models import CustomUser
 
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ("username", "email", "first_name", "last_name", "is_staff", "image")
+    list_display = ("username", "email", "first_name", "last_name", "is_staff")
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name", "email", "image")}),
+        ("Персональная информация", {"fields": ("first_name", "last_name", "email", "image")}),
         (
-            "Permissions",
+            "Разрешения",
             {
                 "fields": (
                     "is_active",
@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
-        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        ("Важные даты", {"fields": ("last_login", "date_joined")}),
     )
 
     add_fieldsets = (
@@ -29,7 +29,7 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("username", "email", "password1", "password2", "image"),
+                "fields": ("username", "email", "first_name", "last_name", "password1", "password2", "is_staff", "is_superuser", "image"),
             },
         ),
     )
