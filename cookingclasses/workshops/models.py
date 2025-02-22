@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -219,15 +220,13 @@ class Video(models.Model):
         return reverse("video_detail", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
-        if self.video:
-            video_path = self.video.path
-            if os.path.exists(video_path):
-                try:
-                    clip = VideoFileClip(video_path)
-                    self.duration = clip.duration
-                    clip.close()
-                except Exception as e:
-                    print(f"Ошибка при вычислении длительности видео: {e}")
+        if self.video and os.path.exists(self.video.path):
+            try:
+                clip = VideoFileClip(self.video.path)
+                self.duration = timedelta(seconds=clip.duration)
+                clip.close()
+            except Exception as e:
+                print(f"Ошибка при вычислении длительности видео: {e}")
         super().save(*args, **kwargs)
 
     class Meta:
