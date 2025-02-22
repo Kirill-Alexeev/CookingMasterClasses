@@ -17,28 +17,6 @@ class Cuisine(models.Model):
         ordering = ["name"]
 
 
-class Chef(models.Model):
-    first_name = models.CharField(max_length=100, verbose_name="Имя")
-    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
-    profession = models.CharField(max_length=255, verbose_name="Профессия")
-    biography = models.TextField(verbose_name="Биография")
-    image = models.ImageField(
-        upload_to="chefs/", null=True, blank=True, verbose_name="Изображение"
-    )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
-    def get_absolute_url(self):
-        return reverse("chef_detail", kwargs={"pk": self.pk})
-
-    class Meta:
-        verbose_name = "Шеф-повар"
-        verbose_name_plural = "Шеф-повара"
-        ordering = ["last_name", "first_name"]
-
-
 class Restaurant(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название")
     description = models.TextField(verbose_name="Описание", blank=True, null=True)
@@ -64,6 +42,35 @@ class Restaurant(models.Model):
         verbose_name = "Ресторан"
         verbose_name_plural = "Рестораны"
         ordering = ["name"]
+
+
+class Chef(models.Model):
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    profession = models.CharField(max_length=255, verbose_name="Профессия")
+    biography = models.TextField(verbose_name="Биография")
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        verbose_name="Ресторан",
+        null=True,
+        blank=True,
+    )
+    image = models.ImageField(
+        upload_to="chefs/", null=True, blank=True, verbose_name="Изображение"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def get_absolute_url(self):
+        return reverse("chef_detail", kwargs={"pk": self.pk})
+
+    class Meta:
+        verbose_name = "Шеф-повар"
+        verbose_name_plural = "Шеф-повара"
+        ordering = ["last_name", "first_name"]
 
 
 class RestaurantImage(models.Model):

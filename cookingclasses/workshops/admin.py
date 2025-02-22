@@ -1,10 +1,26 @@
 from django.contrib import admin
-from .models import Cuisine, Chef, MasterClass, Record, Review, Video, Like
+from .models import (
+    Cuisine,
+    Chef,
+    MasterClass,
+    Record,
+    Restaurant,
+    RestaurantImage,
+    Review,
+    Video,
+    Like,
+)
 
 
 class ChefInline(admin.TabularInline):
     model = MasterClass.chefs.through
     extra = 1
+
+
+class RestaurantImageInline(admin.TabularInline):
+    model = RestaurantImage
+    extra = 1
+    readonly_fields = ("uploaded_at",)
 
 
 @admin.register(Cuisine)
@@ -17,8 +33,8 @@ class CuisineAdmin(admin.ModelAdmin):
 
 @admin.register(Chef)
 class ChefAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "profession", "created_at")
-    list_filter = ("profession", "created_at")
+    list_display = ("first_name", "last_name", "profession", "restaurant", "created_at")
+    list_filter = ("profession", "restaurant", "created_at")
     search_fields = ("first_name", "last_name", "profession")
     list_display_links = ("first_name", "last_name")
     date_hierarchy = "created_at"
@@ -37,7 +53,7 @@ class MasterClassAdmin(admin.ModelAdmin):
         "seats_available",
     )
     list_filter = ("cuisine_id", "date_event", "complexity")
-    search_fields = ("title", "description", "address_event")
+    search_fields = ("title", "description", "restaurant")
     list_display_links = ("title",)
     date_hierarchy = "date_event"
     filter_horizontal = ("chefs",)
@@ -92,8 +108,37 @@ class LikeAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "video__title")
     list_display_links = ("user", "video")
     raw_id_fields = ("video",)
+    date_hierarchy = "created_at"
+    readonly_fields = ("created_at",)
     ordering = ("user",)
 
     @admin.display(description="Название видео")
     def get_video_title(self, obj):
         return obj.video.title
+
+
+@admin.register(Restaurant)
+class RestaurantAdmin(admin.ModelAdmin):
+    list_display = ("name", "address", "phone", "email", "website", "created_at")
+    inlines = [RestaurantImageInline]
+    list_filter = ("created_at", "updated_at")
+    search_fields = ("name", "address", "phone", "email")
+    list_display_links = ("name", "address")
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("name",)
+
+
+@admin.register(RestaurantImage)
+class RestaurantImageAdmin(admin.ModelAdmin):
+    list_display = ("restaurant", "get_restaurant_name", "image", "uploaded_at")
+    list_filter = ("restaurant", "uploaded_at")
+    search_fields = ("restaurant__name",)
+    list_display_links = ("restaurant", "image")
+    raw_id_fields = ("restaurant",)
+    date_hierarchy = "uploaded_at"
+    readonly_fields = ("uploaded_at",)
+    ordering = ("restaurant",)
+
+    @admin.display(description="Название ресторана")
+    def get_restaurant_name(self, obj):
+        return obj.restaurant.name
