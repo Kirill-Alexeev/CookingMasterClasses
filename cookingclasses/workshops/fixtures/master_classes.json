@@ -1,0 +1,202 @@
+[
+  {
+    "model": "workshops.masterclass",
+    "pk": 1,
+    "fields": {
+      "title": "Суши мастер-класс",
+      "description": "На этом мастер-классе вы научитесь готовить традиционные японские суши и роллы. Мы расскажем о выборе свежей рыбы, правильном приготовлении риса и тонкостях подачи блюд. Идеально для тех, кто хочет удивить гостей на домашнем ужине.",
+      "price": "2000.00",
+      "date_event": "2025-03-02T14:00:00Z",
+      "restaurant": 1,
+      "seats_total": 10,
+      "seats_available": 10,
+      "raiting": 0.0,
+      "complexity": "Опытный",
+      "image": null,
+      "chefs": [2, 7],
+      "cuisine_id": 2,
+      "created_at": "2025-02-27T12:00:00Z",
+      "updated_at": "2025-02-27T12:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 2,
+    "fields": {
+      "title": "Итальянская паста от шефа",
+      "description": "Узнайте секреты приготовления идеальной пасты от нашего шеф-повара. Вы научитесь готовить соусы, выбирать правильные ингредиенты и подавать блюда как в лучших ресторанах Италии.",
+      "price": "2500.00",
+      "date_event": "2025-03-02T18:00:00Z",
+      "restaurant": 2,
+      "seats_total": 18,
+      "seats_available": 18,
+      "raiting": 0.0,
+      "complexity": "Любитель",
+      "image": null,
+      "chefs": [1, 4],
+      "cuisine_id": 1,
+      "created_at": "2025-02-28T10:00:00Z",
+      "updated_at": "2025-02-28T10:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 3,
+    "fields": {
+      "title": "Французские десерты",
+      "description": "На этом мастер-классе вы освоите приготовление изысканных французских десертов: эклеров, макарон и тирамису. Мы расскажем о тонкостях работы с тестом и кремами.",
+      "price": "3000.00",
+      "date_event": "2025-03-03T12:00:00Z",
+      "restaurant": 3,
+      "seats_total": 12,
+      "seats_available": 12,
+      "raiting": 0.0,
+      "complexity": "Профессионал",
+      "image": null,
+      "chefs": [3, 6],
+      "cuisine_id": 3,
+      "created_at": "2025-03-01T09:00:00Z",
+      "updated_at": "2025-03-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 4,
+    "fields": {
+      "title": "Гриль-вечеринка",
+      "description": "Научитесь готовить мясо на гриле как настоящий мастер. Мы расскажем о маринадах, температуре и времени приготовления для идеального стейка.",
+      "price": "3500.00",
+      "date_event": "2025-03-03T16:00:00Z",
+      "restaurant": 4,
+      "seats_total": 20,
+      "seats_available": 20,
+      "raiting": 0.0,
+      "complexity": "Любитель",
+      "image": null,
+      "chefs": [4, 1],
+      "cuisine_id": 4,
+      "created_at": "2025-03-02T11:00:00Z",
+      "updated_at": "2025-03-02T11:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 5,
+    "fields": {
+      "title": "Веганская кухня",
+      "description": "Откройте для себя мир веганской кухни. Мы научим вас готовить вкусные и полезные блюда без использования продуктов животного происхождения.",
+      "price": "1800.00",
+      "date_event": "2025-03-03T14:00:00Z",
+      "restaurant": 5,
+      "seats_total": 18,
+      "seats_available": 18,
+      "raiting": 0.0,
+      "complexity": "Новичок",
+      "image": null,
+      "chefs": [5, 2],
+      "cuisine_id": 5,
+      "created_at": "2025-03-03T13:00:00Z",
+      "updated_at": "2025-03-03T13:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 6,
+    "fields": {
+      "title": "Китайская кухня",
+      "description": "Освойте искусство приготовления традиционных китайских блюд: пельмени, лапша и острые соусы. Мы расскажем о секретах китайской кулинарии.",
+      "price": "2200.00",
+      "date_event": "2025-03-04T18:00:00Z",
+      "restaurant": 6,
+      "seats_total": 20,
+      "seats_available": 20,
+      "raiting": 0.0,
+      "complexity": "Опытный",
+      "image": null,
+      "chefs": [6, 3],
+      "cuisine_id": 6,
+      "created_at": "2025-03-04T15:00:00Z",
+      "updated_at": "2025-03-04T15:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 7,
+    "fields": {
+      "title": "Испанские тапас",
+      "description": "Научитесь готовить знаменитые испанские закуски — тапас. Мы расскажем о сочетании вкусов и подаче блюд.",
+      "price": "2800.00",
+      "date_event": "2025-03-04T12:00:00Z",
+      "restaurant": 7,
+      "seats_total": 15,
+      "seats_available": 15,
+      "raiting": 0.0,
+      "complexity": "Любитель",
+      "image": null,
+      "chefs": [2, 7],
+      "cuisine_id": 7,
+      "created_at": "2025-03-05T16:00:00Z",
+      "updated_at": "2025-03-05T16:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 8,
+    "fields": {
+      "title": "Индийские специи",
+      "description": "Погрузитесь в мир индийской кухни. Мы научим вас использовать специи и готовить традиционные блюда, такие как карри и наан.",
+      "price": "2400.00",
+      "date_event": "2025-03-04T14:00:00Z",
+      "restaurant": 8,
+      "seats_total": 18,
+      "seats_available": 18,
+      "raiting": 0.0,
+      "complexity": "Опытный",
+      "image": null,
+      "chefs": [1, 5],
+      "cuisine_id": 8,
+      "created_at": "2025-03-06T17:00:00Z",
+      "updated_at": "2025-03-06T17:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 9,
+    "fields": {
+      "title": "Мексиканские буррито",
+      "description": "Научитесь готовить мексиканские буррито с начинкой на ваш выбор. Мы расскажем о секретах приготовления соусов и начинок.",
+      "price": "2600.00",
+      "date_event": "2025-03-05T16:00:00Z",
+      "restaurant": 6,
+      "seats_total": 20,
+      "seats_available": 20,
+      "raiting": 0.0,
+      "complexity": "Любитель",
+      "image": null,
+      "chefs": [5, 8],
+      "cuisine_id": 9,
+      "created_at": "2025-03-07T18:00:00Z",
+      "updated_at": "2025-03-07T18:00:00Z"
+    }
+  },
+  {
+    "model": "workshops.masterclass",
+    "pk": 10,
+    "fields": {
+      "title": "Тайская кухня",
+      "description": "Освойте искусство приготовления тайских блюд: том-ям, пад-тай и зеленое карри. Мы расскажем о балансе вкусов и использовании специй.",
+      "price": "3000.00",
+      "date_event": "2025-03-05T18:00:00Z",
+      "restaurant": 1,
+      "seats_total": 15,
+      "seats_available": 15,
+      "raiting": 0.0,
+      "complexity": "Профессионал",
+      "image": null,
+      "chefs": [3, 4],
+      "cuisine_id": 10,
+      "created_at": "2025-03-08T19:00:00Z",
+      "updated_at": "2025-03-08T19:00:00Z"
+    }
+  }
+]
