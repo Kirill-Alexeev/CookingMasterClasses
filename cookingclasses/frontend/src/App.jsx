@@ -1,24 +1,19 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-
-axios.defaults.withCredentials = true;
+import { getUserProfile } from "./api/users";
 
 function App() {
-  const [masterClasses, setMasterClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("/api/workshops/chefs/")
-      .then((response) => {
-        setMasterClasses(response.data);
+    getUserProfile()
+      .then((userData) => {
+        setUser(userData);
         setLoading(false);
       })
       .catch((err) => {
-        setError("Failed to load master classes");
-        setLoading(false);
         console.error(err);
+        setLoading(false);
       });
   }, []);
 
@@ -26,20 +21,10 @@ function App() {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div>
-      <h1>Chefs</h1>
-      <ul>
-        {masterClasses.map((chef) => (
-          <li key={chef.id}>
-            {chef.first_name} {chef.last_name}
-          </li>
-        ))}
-      </ul>
+      {user && <p>Вы вошли как {user.username}</p>}. Имя: {user.first_name},
+      Фамилия: {user.last_name}
     </div>
   );
 }
