@@ -1,31 +1,40 @@
-import { useState, useEffect } from "react";
-import { getUserProfile } from "./api/users";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import MainPage from "./pages/MainPage";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import RestaurantList from "./pages/RestaurantList";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import ChefDetail from "./pages/ChefDetail";
+import MasterClassList from "./pages/MasterClassList";
+import MasterClassDetail from "./pages/MasterClassDetail";
+import VideoList from "./pages/VideoList";
+import VideoDetail from "./pages/VideoDetail";
 
 function App() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    getUserProfile()
-      .then((userData) => {
-        setUser(userData);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div>
-      {user && <p>Вы вошли как {user.username}</p>}. Имя: {user.first_name},
-      Фамилия: {user.last_name}
-    </div>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/restaurant-list" element={<RestaurantList />} />
+        <Route path="/restaurant-detail/:id" element={<RestaurantDetail />} />
+        <Route path="/chef-detail/:id" element={<ChefDetail />} />
+        <Route path="/master-class-list" element={<MasterClassList />} />
+        <Route
+          path="/master-class-detail/:id"
+          element={<MasterClassDetail />}
+        />
+        <Route path="/video-list" element={<VideoList />} />
+        <Route path="/video-detail/:id" element={<VideoDetail />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
