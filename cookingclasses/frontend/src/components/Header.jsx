@@ -1,61 +1,84 @@
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { getUserProfile, logoutUser } from "../api/users";
+// frontend/src/components/Header.jsx
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    getUserProfile()
-      .then((data) => setUser(data))
-      .catch(() => setUser(null));
-  }, [location.pathname]);
 
   const handleLogout = () => {
-    logoutUser()
-      .then(() => {
-        setUser(null);
-        navigate("/");
-      })
-      .catch((err) => console.error(err));
+    logout();
+    navigate("/");
   };
 
   return (
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <NavLink to="/" end>
+    <header className="header">
+      <div className="header__top">
+        <div className="header__logo">
+          <img src="#" alt="Кулинар" className="header__logo-img" />
+        </div>
+        <div className="header__search">
+          <input
+            type="text"
+            placeholder="Поиск по сайту"
+            className="header__search-input"
+          />
+        </div>
+        <div className="contacts">
+          <a href="mailto:kylinar@mail.ru" className="contacts__email">
+            kylinar@mail.ru
+          </a>
+          <a href="tel:+79500000000" className="contacts__phone">
+            +7 (950) 000-00-00
+          </a>
+        </div>
+      </div>
+      <nav className="header__nav">
+        <ul className="header__nav-list">
+          <li className="header__nav-item">
+            <NavLink to="/" className="header__nav-link" end>
               Главная
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/restaurant-list">Рестораны</NavLink>
+          <li className="header__nav-item">
+            <NavLink to="/restaurant-list" className="header__nav-link">
+              Рестораны
+            </NavLink>
           </li>
-          <li>
-            <NavLink to="/master-class-list">Мастер-классы</NavLink>
+          <li className="header__nav-item">
+            <NavLink to="/master-class-list" className="header__nav-link">
+              Мастер-классы
+            </NavLink>
           </li>
-          <li>
-            <NavLink to="/video-list">Видео</NavLink>
+          <li className="header__nav-item">
+            <NavLink to="/video-list" className="header__nav-link">
+              Видео
+            </NavLink>
           </li>
           {user ? (
             <>
-              <li>
-                <NavLink to="/profile">Профиль</NavLink>
+              <li className="header__nav-item">
+                <NavLink to="/profile" className="header__nav-link">
+                  Профиль
+                </NavLink>
               </li>
-              <li>
-                <button onClick={handleLogout}>Выйти</button>
+              <li className="header__nav-item">
+                <button className="header__nav-button" onClick={handleLogout}>
+                  Выйти
+                </button>
               </li>
             </>
           ) : (
             <>
-              <li>
-                <NavLink to="/register">Зарегистрироваться</NavLink>
+              <li className="header__nav-item">
+                <NavLink to="/register" className="header__nav-link">
+                  Зарегистрироваться
+                </NavLink>
               </li>
-              <li>
-                <NavLink to="/login">Войти</NavLink>
+              <li className="header__nav-item">
+                <NavLink to="/login" className="header__nav-link">
+                  Войти
+                </NavLink>
               </li>
             </>
           )}
