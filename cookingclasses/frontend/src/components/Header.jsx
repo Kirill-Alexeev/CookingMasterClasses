@@ -1,13 +1,25 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getUserProfile, logoutUser } from "../api/users";
 
 function Header() {
-  const { user, logout } = useAuth();
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    getUserProfile()
+      .then((data) => setUser(data))
+      .catch(() => setUser(null));
+  }, [location.pathname]);
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
+    logoutUser()
+      .then(() => {
+        setUser(null);
+        navigate("/");
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
