@@ -1,6 +1,8 @@
 @use "abstracts/variables";
 @use "abstracts/mixins";
 @use "base/reset";
+@use "base/base";
+@use "base/typography";
 
 @use "components/chef-list";
 @use "components/footer";
