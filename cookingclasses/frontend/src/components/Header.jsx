@@ -1,16 +1,17 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUserProfile, logoutUser } from "../api/users";
 
 function Header() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     getUserProfile()
       .then((data) => setUser(data))
       .catch(() => setUser(null));
-  }, []);
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logoutUser()
