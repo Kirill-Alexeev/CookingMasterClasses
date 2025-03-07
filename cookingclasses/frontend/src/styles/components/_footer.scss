@@ -1,0 +1,116 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.footer {
+  background-color: #1a1a1a;
+  color: #fff;
+  padding: 20px 0;
+
+  &__top {
+    @include flex-center;
+    justify-content: space-between;
+    max-width: $max-width;
+    margin: 0 auto 20px;
+    padding: 0 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  &__logo {
+    &-img {
+      width: 50px;
+      height: auto;
+    }
+  }
+
+  &__nav {
+    &-list {
+      @include flex-center;
+      list-style: none;
+      gap: 20px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+
+    &-item {
+      margin: 0;
+    }
+
+    &-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+
+      &:hover {
+        color: $primary-color;
+      }
+
+      &.active {
+        color: $primary-color;
+        font-weight: bold;
+      }
+    }
+  }
+
+  &__bottom {
+    @include flex-center;
+    justify-content: space-between;
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: 0 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  &__social {
+    display: flex;
+    gap: 10px;
+
+    &-link {
+      display: block;
+    }
+
+    &-icon {
+      width: 30px;
+      height: auto;
+    }
+  }
+
+  &__contacts {
+    p {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+  }
+
+  &__apps {
+    display: flex;
+    gap: 10px;
+
+    &-link {
+      display: block;
+    }
+
+    &-icon {
+      width: 120px;
+      height: auto;
+    }
+  }
+
+  &__copyright {
+    text-align: center;
+    font-size: 12px;
+    padding-top: 20px;
+    color: #ccc;
+  }
+}
