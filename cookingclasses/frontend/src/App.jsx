@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import MainPage from "./pages/MainPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -34,6 +35,7 @@ function App() {
         <Route path="/video-list" element={<VideoList />} />
         <Route path="/video-detail/:id" element={<VideoDetail />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }
