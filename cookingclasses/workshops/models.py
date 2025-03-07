@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 from moviepy import VideoFileClip
 import os
+from django.db.models import Avg
 
 
 class Cuisine(models.Model):
@@ -107,7 +108,7 @@ class MasterClass(models.Model):
     )
     seats_total = models.IntegerField(verbose_name="Всего мест")
     seats_available = models.IntegerField(verbose_name="Свободных мест")
-    raiting = models.FloatField(verbose_name="Рейтинг")
+    raiting = models.FloatField(verbose_name="Рейтинг", default=0.0)
     complexity = models.CharField(
         max_length=20,
         choices=[
@@ -135,6 +136,18 @@ class MasterClass(models.Model):
 
     def get_absolute_url(self):
         return reverse("master-class_detail", kwargs={"pk": self.pk})
+
+    @property
+    def calculated_rating(self):
+        avg_rating = self.review_set.aggregate(avg_rating=Avg("rating"))["avg_rating"]
+        return round(avg_rating or 0.0, 1)
+
+    def update_rating(self):
+        self.raiting = self.calculated_rating
+        self.save(update_fields=["raiting"])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Мастер-класс"
