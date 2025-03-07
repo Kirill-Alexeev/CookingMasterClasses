@@ -55,6 +55,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class VideoSerializer(serializers.ModelSerializer):
+    likes_count = serializers.ReadOnlyField(source="calculated_likes_count")
+
     class Meta:
         model = Video
         fields = "__all__"

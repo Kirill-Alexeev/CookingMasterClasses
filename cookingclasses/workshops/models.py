@@ -242,6 +242,14 @@ class Video(models.Model):
                 print(f"Ошибка при вычислении длительности видео: {e}")
         super().save(*args, **kwargs)
 
+    @property
+    def calculated_likes_count(self):
+        return self.like_set.count()
+
+    def update_likes_count(self):
+        self.likes_count = self.calculated_likes_count
+        self.save()
+
     class Meta:
         verbose_name = "Видео"
         verbose_name_plural = "Видео"
