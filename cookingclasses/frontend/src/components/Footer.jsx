@@ -1,11 +1,19 @@
 import { NavLink } from "react-router-dom";
+import kylinarLogo from "../assets/icons/kylinar_logo.svg";
+import mailIcon from "../assets/icons/mail_icon.svg";
+import phoneIcon from "../assets/icons/phone_icon.svg";
+import whatsAppIcon from "../assets/icons/whatsapp_icon.svg";
+import vkIcon from "../assets/icons/vk_icon.svg";
+import telegramIcon from "../assets/icons/telegram_icon.svg";
+import googlePlayIcon from "../assets/icons/google_play_icon.svg";
+import appStoreIcon from "../assets/icons/app_store_icon.svg";
 
 function Footer() {
   return (
     <footer className="footer">
       <div className="footer__top">
         <div className="footer__logo">
-          <img src="/logo.png" alt="Кулинар" className="footer__logo-img" />
+          <img src={kylinarLogo} alt="Кулинар" className="footer__logo-img" />
         </div>
         <nav className="header__nav">
           <ul className="header__nav-list">
@@ -35,25 +43,47 @@ function Footer() {
       <div className="footer__bottom">
         <div className="footer__social">
           <a href="https://wa.me/79500002010" className="footer__social-link">
-            <img src="#" alt="WhatsApp" className="footer__social-icon" />
+            <img
+              src={whatsAppIcon}
+              alt="WhatsApp"
+              className="footer__social-icon"
+            />
           </a>
           <a href="https://vk.com/kylinar" className="footer__social-link">
-            <img src="#" alt="VK" className="footer__social-icon" />
+            <img src={vkIcon} alt="VK" className="footer__social-icon" />
           </a>
           <a href="https://t.me/kylinar" className="footer__social-link">
-            <img src="#" alt="Telegram" className="footer__social-icon" />
+            <img
+              src={telegramIcon}
+              alt="Telegram"
+              className="footer__social-icon"
+            />
           </a>
         </div>
         <div className="footer__contacts">
-          <p className="footer__contact-email">kylinar@mail.ru</p>
-          <p className="footer__contact-phone">+7 (950) 000-20-10</p>
+          <div className="footer__contact-email">
+            <img src={mailIcon} className="footer__contact-img" />
+            kylinar@mail.ru
+          </div>
+          <div className="footer__contact-phone">
+            <img src={phoneIcon} className="footer__contact-img" />
+            +7 (950) 000-20-10
+          </div>
         </div>
         <div className="footer__apps">
           <a href="#" className="footer__app-link">
-            <img src="#" alt="Google Play" className="footer__app-icon" />
+            <img
+              src={googlePlayIcon}
+              alt="Google Play"
+              className="footer__app-icon"
+            />
           </a>
           <a href="#" className="footer__app-link">
-            <img src="#" alt="App Store" className="footer__app-icon" />
+            <img
+              src={appStoreIcon}
+              alt="App Store"
+              className="footer__app-icon"
+            />
           </a>
         </div>
       </div>

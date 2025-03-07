@@ -1,6 +1,9 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUserProfile, logoutUser } from "../api/users";
+import kylinarLogo from "../assets/icons/kylinar_logo.svg";
+import mailIcon from "../assets/icons/mail_icon.svg";
+import phoneIcon from "../assets/icons/phone_icon.svg";
 
 function Header() {
   const [user, setUser] = useState(null);
@@ -26,7 +29,7 @@ function Header() {
     <header className="header">
       <div className="header__top">
         <div className="header__logo">
-          <img src="#" alt="Кулинар" className="header__logo-img" />
+          <img src={kylinarLogo} alt="Кулинар" className="header__logo-img" />
         </div>
         <div className="header__search">
           <input
@@ -37,9 +40,11 @@ function Header() {
         </div>
         <div className="contacts">
           <a href="mailto:kylinar@mail.ru" className="contacts__email">
+            <img src={mailIcon} className="contacts__img" />
             kylinar@mail.ru
           </a>
           <a href="tel:+79500000000" className="contacts__phone">
+            <img src={phoneIcon} className="contacts__img" />
             +7 (950) 000-00-00
           </a>
         </div>
