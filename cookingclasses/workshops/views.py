@@ -21,6 +21,8 @@ from .serializers import (
     VideoSerializer,
     LikeSerializer,
 )
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class CuisineViewSet(viewsets.ModelViewSet):
@@ -51,6 +53,30 @@ class MasterClassViewSet(viewsets.ModelViewSet):
 class RecordViewSet(viewsets.ModelViewSet):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        master_class_id = request.data.get("master_class")
+        master_class = MasterClass.objects.get(id=master_class_id)
+
+        if master_class.seats_available <= 0:
+            return Response(
+                {"error": "Нет свободных мест"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        master_class.seats_available -= 1
+        master_class.save()
+
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
