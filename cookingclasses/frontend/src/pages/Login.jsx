@@ -28,38 +28,51 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Вход</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Логин или email:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
+    <div className="login">
+      <div className="login__container">
+        <h1 className="login__title">Вход</h1>
+        {error && <p className="login__error">{error}</p>}
+        <form onSubmit={handleSubmit} className="login__form">
+          <div className="login__field">
+            <label className="login__label">Email:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              className="login__input"
+            />
+          </div>
+          <div className="login__field">
+            <label className="login__label">Пароль:</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="login__input"
+            />
+          </div>
+          <button type="submit" className="login__button">
+            Войти
+          </button>
+          <p className="login__register-link">
+            Зарегистрироваться <Link to="/register">здесь</Link>
+          </p>
+        </form>
+        <div className="login__social">
+          <button className="login__social-button login__social-vk" disabled>
+            Войти через VK ID
+          </button>
+          <button
+            className="login__social-button login__social-google"
+            disabled
+          >
+            Войти через Google
+          </button>
         </div>
-        <div>
-          <label>Пароль:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Войти</button>
-      </form>
-      <p>
-        Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
-      </p>
-      <div>
-        <button disabled>Войти через ВКонтакте</button>
-        <button disabled>Войти через Google</button>
       </div>
     </div>
   );

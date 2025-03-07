@@ -39,78 +39,98 @@ function Register() {
   };
 
   return (
-    <div>
-      <h1>Регистрация</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Имя:</label>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            required
-          />
+    <div className="register">
+      <div className="register__container">
+        <h1 className="register__title">Регистрация</h1>
+        {error && <p className="register__error">{error}</p>}
+        <form onSubmit={handleSubmit} className="register__form">
+          <div className="register__field">
+            <label className="register__label">Имя:</label>
+            <input
+              type="text"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleChange}
+              required
+              className="register__input"
+            />
+          </div>
+          <div className="register__field">
+            <label className="register__label">Фамилия:</label>
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+              required
+              className="register__input"
+            />
+          </div>
+          <div className="register__field">
+            <label className="register__label">Логин:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              className="register__input"
+            />
+          </div>
+          <div className="register__field">
+            <label className="register__label">Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="register__input"
+            />
+          </div>
+          <div className="register__field">
+            <label className="register__label">Пароль:</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="register__input"
+            />
+          </div>
+          <div className="register__field">
+            <label className="register__label">Повтор пароля:</label>
+            <input
+              type="password"
+              name="passwordConfirm"
+              value={formData.passwordConfirm}
+              onChange={handleChange}
+              required
+              className="register__input"
+            />
+          </div>
+          <button type="submit" className="register__button">
+            Зарегистрироваться
+          </button>
+          <p className="register__login-link">
+            Уже есть аккаунт? <Link to="/login">Войти</Link>
+          </p>
+        </form>
+        <div className="register__social">
+          <button
+            className="register__social-button register__social-vk"
+            disabled
+          >
+            Войти через VK ID
+          </button>
+          <button
+            className="register__social-button register__social-google"
+            disabled
+          >
+            Войти через Google
+          </button>
         </div>
-        <div>
-          <label>Фамилия:</label>
-          <input
-            type="text"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Логин:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Пароль:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Повтор пароля:</label>
-          <input
-            type="password"
-            name="passwordConfirm"
-            value={formData.passwordConfirm}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Зарегистрироваться</button>
-      </form>
-      <p>
-        Уже есть аккаунт? <Link to="/login">Войти</Link>
-      </p>
-      <div>
-        <button disabled>Войти через ВКонтакте</button>
-        <button disabled>Войти через Google</button>
       </div>
     </div>
   );
