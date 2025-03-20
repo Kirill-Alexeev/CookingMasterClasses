@@ -21,7 +21,7 @@
     &-btn {
       @include button-like-link;
       @include flex-center;
-      gap: 5px;
+      gap: 10px;
       color: $header-text-color;
       font-size: 1.6rem;
     }
@@ -95,7 +95,7 @@
       font-size: 1.6rem;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 10px;
 
       &:hover {
         text-decoration: underline;

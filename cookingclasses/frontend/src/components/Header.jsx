@@ -80,7 +80,7 @@ function Header() {
             </li>
             <li className="header__nav-item">
               <NavLink to="/video-list" className="header__nav-link">
-                Видео
+                Видео-уроки
               </NavLink>
             </li>
             {user ? (
