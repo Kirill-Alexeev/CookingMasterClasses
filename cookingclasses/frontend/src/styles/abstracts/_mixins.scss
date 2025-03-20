@@ -1,25 +1,44 @@
 @use "./variables" as *;
 
+@mixin container-center {
+  max-width: $max-width;
+  padding: 0 8px;
+  margin: 0 auto;
+}
+
 @mixin flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @mixin button-style {
   padding: 10px 20px;
+  background: none;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  border-radius: 10px;
   font-size: 16px;
+  cursor: pointer;
   transition: background-color 0.3s;
 }
 
+@mixin button-like-link {
+  background: none;
+  border: none;
+}
+
 @mixin input-style {
-  padding: 10px;
-  border: 1px solid $border-color;
-  border-radius: 5px;
-  font-size: 16px;
+  padding: 5px;
+  background-color: $header-text-color;
+  border: 1px solid $primary-color;
+  border-radius: 10px;
+  font-size: $regular-font-size;
   width: 100%;
-  max-width: 300px;
+  max-width: 600px;
 }

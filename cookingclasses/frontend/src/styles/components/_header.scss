@@ -2,104 +2,161 @@
 @use "../abstracts/mixins" as *;
 
 .header {
+  width: 100vw;
+  padding: 10px 0 15px;
   background-color: $primary-color;
-  color: #fff;
 
-  &__top {
+  &__wrapper {
+    @include container-center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__location {
     @include flex-center;
-    padding: 10px 20px;
-    justify-content: space-between;
-    max-width: $max-width;
-    margin: 0 auto;
+    align-self: flex-start;
+    gap: 5px;
 
-    @media (max-width: 768px) {
-      flex-direction: column;
-      text-align: center;
+    &-btn {
+      @include button-like-link;
+      @include flex-center;
+      gap: 5px;
+      color: $header-text-color;
+      font-size: 1.6rem;
+    }
+
+    &-img {
+      width: 20px;
     }
   }
 
+  &__top {
+    @include flex-between;
+  }
+
   &__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
     &-img {
-      width: 50px;
-      height: auto;
+      height: 50px;
+      width: auto;
     }
   }
 
   &__search {
+    max-width: 700px;
     flex-grow: 1;
     margin: 0 20px;
+    display: flex;
+    justify-content: center;
+    background-color: $header-text-color;
+    border-radius: 10px;
 
     &-input {
       @include input-style;
+      color: $text-color;
       width: 100%;
-      max-width: 400px;
+      max-width: 700px;
       padding: 8px;
+      border: none;
+    }
+
+    &-btn {
+      @include button-like-link;
+      @include flex-center;
+      height: 100%;
+      max-height: 50px;
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    &-img {
+      width: 35px;
+    }
+  }
+
+  &__contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &-link {
+      color: $header-text-color;
+      text-decoration: none;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &-img {
+      width: 20px;
+
+      &:last-of-type {
+        width: 25px;
+      }
     }
   }
 
   &__nav {
-    background-color: #fff;
-    color: $text-color;
-    padding: 10px 0;
-    border-top: 1px solid $border-color;
-
     &-list {
-      @include flex-center;
-      list-style: none;
-      max-width: $max-width;
-      margin: 0 auto;
-      gap: 20px;
-
-      @media (max-width: 768px) {
-        flex-direction: column;
-        text-align: center;
-      }
-    }
-
-    &-item {
-      margin: 0;
+      display: flex;
+      gap: 15px;
     }
 
     &-link {
-      color: $text-color;
+      display: block;
       text-decoration: none;
-      font-size: 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: $regular-font-size;
       padding: 5px 10px;
+      color: $header-text-color;
 
       &.active {
+        background-color: $header-text-color;
+        border-radius: 10px;
         color: $primary-color;
         font-weight: bold;
       }
 
       &:hover {
-        color: $primary-color;
+        text-decoration: underline;
       }
     }
 
-    &-button {
-      @include button-style;
-      background-color: $primary-color;
-      color: #fff;
-      border: 1px solid $primary-color;
+    &-btn {
+      display: block;
+      @include button-like-link;
+      font-family: $regular-font-family;
+      line-height: 1.6;
+      font-size: $regular-font-size;
+      padding: 5px 10px;
+      color: $header-text-color;
+      cursor: pointer;
+
+      &.active {
+        background-color: $header-text-color;
+        border-radius: 10px;
+        color: $primary-color;
+        font-weight: bold;
+      }
 
       &:hover {
-        background-color: $accent-color-hover;
+        text-decoration: underline;
       }
-    }
-  }
-}
-
-.contacts {
-  display: flex;
-  gap: 20px;
-
-  a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 14px;
-
-    &:hover {
-      text-decoration: underline;
     }
   }
 }
