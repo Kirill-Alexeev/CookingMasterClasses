@@ -24,6 +24,10 @@ from .serializers import (
 from rest_framework.response import Response
 from rest_framework import status
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from .filters import MasterClassFilter
+
 
 class CuisineViewSet(viewsets.ModelViewSet):
     queryset = Cuisine.objects.all()
@@ -48,6 +52,10 @@ class RestaurantImageViewSet(viewsets.ModelViewSet):
 class MasterClassViewSet(viewsets.ModelViewSet):
     queryset = MasterClass.objects.all()
     serializer_class = MasterClassSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = MasterClassFilter
+    ordering_fields = ["title", "price", "date_event", "raiting"]
+    ordering = ["-date_event"]
 
 
 class RecordViewSet(viewsets.ModelViewSet):

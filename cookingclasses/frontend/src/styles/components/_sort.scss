@@ -1,0 +1,41 @@
+// src/styles/components/_sort.scss
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  &__button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+
+    &--asc {
+      .sort__icon {
+        transform: rotate(0deg);
+      }
+    }
+
+    &--desc {
+      .sort__icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s;
+  }
+
+  &__select {
+    padding: 5px;
+    border: 1px solid $border-color;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: $card-bg;
+    color: $text-color;
+  }
+}

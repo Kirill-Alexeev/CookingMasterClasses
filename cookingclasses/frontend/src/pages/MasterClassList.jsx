@@ -1,23 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getMasterClasses } from "../api/workshops";
 import Breadcrumbs from "../components/Breadcrumbs";
+import Sort from "../components/Sort";
+import Filter from "../components/Filter";
 
 function MasterClassList() {
   const [masterClasses, setMasterClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({});
+  const [sort, setSort] = useState({ field: "title", direction: "asc" });
+
+  const fetchMasterClasses = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getMasterClasses(filters, sort);
+      setMasterClasses(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.error);
+      setLoading(false);
+    }
+  }, [filters, sort]);
 
   useEffect(() => {
-    getMasterClasses()
-      .then((data) => {
-        setMasterClasses(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.error);
-        setLoading(false);
-      });
-  }, []);
+    fetchMasterClasses();
+  }, [fetchMasterClasses]);
+
+  const handleSortChange = (sortParams) => {
+    setSort(sortParams);
+  };
+
+  const handleFilterChange = (filterParams) => {
+    setFilters(filterParams);
+  };
 
   if (loading)
     return <div className="master-classes__loading">Загрузка...</div>;
@@ -27,54 +43,17 @@ function MasterClassList() {
     <div className="master-classes">
       <Breadcrumbs />
       <h1 className="master-classes__title">Мастер-классы</h1>
-      <div className="master-classes__catalog">
-        <div className="master-classes__filters">
-          <h2 className="master-classes__filters-title">Фильтры</h2>
-          <div className="master-classes__filter-group">
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Новичок
-            </label>
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Любитель
-            </label>
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Опытный
-            </label>
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Профессионал
-            </label>
-          </div>
-          <div className="master-classes__filter-group">
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Русская
-            </label>
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Итальянская
-            </label>
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Французская
-            </label>
-            <label className="master-classes__filter-label">
-              <input type="checkbox" className="master-classes__filter-input" />{" "}
-              Европейская
-            </label>
-          </div>
-          <button className="master-classes__filter-submit">
-            Смотреть все фильтры
-          </button>
-        </div>
-        <div className="master-classes__grid">
+      <Sort onSortChange={handleSortChange} />
+      <div className="catalog">
+        <Filter
+          masterClasses={masterClasses}
+          onFilterChange={handleFilterChange}
+        />
+        <div className="catalog__list">
           {masterClasses.map((mc) => (
-            <div key={mc.id} className="master-classes__card">
+            <div key={mc.id} className="card">
               <img
-                src={mc.image || "https://via.placeholder.com/300x200"}
+                src={mc.image}
                 alt={mc.title}
                 className="master-classes__card-image"
               />

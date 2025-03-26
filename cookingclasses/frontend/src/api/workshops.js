@@ -15,7 +15,7 @@ function getCsrfToken() {
 export const getCuisines = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/cuisines/`);
-    return response.data;
+    return response.data.map((cuisine) => ({ ...cuisine, selected: false }));
   } catch (error) {
     throw error.response?.data || { error: "Не удалось загрузить кухни" };
   }
@@ -25,7 +25,10 @@ export const getCuisines = async () => {
 export const getRestaurants = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/restaurants/`);
-    return response.data;
+    return response.data.map((restaurant) => ({
+      ...restaurant,
+      selected: false,
+    }));
   } catch (error) {
     throw error.response?.data || { error: "Не удалось загрузить рестораны" };
   }
@@ -44,7 +47,7 @@ export const getRestaurantDetail = async (id) => {
 export const getChefs = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/chefs/`);
-    return response.data;
+    return response.data.map((chef) => ({ ...chef, selected: false }));
   } catch (error) {
     throw error.response?.data || { error: "Не удалось загрузить шеф-поваров" };
   }
@@ -72,9 +75,43 @@ export const getRestaurantImages = async () => {
 };
 
 // Мастер-классы
-export const getMasterClasses = async () => {
+export const getMasterClasses = async (filters = {}, sort = {}) => {
+  const params = new URLSearchParams();
+
+  // Фильтры
+  if (filters.minPrice) params.append("min_price", filters.minPrice);
+  if (filters.maxPrice) params.append("max_price", filters.maxPrice);
+  if (filters.minDate) params.append("min_date", filters.minDate.toISOString());
+  if (filters.maxDate) params.append("max_date", filters.maxDate.toISOString());
+  if (filters.minRating) params.append("min_rating", filters.minRating);
+  if (filters.maxRating) params.append("max_rating", filters.maxRating);
+  if (filters.complexities?.length) {
+    filters.complexities.forEach((complexity) =>
+      params.append("complexity", complexity)
+    );
+  }
+  if (filters.cuisines?.length) {
+    filters.cuisines.forEach((cuisine) => params.append("cuisine_id", cuisine));
+  }
+  if (filters.restaurants?.length) {
+    filters.restaurants.forEach((restaurant) =>
+      params.append("restaurant", restaurant)
+    );
+  }
+  if (filters.chefs?.length) {
+    filters.chefs.forEach((chef) => params.append("chefs", chef));
+  }
+
+  // Сортировка
+  if (sort.field) {
+    const ordering = sort.direction === "asc" ? sort.field : `-${sort.field}`;
+    params.append("ordering", ordering);
+  }
+
   try {
-    const response = await axios.get(`${API_BASE_URL}/master-classes/`);
+    const response = await axios.get(`${API_BASE_URL}/master-classes/`, {
+      params,
+    });
     return response.data;
   } catch (error) {
     throw (
