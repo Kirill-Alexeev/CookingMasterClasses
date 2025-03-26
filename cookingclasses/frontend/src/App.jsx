@@ -16,7 +16,7 @@ import VideoDetail from "./pages/VideoDetail";
 
 function App() {
   return (
-    <BrowserRouter basename="/static/react">
+    <BrowserRouter>
       <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />

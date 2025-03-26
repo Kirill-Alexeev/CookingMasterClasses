@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getMasterClasses } from "../api/workshops";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 function MasterClassList() {
   const [masterClasses, setMasterClasses] = useState([]);
@@ -24,6 +25,7 @@ function MasterClassList() {
 
   return (
     <div className="master-classes">
+      <Breadcrumbs />
       <h1 className="master-classes__title">Мастер-классы</h1>
       <div className="master-classes__catalog">
         <div className="master-classes__filters">
