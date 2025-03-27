@@ -1,64 +1,116 @@
-// // src/styles/components/_filter.scss
-// .filter {
-//   background-color: $card-bg;
-//   padding: 15px;
-//   border-radius: 5px;
-//   border: 1px solid $border-color;
-//   margin-bottom: 20px;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
 
-//   &__title {
-//     font-size: 18px;
-//     margin-bottom: 10px;
-//     color: $text-color;
-//   }
+.filter {
+  background: $header-text-color;
+  padding: 20px;
+  border-radius: 12px;
+  width: 280px;
+  font-family: $regular-font-family;
 
-//   &__group {
-//     margin-bottom: 15px;
-//   }
+  &__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
 
-//   &__group-title {
-//     font-size: 16px;
-//     margin-bottom: 5px;
-//     color: $text-color;
-//   }
+  &__group {
+    margin-bottom: 1.5rem;
+  }
 
-//   &__range {
-//     display: flex;
-//     align-items: center;
-//     gap: 10px;
-//   }
+  &__group-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
 
-//   &__range-separator {
-//     color: $text-color;
-//   }
+  &__range {
+    @include flex-center;
+    gap: 0.5rem;
+  }
 
-//   &__input {
-//     padding: 5px;
-//     border: 1px solid $border-color;
-//     border-radius: 5px;
-//     font-size: 14px;
-//     width: 100%;
-//     max-width: 120px;
-//   }
+  &__range-separator {
+    font-weight: bold;
+    color: $text-color;
+  }
 
-//   &__checkbox-label {
-//     display: flex;
-//     align-items: center;
-//     gap: 5px;
-//     font-size: 14px;
-//     color: $text-color;
-//     margin-bottom: 5px;
-//   }
+  &__input {
+    @include input-style;
+    font-size: 1rem;
 
-//   &__checkbox {
-//     margin: 0;
-//   }
+    &:focus {
+      border-color: $accent-color;
+      outline: none;
+    }
+  }
 
-//   &__show-more,
-//   &__show-all {
-//     @include button-style($primary-color, darken($primary-color, 10%));
-//     width: 100%;
-//     padding: 10px;
-//     font-size: 14px;
-//   }
-// }
+  &__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+
+    .filter__checkbox {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: $accent-color;
+    }
+  }
+
+  &__show-more {
+    @include button-like-link;
+    font-size: 1rem;
+    color: $accent-color;
+    cursor: pointer;
+
+    &:hover {
+      color: $accent-color-hover;
+      text-decoration: underline;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  &__show-all,
+  &__apply,
+  &__reset {
+    @include button-style;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  &__show-all {
+    color: $accent-color;
+
+    &:hover {
+      color: $accent-color-hover;
+      text-decoration: underline;
+    }
+  }
+
+  &__apply {
+    background: $accent-color;
+    color: $header-text-color;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+  }
+
+  &__reset {
+    background: $card-color;
+    color: $text-color;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+  }
+}

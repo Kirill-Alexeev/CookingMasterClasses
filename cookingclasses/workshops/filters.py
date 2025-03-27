@@ -1,4 +1,5 @@
 import django_filters
+from django_filters import BaseInFilter, NumberFilter
 from .models import MasterClass, Cuisine, Restaurant, Chef
 
 
@@ -17,23 +18,13 @@ class MasterClassFilter(django_filters.FilterSet):
             ("Опытный", "Опытный"),
             ("Профессионал", "Профессионал"),
         ],
-        conjoined=False
+        conjoined=False,
     )
     cuisine_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="cuisine_id",
-        queryset=Cuisine.objects.all(),
-        conjoined=False,
+        field_name="cuisine_id", queryset=Cuisine.objects.all(), conjoined=False
     )
-    restaurant = django_filters.ModelMultipleChoiceFilter(
-        field_name="restaurant__id",
-        queryset=Restaurant.objects.all(),
-        conjoined=False,
-    )
-    chefs = django_filters.ModelMultipleChoiceFilter(
-        field_name="chefs__id",
-        queryset=Chef.objects.all(),
-        conjoined=False,
-    )
+    restaurant = django_filters.NumberFilter(field_name="restaurant_id")
+    chefs = BaseInFilter(field_name="chefs__id")
 
     class Meta:
         model = MasterClass
