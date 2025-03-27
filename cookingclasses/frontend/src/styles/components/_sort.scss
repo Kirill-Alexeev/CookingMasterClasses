@@ -1,41 +1,44 @@
-// src/styles/components/_sort.scss
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
 .sort {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  padding: 10px 0;
 
   &__button {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.4s ease-in-out;
 
-    &--asc {
-      .sort__icon {
-        transform: rotate(0deg);
-      }
-    }
-
-    &--desc {
-      .sort__icon {
-        transform: rotate(180deg);
-      }
+    &:active {
+      transform: rotate(360deg);
     }
   }
 
   &__icon {
     width: 20px;
-    height: 20px;
-    transition: transform 0.3s;
   }
 
   &__select {
-    padding: 5px;
-    border: 1px solid $border-color;
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: $card-bg;
+    background: none;
+    border: none;
     color: $text-color;
+    font-size: 1.6rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+
+    &::-webkit-dropdown-list {
+      transition: max-height 0.3s ease-in-out;
+    }
+  }
+
+  &__option {
+    background-color: $header-text-color;
   }
 }

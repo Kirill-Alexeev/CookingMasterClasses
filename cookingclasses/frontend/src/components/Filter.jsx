@@ -2,14 +2,25 @@ import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { getCuisines, getRestaurants, getChefs } from "../api/workshops";
 
-function Filter({ masterClasses, onFilterChange }) {
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [minDate, setMinDate] = useState("");
-  const [maxDate, setMaxDate] = useState("");
-  const [minRating, setMinRating] = useState("");
-  const [maxRating, setMaxRating] = useState("");
-  const [complexities, setComplexities] = useState([]);
+function Filter({ masterClasses, onFilterChange, initialFilters }) {
+  const [minPrice, setMinPrice] = useState(initialFilters.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(initialFilters.maxPrice || "");
+  const [minDate, setMinDate] = useState(initialFilters.minDate || "");
+  const [maxDate, setMaxDate] = useState(initialFilters.maxDate || "");
+  const [minRating, setMinRating] = useState(initialFilters.minRating || "");
+  const [maxRating, setMaxRating] = useState(initialFilters.maxRating || "");
+  const [complexities, setComplexities] = useState(
+    initialFilters.complexities || []
+  );
+  const [selectedCuisines, setSelectedCuisines] = useState(
+    initialFilters.cuisines || []
+  );
+  const [selectedRestaurants, setSelectedRestaurants] = useState(
+    initialFilters.restaurants || []
+  );
+  const [selectedChefs, setSelectedChefs] = useState(
+    initialFilters.chefs || []
+  );
   const [cuisines, setCuisines] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [chefs, setChefs] = useState([]);
@@ -57,7 +68,7 @@ function Filter({ masterClasses, onFilterChange }) {
     : 0;
 
   const handleFilterChange = useCallback(() => {
-    onFilterChange({
+    const filterParams = {
       minPrice: minPrice ? parseFloat(minPrice) : null,
       maxPrice: maxPrice ? parseFloat(maxPrice) : null,
       minDate: minDate ? new Date(minDate) : null,
@@ -65,10 +76,12 @@ function Filter({ masterClasses, onFilterChange }) {
       minRating: minRating ? parseFloat(minRating) : null,
       maxRating: maxRating ? parseFloat(maxRating) : null,
       complexities,
-      cuisines: cuisines.filter((c) => c.selected).map((c) => c.id),
-      restaurants: restaurants.filter((r) => r.selected).map((r) => r.id),
-      chefs: chefs.filter((c) => c.selected).map((c) => c.id),
-    });
+      cuisines: selectedCuisines,
+      restaurants: selectedRestaurants,
+      chefs: selectedChefs,
+    };
+    console.log("Applying filters:", filterParams);
+    onFilterChange(filterParams);
   }, [
     minPrice,
     maxPrice,
@@ -77,9 +90,9 @@ function Filter({ masterClasses, onFilterChange }) {
     minRating,
     maxRating,
     complexities,
-    cuisines,
-    restaurants,
-    chefs,
+    selectedCuisines,
+    selectedRestaurants,
+    selectedChefs,
     onFilterChange,
   ]);
 
@@ -92,37 +105,54 @@ function Filter({ masterClasses, onFilterChange }) {
   };
 
   const handleCuisineChange = (id) => {
-    setCuisines((prev) =>
-      prev.map((cuisine) =>
-        cuisine.id === id
-          ? { ...cuisine, selected: !cuisine.selected }
-          : cuisine
-      )
+    setSelectedCuisines((prev) =>
+      prev.includes(id)
+        ? prev.filter((cuisineId) => cuisineId !== id)
+        : [...prev, id]
     );
   };
 
   const handleRestaurantChange = (id) => {
-    setRestaurants((prev) =>
-      prev.map((restaurant) =>
-        restaurant.id === id
-          ? { ...restaurant, selected: !restaurant.selected }
-          : restaurant
-      )
+    setSelectedRestaurants((prev) =>
+      prev.includes(id)
+        ? prev.filter((restaurantId) => restaurantId !== id)
+        : [...prev, id]
     );
   };
 
   const handleChefChange = (id) => {
-    setChefs((prev) =>
-      prev.map((chef) =>
-        chef.id === id ? { ...chef, selected: !chef.selected } : chef
-      )
+    setSelectedChefs((prev) =>
+      prev.includes(id) ? prev.filter((chefId) => chefId !== id) : [...prev, id]
     );
   };
 
-  // Удаляем useEffect, который автоматически вызывает handleFilterChange
-  // Вместо этого добавляем кнопку "Применить фильтры"
   const handleApplyFilters = () => {
     handleFilterChange();
+  };
+
+  const handleResetFilters = () => {
+    setMinPrice("");
+    setMaxPrice("");
+    setMinDate("");
+    setMaxDate("");
+    setMinRating("");
+    setMaxRating("");
+    setComplexities([]);
+    setSelectedCuisines([]);
+    setSelectedRestaurants([]);
+    setSelectedChefs([]);
+    onFilterChange({
+      minPrice: null,
+      maxPrice: null,
+      minDate: null,
+      maxDate: null,
+      minRating: null,
+      maxRating: null,
+      complexities: [],
+      cuisines: [],
+      restaurants: [],
+      chefs: [],
+    });
   };
 
   if (error) {
@@ -234,7 +264,7 @@ function Filter({ masterClasses, onFilterChange }) {
           <label key={cuisine.id} className="filter__checkbox-label">
             <input
               type="checkbox"
-              checked={cuisine.selected || false}
+              checked={selectedCuisines.includes(cuisine.id)}
               onChange={() => handleCuisineChange(cuisine.id)}
               className="filter__checkbox"
             />
@@ -259,7 +289,7 @@ function Filter({ masterClasses, onFilterChange }) {
                 <label key={restaurant.id} className="filter__checkbox-label">
                   <input
                     type="checkbox"
-                    checked={restaurant.selected || false}
+                    checked={selectedRestaurants.includes(restaurant.id)}
                     onChange={() => handleRestaurantChange(restaurant.id)}
                     className="filter__checkbox"
                   />
@@ -282,7 +312,7 @@ function Filter({ masterClasses, onFilterChange }) {
               <label key={chef.id} className="filter__checkbox-label">
                 <input
                   type="checkbox"
-                  checked={chef.selected || false}
+                  checked={selectedChefs.includes(chef.id)}
                   onChange={() => handleChefChange(chef.id)}
                   className="filter__checkbox"
                 />
@@ -300,15 +330,20 @@ function Filter({ masterClasses, onFilterChange }) {
           </div>
         </>
       )}
-      <button
-        className="filter__show-all"
-        onClick={() => setShowAllFilters(!showAllFilters)}
-      >
-        {showAllFilters ? "Скрыть фильтры" : "Смотреть все"}
-      </button>
-      <button className="filter__apply" onClick={handleApplyFilters}>
-        Применить фильтры
-      </button>
+      <div className="filter__actions">
+        <button
+          className="filter__show-all"
+          onClick={() => setShowAllFilters(!showAllFilters)}
+        >
+          {showAllFilters ? "Скрыть фильтры" : "Смотреть все"}
+        </button>
+        <button className="filter__apply" onClick={handleApplyFilters}>
+          Применить фильтры
+        </button>
+        <button className="filter__reset" onClick={handleResetFilters}>
+          Сбросить фильтры
+        </button>
+      </div>
     </div>
   );
 }
@@ -324,6 +359,18 @@ Filter.propTypes = {
     })
   ).isRequired,
   onFilterChange: PropTypes.func.isRequired,
+  initialFilters: PropTypes.shape({
+    minPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    maxPrice: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    minDate: PropTypes.string,
+    maxDate: PropTypes.string,
+    minRating: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    maxRating: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    complexities: PropTypes.arrayOf(PropTypes.string),
+    cuisines: PropTypes.arrayOf(PropTypes.number),
+    restaurants: PropTypes.arrayOf(PropTypes.number),
+    chefs: PropTypes.arrayOf(PropTypes.number),
+  }).isRequired,
 };
 
 export default Filter;

@@ -1,64 +1,64 @@
-// src/styles/components/_filter.scss
-.filter {
-  background-color: $card-bg;
-  padding: 15px;
-  border-radius: 5px;
-  border: 1px solid $border-color;
-  margin-bottom: 20px;
+// // src/styles/components/_filter.scss
+// .filter {
+//   background-color: $card-bg;
+//   padding: 15px;
+//   border-radius: 5px;
+//   border: 1px solid $border-color;
+//   margin-bottom: 20px;
 
-  &__title {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: $text-color;
-  }
+//   &__title {
+//     font-size: 18px;
+//     margin-bottom: 10px;
+//     color: $text-color;
+//   }
 
-  &__group {
-    margin-bottom: 15px;
-  }
+//   &__group {
+//     margin-bottom: 15px;
+//   }
 
-  &__group-title {
-    font-size: 16px;
-    margin-bottom: 5px;
-    color: $text-color;
-  }
+//   &__group-title {
+//     font-size: 16px;
+//     margin-bottom: 5px;
+//     color: $text-color;
+//   }
 
-  &__range {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+//   &__range {
+//     display: flex;
+//     align-items: center;
+//     gap: 10px;
+//   }
 
-  &__range-separator {
-    color: $text-color;
-  }
+//   &__range-separator {
+//     color: $text-color;
+//   }
 
-  &__input {
-    padding: 5px;
-    border: 1px solid $border-color;
-    border-radius: 5px;
-    font-size: 14px;
-    width: 100%;
-    max-width: 120px;
-  }
+//   &__input {
+//     padding: 5px;
+//     border: 1px solid $border-color;
+//     border-radius: 5px;
+//     font-size: 14px;
+//     width: 100%;
+//     max-width: 120px;
+//   }
 
-  &__checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 14px;
-    color: $text-color;
-    margin-bottom: 5px;
-  }
+//   &__checkbox-label {
+//     display: flex;
+//     align-items: center;
+//     gap: 5px;
+//     font-size: 14px;
+//     color: $text-color;
+//     margin-bottom: 5px;
+//   }
 
-  &__checkbox {
-    margin: 0;
-  }
+//   &__checkbox {
+//     margin: 0;
+//   }
 
-  &__show-more,
-  &__show-all {
-    @include button-style($primary-color, darken($primary-color, 10%));
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-  }
-}
+//   &__show-more,
+//   &__show-all {
+//     @include button-style($primary-color, darken($primary-color, 10%));
+//     width: 100%;
+//     padding: 10px;
+//     font-size: 14px;
+//   }
+// }
