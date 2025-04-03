@@ -224,6 +224,9 @@ class Video(models.Model):
     duration = models.DurationField(verbose_name="Длительность", blank=True, null=True)
     video = models.FileField(upload_to="videos/", null=True, verbose_name="Видеофайл")
     likes_count = models.IntegerField(default=0, verbose_name="Количество лайков")
+    comments_count = models.IntegerField(
+        default=0, verbose_name="Количество комментариев"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     def __str__(self):
@@ -250,6 +253,14 @@ class Video(models.Model):
         self.likes_count = self.calculated_likes_count
         self.save()
 
+    @property
+    def calculated_comments_count(self):
+        return self.comments.count()
+
+    def update_comments_count(self):
+        self.comments_count = self.calculated_comments_count
+        self.save()
+
     class Meta:
         verbose_name = "Видео"
         verbose_name_plural = "Видео"
@@ -270,3 +281,23 @@ class Like(models.Model):
         verbose_name = "Лайк"
         verbose_name_plural = "Лайки"
         ordering = ["user"]
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    video = models.ForeignKey(
+        Video, on_delete=models.CASCADE, related_name="comments", verbose_name="Видео"
+    )
+    text = models.TextField(verbose_name="Текст комментария")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    def __str__(self):
+        return f"Комментарий от {self.user.username} к видео {self.video.title}"
+
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+        ordering = ["-created_at"]

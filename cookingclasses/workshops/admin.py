@@ -9,6 +9,7 @@ from .models import (
     Review,
     Video,
     Like,
+    Comment,
 )
 
 
@@ -21,6 +22,12 @@ class RestaurantImageInline(admin.TabularInline):
     model = RestaurantImage
     extra = 1
     readonly_fields = ("uploaded_at",)
+
+
+class CommentInline(admin.TabularInline):
+    model = Comment
+    extra = 1
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(Cuisine)
@@ -97,6 +104,7 @@ class VideoAdmin(admin.ModelAdmin):
     search_fields = ("title", "description")
     list_display_links = ("title",)
     date_hierarchy = "created_at"
+    inlines = [CommentInline]
     readonly_fields = ("created_at",)
     ordering = ("-created_at",)
 
@@ -142,3 +150,18 @@ class RestaurantImageAdmin(admin.ModelAdmin):
     @admin.display(description="Название ресторана")
     def get_restaurant_name(self, obj):
         return obj.restaurant.name
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("user", "get_video_title", "text", "created_at")
+    list_filter = ("user", "video", "created_at")
+    search_fields = ("user__username", "video__title", "text")
+    list_display_links = ("user",)
+    date_hierarchy = "created_at"
+    readonly_fields = ("created_at", "updated_at")
+    ordering = ("-created_at",)
+
+    @admin.display(description="Название видео")
+    def get_video_title(self, obj):
+        return obj.video.title

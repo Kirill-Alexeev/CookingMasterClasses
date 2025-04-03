@@ -10,6 +10,7 @@ from .views import (
     ReviewViewSet,
     VideoViewSet,
     LikeViewSet,
+    CommentViewSet,
 )
 
 router = DefaultRouter()
@@ -22,6 +23,7 @@ router.register(r"records", RecordViewSet)
 router.register(r"reviews", ReviewViewSet)
 router.register(r"videos", VideoViewSet)
 router.register(r"likes", LikeViewSet)
+router.register(r"comments", CommentViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

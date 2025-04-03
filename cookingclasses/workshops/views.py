@@ -9,6 +9,7 @@ from .models import (
     Review,
     Video,
     Like,
+    Comment,
 )
 from .serializers import (
     CuisineSerializer,
@@ -20,6 +21,7 @@ from .serializers import (
     ReviewSerializer,
     VideoSerializer,
     LikeSerializer,
+    CommentSerializer,
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -100,3 +102,11 @@ class VideoViewSet(viewsets.ModelViewSet):
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
