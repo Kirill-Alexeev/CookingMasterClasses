@@ -2,134 +2,148 @@
 @use "../abstracts/mixins" as *;
 
 .master-classes {
-  @include container-center;
-  padding: 20px;
+  background: $header-text-color;
+  min-height: 100vh;
 
-  &__title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: $text-color;
-    font-size: 24px;
-  }
-
-  &__catalog {
-    display: flex;
-    gap: 20px;
-  }
-
-  &__filters {
-    background-color: $header-text-color;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-  }
-
-  &__filters-title {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: $text-color;
-  }
-
-  &__filter-group {
+  &__wrapper {
+    @include container-center;
     display: flex;
     flex-direction: column;
+    margin-bottom: 40px;
     gap: 10px;
-    margin-bottom: 15px;
   }
 
-  &__filter-label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 14px;
+  &__title {
+    font-family: $headline-font-family;
+    font-size: 3rem;
     color: $text-color;
+    text-align: left;
+  }
+}
+
+.catalog {
+  @include container-center;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.catalog__list {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 283px);
+  gap: 15px;
+}
+
+.catalog__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 2rem;
+  color: $text-color;
+  font-family: $regular-font-family;
+}
+
+.card {
+  background: $header-text-color;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+
+  &:hover {
+    transform: translateY(-5px);
   }
 
-  &__filter-input {
-    margin: 0;
+  &__link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
-  &__filter-submit {
-    @include button-style;
+  &__img-wrapper {
     width: 100%;
-    padding: 10px;
-  }
-
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-
-  &__card {
-    background-color: $header-text-color;
-    border-radius: 5px;
+    height: 180px;
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
-  &__card-image {
+  &__img {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
   }
 
-  &__card-content {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 15px;
-    text-align: center;
+    gap: 10px;
+    flex-grow: 1;
   }
 
-  &__card-title {
-    font-size: 18px;
-    margin-bottom: 10px;
+  &__top {
+    @include flex-between;
+  }
+
+  &__title {
+    font-family: $headline-font-family;
+    font-size: 2rem;
+    font-weight: bold;
     color: $text-color;
+    margin: 0;
   }
 
-  &__card-rating {
-    font-size: 16px;
-    color: #ffd700;
-    margin-bottom: 10px;
+  &__raiting {
+    @include flex-center;
+    gap: 5px;
+    font-size: 2rem;
+    color: $accent-color;
+    font-family: $regular-font-family;
   }
 
-  &__card-price {
-    font-size: 16px;
-    color: $text-color;
-    margin-bottom: 10px;
+  &__raiting-img {
+    width: 20px;
+    height: 20px;
   }
 
-  &__card-button {
+  &__date {
+    font-size: 1.8rem;
+    color: #666;
+    font-family: $regular-font-family;
+  }
+
+  &__desc {
+    font-size: 2rem;
+    color: #666;
+    font-family: $regular-font-family;
+    line-height: 1.4;
+  }
+
+  &__price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: $accent-color;
+    font-family: $regular-font-family;
+  }
+
+  &__button {
     @include button-style;
     width: 100%;
-    padding: 10px;
-  }
+    background: $card-color;
+    color: $header-text-color;
+    font-family: $regular-font-family;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-top: auto;
 
-  &__pagination {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  &__pagination-button {
-    @include button-style;
-    padding: 5px 10px;
-    font-size: 14px;
-
-    &--active {
-      background-color: $accent-color;
-      cursor: default;
-
-      &:hover {
-        background-color: $accent-color;
-      }
+    &:hover {
+      background: $accent-color-hover;
     }
-  }
-
-  &__loading,
-  &__error {
-    text-align: center;
-    color: $text-color;
-    font-size: 18px;
   }
 }

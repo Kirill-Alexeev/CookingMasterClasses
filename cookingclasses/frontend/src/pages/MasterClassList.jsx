@@ -105,61 +105,60 @@ function MasterClassList() {
 
   return (
     <div className="master-classes">
-      <Breadcrumbs />
-      <h1 className="master-classes__title">Мастер-классы</h1>
-      <Sort sort={sort} onSortChange={handleSortChange} />
-      <div className="catalog">
-        <Filter
-          masterClasses={masterClasses}
-          onFilterChange={handleFilterChange}
-          initialFilters={filters}
-        />
-        <div className="catalog__list">
-          {Array.isArray(masterClasses) && masterClasses.length > 0 ? (
-            masterClasses.map((mc) => (
-              <div key={mc.id} className="card">
-                <NavLink
-                  to={`/master-class-detail/${mc.id}`}
-                  className="card__link"
-                  end
-                >
-                  <div className="card__img-wrapper">
-                    <img
-                      src={mc.image}
-                      alt={mc.title}
-                      className="card__img"
-                      onError={(e) => {
-                        e.target.src = "/assets/placeholder.png";
-                      }}
-                    />
-                  </div>
-                  <div className="card__content">
-                    <div className="card__top">
-                      <h3 className="card__title">{mc.title}</h3>
-                      <div className="card__raiting">
-                        <img
-                          src={raitingStarIcon}
-                          className="card__raiting-img"
-                          alt="Рейтинг"
-                        />
-                        {mc.raiting || 0}
-                      </div>
+      <div className="master-classes__wrapper">
+        <Breadcrumbs />
+        <h1 className="master-classes__title">Мастер-классы</h1>
+        <Sort sort={sort} onSortChange={handleSortChange} />
+        <div className="catalog">
+          <Filter
+            masterClasses={masterClasses}
+            onFilterChange={handleFilterChange}
+            initialFilters={filters}
+          />
+          <div className="catalog__list">
+            {Array.isArray(masterClasses) && masterClasses.length > 0 ? (
+              masterClasses.map((mc) => (
+                <div key={mc.id} className="card">
+                  <NavLink
+                    to={`/master-class-detail/${mc.id}`}
+                    className="card__link"
+                    end
+                  >
+                    <div className="card__img-wrapper">
+                      <img
+                        src={mc.image}
+                        alt={mc.title}
+                        className="card__img"
+                      />
                     </div>
-                    <p className="card__date">{formatDate(mc.date_event)}</p>
-                    <p className="card__desc">
-                      {truncateDescription(mc.description)}
-                    </p>
-                    <p className="card__price">{mc.price} ₽</p>
-                    <button className="card__button">Записаться</button>
-                  </div>
-                </NavLink>
+                    <div className="card__content">
+                      <div className="card__top">
+                        <h3 className="card__title">{mc.title}</h3>
+                        <div className="card__raiting">
+                          <img
+                            src={raitingStarIcon}
+                            className="card__raiting-img"
+                            alt="Рейтинг"
+                          />
+                          {mc.raiting || 0}
+                        </div>
+                      </div>
+                      <p className="card__date">{formatDate(mc.date_event)}</p>
+                      <p className="card__desc">
+                        {truncateDescription(mc.description)}
+                      </p>
+                      <p className="card__price">{mc.price} ₽</p>
+                      <button className="card__button">Записаться</button>
+                    </div>
+                  </NavLink>
+                </div>
+              ))
+            ) : (
+              <div className="catalog__empty">
+                Нет доступных мастер-классов. Попробуйте изменить фильтры.
               </div>
-            ))
-          ) : (
-            <div className="catalog__empty">
-              Нет доступных мастер-классов. Попробуйте изменить фильтры.
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

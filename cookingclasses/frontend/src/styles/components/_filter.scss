@@ -7,26 +7,32 @@
   border-radius: 12px;
   width: 280px;
   font-family: $regular-font-family;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
 
   &__title {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 1rem;
+    color: $text-color;
+    margin-bottom: 10px;
   }
 
   &__group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 15px;
   }
 
   &__group-title {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    color: $text-color;
+    margin-bottom: 5px;
   }
 
   &__range {
     @include flex-center;
-    gap: 0.5rem;
+    max-width: 240px;
+    flex-wrap: wrap;
+    gap: 5px;
   }
 
   &__range-separator {
@@ -36,7 +42,11 @@
 
   &__input {
     @include input-style;
-    font-size: 1rem;
+    font-size: 1.5rem;
+    border: 1px solid $text-color;
+    border-radius: 8px;
+    padding: 8px;
+    max-width: 100px;
 
     &:focus {
       border-color: $accent-color;
@@ -47,9 +57,10 @@
   &__checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    gap: 5px;
+    font-size: 1.5rem;
+    color: $text-color;
+    margin-bottom: 5px;
     cursor: pointer;
 
     .filter__checkbox {
@@ -62,7 +73,7 @@
 
   &__show-more {
     @include button-like-link;
-    font-size: 1rem;
+    font-size: 1.8rem;
     color: $accent-color;
     cursor: pointer;
 
@@ -75,20 +86,21 @@
   &__actions {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
+    gap: 7px;
+    margin-top: 10px;
   }
 
   &__show-all,
   &__apply,
   &__reset {
     @include button-style;
-    font-size: 1rem;
-    font-weight: bold;
+    font-size: 1.8rem;
+    border-radius: 8px;
   }
 
   &__show-all {
     color: $accent-color;
+    background: transparent;
 
     &:hover {
       color: $accent-color-hover;
@@ -107,7 +119,7 @@
 
   &__reset {
     background: $card-color;
-    color: $text-color;
+    color: $header-text-color;
 
     &:hover {
       background: $accent-color-hover;
