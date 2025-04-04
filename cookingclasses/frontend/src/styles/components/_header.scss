@@ -2,7 +2,7 @@
 @use "../abstracts/mixins" as *;
 
 .header {
-  width: 100vw;
+  width: 100%;
   padding: 10px 0 15px;
   background-color: $primary-color;
 
@@ -96,8 +96,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      transition: color 0.3s;
 
       &:hover {
+        color: $accent-color;
         text-decoration: underline;
       }
     }
@@ -124,15 +126,17 @@
       font-size: $regular-font-size;
       padding: 5px 10px;
       color: $header-text-color;
+      transition: color 0.3s;
 
       &.active {
         background-color: $header-text-color;
         border-radius: 10px;
-        color: $primary-color;
+        color: $accent-color;
         font-weight: bold;
       }
 
       &:hover {
+        color: $accent-color;
         text-decoration: underline;
       }
     }
@@ -146,15 +150,17 @@
       padding: 5px 10px;
       color: $header-text-color;
       cursor: pointer;
+      transition: color 0.3s;
 
       &.active {
         background-color: $header-text-color;
         border-radius: 10px;
-        color: $primary-color;
+        color: $accent-color;
         font-weight: bold;
       }
 
       &:hover {
+        color: $accent-color;
         text-decoration: underline;
       }
     }
