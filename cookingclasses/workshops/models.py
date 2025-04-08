@@ -37,9 +37,6 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse("restaurant_detail", kwargs={"pk": self.pk})
-
     class Meta:
         verbose_name = "Ресторан"
         verbose_name_plural = "Рестораны"
@@ -59,15 +56,12 @@ class Chef(models.Model):
         blank=True,
     )
     image = models.ImageField(
-        upload_to="chefs/", null=True, blank=True, verbose_name="Изображение"
+        upload_to="chefs/", null=True, blank=True, verbose_name="Фотография"
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-    def get_absolute_url(self):
-        return reverse("chef_detail", kwargs={"pk": self.pk})
 
     class Meta:
         verbose_name = "Шеф-повар"
@@ -86,7 +80,7 @@ class RestaurantImage(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата загрузки")
 
     def __str__(self):
-        return f"Фото {self.id} - {self.restaurant.name}"
+        return f"Фото: {self.id} - Ресторан: {self.restaurant.name}"
 
     class Meta:
         verbose_name = "Фото ресторана"
@@ -134,9 +128,6 @@ class MasterClass(models.Model):
     def __str__(self):
         return self.title
 
-    def get_absolute_url(self):
-        return reverse("master-class_detail", kwargs={"pk": self.pk})
-
     @property
     def calculated_rating(self):
         avg_rating = self.review_set.aggregate(avg_rating=Avg("rating"))["avg_rating"]
@@ -177,12 +168,9 @@ class Record(models.Model):
     def __str__(self):
         return f"Пользователь: {self.user.username} - Мастер-класс: {self.master_class.title}"
 
-    def get_absolute_url(self):
-        return reverse("record_detail", kwargs={"pk": self.pk})
-
     class Meta:
-        verbose_name = "Запись"
-        verbose_name_plural = "Записи"
+        verbose_name = "Запись на мастер-класс"
+        verbose_name_plural = "Записи на мастер-классы"
         ordering = ["-created_at"]
 
 
@@ -205,12 +193,10 @@ class Review(models.Model):
     )
     comment = models.TextField(verbose_name="Комментарий")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     def __str__(self):
-        return f"Пользователь {self.user.username} - Мастер-класс {self.master_class.title}"
-
-    def get_absolute_url(self):
-        return reverse("review_detail", kwargs={"pk": self.pk})
+        return f"Пользователь: {self.user.username} - Мастер-класс: {self.master_class.title}"
 
     class Meta:
         verbose_name = "Отзыв"
@@ -221,29 +207,32 @@ class Review(models.Model):
 class Video(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название")
     description = models.TextField(verbose_name="Описание")
-    duration = models.DurationField(verbose_name="Длительность", blank=True, null=True)
+    duration = models.DurationField(
+        verbose_name="Длительность видео", blank=True, null=True
+    )
     video = models.FileField(upload_to="videos/", null=True, verbose_name="Видеофайл")
     likes_count = models.IntegerField(default=0, verbose_name="Количество лайков")
     comments_count = models.IntegerField(
         default=0, verbose_name="Количество комментариев"
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     def __str__(self):
         return self.title
 
-    def get_absolute_url(self):
-        return reverse("video_detail", kwargs={"pk": self.pk})
-
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
         if self.video and os.path.exists(self.video.path):
             try:
                 clip = VideoFileClip(self.video.path)
-                self.duration = timedelta(seconds=clip.duration)
+                self.duration = timedelta(seconds=int(clip.duration))
                 clip.close()
+
+                super().save(update_fields=["duration"])
             except Exception as e:
                 print(f"Ошибка при вычислении длительности видео: {e}")
-        super().save(*args, **kwargs)
 
     @property
     def calculated_likes_count(self):
@@ -275,7 +264,7 @@ class Like(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     def __str__(self):
-        return f"{self.user.username} - Видео {self.video_id}"
+        return f"Лайк от {self.user.username} к видео {self.video.title}"
 
     class Meta:
         verbose_name = "Лайк"

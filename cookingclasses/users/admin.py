@@ -38,7 +38,7 @@ class CustomUserAdmin(UserAdmin):
 
     list_filter = ("is_staff", "is_superuser", "is_active", "groups")
 
-    list_display_links = ("username", "email")
+    list_display_links = ("username",)
 
     ordering = ("username",)
 
