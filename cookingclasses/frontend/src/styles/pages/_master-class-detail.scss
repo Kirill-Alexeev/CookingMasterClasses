@@ -1,0 +1,227 @@
+// styles/_master-class-detail.scss
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.mc-detail {
+  background: $header-text-color;
+  padding: 20px 0;
+
+  &__header {
+    @include container-center;
+    margin-bottom: 20px;
+  }
+
+  &__info {
+    background: $header-text-color;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  }
+
+  &__info-top {
+    position: relative;
+    width: 100%;
+    height: 300px;
+  }
+
+  &__info-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.3);
+  }
+
+  &__title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: $headline-font-family;
+    font-size: 3rem;
+    color: $header-text-color;
+    margin: 0;
+    text-align: center;
+  }
+
+  &__info-bottom {
+    background: $primary-color;
+    padding: 15px 20px;
+    @include flex-between;
+    gap: 40px;
+    position: relative;
+  }
+
+  &__price,
+  &__seats {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    color: $header-text-color;
+    position: relative;
+    flex: 1;
+
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 100%;
+      background: $header-text-color;
+      opacity: 0.5;
+    }
+  }
+
+  &__signup-button {
+    @include button-style;
+    background: $accent-color;
+    color: $header-text-color;
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    font-weight: 500;
+    padding: 10px 30px;
+    text-decoration: none;
+    text-align: center;
+    margin: 0 auto;
+    flex: 1;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+  }
+
+  &__event-info {
+    @include container-center;
+    background: none;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &__event-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__event-date,
+  &__event-time,
+  &__event-restaurant,
+  &__event-location {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    font-weight: normal;
+    color: $text-color;
+    margin: 0;
+  }
+
+  &__event-rating {
+    @include flex-center;
+    gap: 10px;
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    margin: 0;
+  }
+
+  &__rating-star {
+    width: 50px;
+    height: 50px;
+  }
+
+  &__description {
+    @include container-center;
+    margin: 60px auto;
+
+    h2 {
+      font-family: $headline-font-family;
+      font-size: 2.5rem;
+      color: $text-color;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-family: $regular-font-family;
+      font-size: 2rem;
+      color: $text-color;
+      line-height: 3rem;
+    }
+  }
+
+  &__chefs {
+    width: 100%;
+    background: $card-color;
+    padding: 20px;
+    margin: 0;
+
+    h2 {
+      font-family: $headline-font-family;
+      font-size: 2.5rem;
+      color: $header-text-color;
+      margin: 0 0 5px;
+      text-align: center;
+    }
+  }
+
+  &__chefs-list {
+    @include container-center;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  &__chef {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    max-width: 600px;
+  }
+
+  &__chef-image {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  &__chef-info {
+    flex: 1;
+  }
+
+  &__chef-name {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    font-weight: 500;
+    color: $header-text-color;
+    margin: 0 0 5px;
+  }
+
+  &__chef-bio {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    color: $header-text-color;
+    margin: 0;
+    text-align: start;
+  }
+
+  &__chef-nothing {
+    font-family: $regular-font-family;
+    font-size: 2.5rem;
+    color: $header-text-color;
+    text-align: center;
+    margin: 0;
+  }
+
+  .loading,
+  .error {
+    @include container-center;
+    font-family: $regular-font-family;
+    font-size: 1.2rem;
+    color: $text-color;
+    text-align: center;
+    padding: 20px;
+  }
+}

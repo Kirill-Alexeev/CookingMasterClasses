@@ -13,6 +13,7 @@ import MasterClassList from "./pages/MasterClassList";
 import MasterClassDetail from "./pages/MasterClassDetail";
 import VideoList from "./pages/VideoList";
 import VideoDetail from "./pages/VideoDetail";
+import Record from "./pages/Record";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         />
         <Route path="/video-list" element={<VideoList />} />
         <Route path="/video-detail/:id" element={<VideoDetail />} />
+        <Route path="/record" element={<Record />} />
       </Routes>
       <Footer />
     </BrowserRouter>
