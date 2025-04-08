@@ -121,6 +121,7 @@ function MasterClassList() {
                 <div key={mc.id} className="card">
                   <NavLink
                     to={`/master-class-detail/${mc.id}`}
+                    state={{ title: mc.title }}
                     className="card__link"
                     end
                   >

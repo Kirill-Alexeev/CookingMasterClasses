@@ -66,7 +66,8 @@ function MasterClassDetail() {
               {masterClass.seats_available} из {masterClass.seats_total} мест
             </p>
             <NavLink
-              to={`/record/${id}`}
+              to={`/record`}
+              state={{ title: "Запись на мастер-класс" }}
               className="mc-detail__signup-button"
               end
             >

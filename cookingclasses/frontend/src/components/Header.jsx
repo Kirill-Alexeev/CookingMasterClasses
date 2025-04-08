@@ -69,17 +69,29 @@ function Header() {
               </NavLink>
             </li>
             <li className="header__nav-item">
-              <NavLink to="/restaurant-list" className="header__nav-link">
+              <NavLink
+                to="/restaurant-list"
+                state={{ title: "Рестораны" }}
+                className="header__nav-link"
+              >
                 Рестораны
               </NavLink>
             </li>
             <li className="header__nav-item">
-              <NavLink to="/master-class-list" className="header__nav-link">
+              <NavLink
+                to="/master-class-list"
+                state={{ title: "Мастер-классы" }}
+                className="header__nav-link"
+              >
                 Мастер-классы
               </NavLink>
             </li>
             <li className="header__nav-item">
-              <NavLink to="/video-list" className="header__nav-link">
+              <NavLink
+                to="/video-list"
+                state={{ title: "Видео-уроки" }}
+                className="header__nav-link"
+              >
                 Видео-уроки
               </NavLink>
             </li>
