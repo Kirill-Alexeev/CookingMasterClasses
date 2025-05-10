@@ -103,7 +103,7 @@ class RecordAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("user", "master_class_link", "rating", "created_at")
+    list_display = ("user", "master_class_link", "rating", "is_visible", "created_at")
     list_filter = ("rating", "created_at")
     search_fields = ("user__username", "master_class__title", "comment")
     raw_id_fields = ("user", "master_class")
@@ -119,7 +119,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ("title", "duration", "likes_count", "comments_count", "created_at")
+    list_display = ("title", "duration", "likes_count", "comments_count", "is_visible", "created_at")
     list_filter = ("created_at",)
     search_fields = ("title", "description")
     list_display_links = ("title",)
@@ -176,7 +176,7 @@ class RestaurantImageAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("user", "video_link", "text", "created_at")
+    list_display = ("user", "video_link", "text", "is_visible", "created_at")
     list_filter = ("user", "video", "created_at")
     search_fields = ("user__username", "video__title", "text")
     raw_id_fields = ("user", "video")

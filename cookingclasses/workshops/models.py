@@ -192,6 +192,7 @@ class Review(models.Model):
         verbose_name="Рейтинг",
     )
     comment = models.TextField(verbose_name="Комментарий")
+    is_visible = models.BooleanField(default=False, verbose_name="Видимость")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
@@ -215,6 +216,7 @@ class Video(models.Model):
     comments_count = models.IntegerField(
         default=0, verbose_name="Количество комментариев"
     )
+    is_visible = models.BooleanField(default=False, verbose_name="Видимость")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
@@ -280,6 +282,7 @@ class Comment(models.Model):
         Video, on_delete=models.CASCADE, related_name="comments", verbose_name="Видео"
     )
     text = models.TextField(verbose_name="Текст комментария")
+    is_visible = models.BooleanField(default=False, verbose_name="Видимость")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
