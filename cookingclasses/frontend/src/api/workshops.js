@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 
 axios.defaults.withCredentials = true;
 
@@ -75,60 +76,39 @@ export const getRestaurantImages = async () => {
 };
 
 // Мастер-классы
-export const getMasterClasses = async (filters = {}, sort = {}) => {
-  const params = new URLSearchParams();
+export const masterClassesApi = {
+  getList: async (params = {}) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/master-classes/`, {
+        params,
+        paramsSerializer: (params) => {
+          return qs.stringify(params, { arrayFormat: "repeat" });
+        },
+      });
 
-  // Фильтры
-  if (filters.minPrice) params.append("min_price", filters.minPrice);
-  if (filters.maxPrice) params.append("max_price", filters.maxPrice);
-  if (filters.minDate) params.append("min_date", filters.minDate.toISOString());
-  if (filters.maxDate) params.append("max_date", filters.maxDate.toISOString());
-  if (filters.minRating) params.append("min_rating", filters.minRating);
-  if (filters.maxRating) params.append("max_rating", filters.maxRating);
-  if (filters.complexities?.length) {
-    filters.complexities.forEach((complexity) =>
-      params.append("complexity", complexity)
-    );
-  }
-  if (filters.cuisines?.length) {
-    filters.cuisines.forEach((cuisine) => params.append("cuisine_id", cuisine));
-  }
-  if (filters.restaurants?.length) {
-    filters.restaurants.forEach((restaurant) =>
-      params.append("restaurant", restaurant)
-    );
-  }
-  if (filters.chefs?.length) {
-    filters.chefs.forEach((chef) => params.append("chefs", chef));
-  }
+      return response.data.results || response.data;
+    } catch (error) {
+      console.error("MasterClasses API error:", error);
+      throw (
+        error.response?.data || {
+          error: error.message || "Не удалось загрузить мастер-классы",
+        }
+      );
+    }
+  },
 
-  // Сортировка
-  if (sort.field) {
-    const ordering = sort.direction === "asc" ? sort.field : `-${sort.field}`;
-    params.append("ordering", ordering);
-  }
-
-  try {
-    const response = await axios.get(`${API_BASE_URL}/master-classes/`, {
-      params,
-    });
-    return response.data;
-  } catch (error) {
-    throw (
-      error.response?.data || { error: "Не удалось загрузить мастер-классы" }
-    );
-  }
-};
-
-export const getMasterClassDetail = async (id) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/master-classes/${id}/`);
-    return response.data;
-  } catch (error) {
-    throw (
-      error.response?.data || { error: "Не удалось загрузить мастер-класс" }
-    );
-  }
+  getDetail: async (id) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/master-classes/${id}/`);
+      return response.data;
+    } catch (error) {
+      throw (
+        error.response?.data || {
+          error: "Не удалось загрузить мастер-класс",
+        }
+      );
+    }
+  },
 };
 
 // Записи

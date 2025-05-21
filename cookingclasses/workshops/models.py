@@ -5,6 +5,7 @@ from django.urls import reverse
 from moviepy import VideoFileClip
 import os
 from django.db.models import Avg
+from django.utils import timezone
 
 
 class Cuisine(models.Model):
@@ -102,7 +103,7 @@ class MasterClass(models.Model):
     )
     seats_total = models.IntegerField(verbose_name="Всего мест")
     seats_available = models.IntegerField(verbose_name="Свободных мест")
-    raiting = models.FloatField(verbose_name="Рейтинг", default=0.0)
+    rating = models.FloatField(verbose_name="Рейтинг", default=0.0)
     complexity = models.CharField(
         max_length=20,
         choices=[
@@ -119,9 +120,7 @@ class MasterClass(models.Model):
     chefs = models.ManyToManyField(
         Chef, related_name="master_classes", verbose_name="Шеф-повар"
     )
-    cuisine_id = models.ForeignKey(
-        Cuisine, on_delete=models.CASCADE, verbose_name="Кухня"
-    )
+    cuisine = models.ForeignKey(Cuisine, on_delete=models.CASCADE, verbose_name="Кухня")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
@@ -129,13 +128,22 @@ class MasterClass(models.Model):
         return self.title
 
     @property
+    def is_upcoming(self):
+        return self.date_event > timezone.now()
+
+    @property
+    def days_until_event(self):
+        delta = self.date_event - timezone.now()
+        return delta.days if delta.days > 0 else 0
+
+    @property
     def calculated_rating(self):
         avg_rating = self.review_set.aggregate(avg_rating=Avg("rating"))["avg_rating"]
         return round(avg_rating or 0.0, 1)
 
     def update_rating(self):
-        self.raiting = self.calculated_rating
-        self.save(update_fields=["raiting"])
+        self.rating = self.calculated_rating
+        self.save(update_fields=["rating"])
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -231,10 +239,13 @@ class Video(models.Model):
                 clip = VideoFileClip(self.video.path)
                 self.duration = timedelta(seconds=int(clip.duration))
                 clip.close()
-
                 super().save(update_fields=["duration"])
             except Exception as e:
                 print(f"Ошибка при вычислении длительности видео: {e}")
+
+    @property
+    def is_new(self):
+        return (timezone.now() - self.created_at).days <= 7
 
     @property
     def calculated_likes_count(self):
@@ -242,7 +253,7 @@ class Video(models.Model):
 
     def update_likes_count(self):
         self.likes_count = self.calculated_likes_count
-        self.save()
+        self.save(update_fields=["likes_count"])
 
     @property
     def calculated_comments_count(self):
@@ -250,7 +261,7 @@ class Video(models.Model):
 
     def update_comments_count(self):
         self.comments_count = self.calculated_comments_count
-        self.save()
+        self.save(update_fields=["comments_count"])
 
     class Meta:
         verbose_name = "Видео"
@@ -272,6 +283,7 @@ class Like(models.Model):
         verbose_name = "Лайк"
         verbose_name_plural = "Лайки"
         ordering = ["user"]
+        unique_together = [["user", "video"]]
 
 
 class Comment(models.Model):

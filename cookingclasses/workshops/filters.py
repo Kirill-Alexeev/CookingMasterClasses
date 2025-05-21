@@ -1,31 +1,42 @@
-import django_filters
-from django_filters import BaseInFilter, NumberFilter
-from .models import MasterClass, Cuisine, Restaurant, Chef
+from django_filters import rest_framework as filters
+from .models import Chef, Cuisine, MasterClass, Restaurant
 
 
-class MasterClassFilter(django_filters.FilterSet):
-    min_price = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
-    max_price = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
-    min_date = django_filters.DateTimeFilter(field_name="date_event", lookup_expr="gte")
-    max_date = django_filters.DateTimeFilter(field_name="date_event", lookup_expr="lte")
-    min_rating = django_filters.NumberFilter(field_name="raiting", lookup_expr="gte")
-    max_rating = django_filters.NumberFilter(field_name="raiting", lookup_expr="lte")
-    complexity = django_filters.MultipleChoiceFilter(
+class MasterClassFilter(filters.FilterSet):
+    min_date = filters.IsoDateTimeFilter(field_name="date_event", lookup_expr="gte")
+    max_date = filters.IsoDateTimeFilter(field_name="date_event", lookup_expr="lte")
+    min_price = filters.NumberFilter(field_name="price", lookup_expr="gte")
+    max_price = filters.NumberFilter(field_name="price", lookup_expr="lte")
+    min_rating = filters.NumberFilter(field_name="rating", lookup_expr="gte")
+    max_rating = filters.NumberFilter(field_name="rating", lookup_expr="lte")
+    complexity = filters.MultipleChoiceFilter(
         field_name="complexity",
-        choices=[
-            ("Новичок", "Новичок"),
-            ("Любитель", "Любитель"),
-            ("Опытный", "Опытный"),
-            ("Профессионал", "Профессионал"),
-        ],
-        conjoined=False,
+        choices=MasterClass._meta.get_field("complexity").choices,
     )
-    cuisine_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="cuisine_id", queryset=Cuisine.objects.all(), conjoined=False
+    cuisine_id = filters.ModelMultipleChoiceFilter(
+        field_name="cuisine",
+        queryset=Cuisine.objects.all(),
     )
-    restaurant = django_filters.NumberFilter(field_name="restaurant_id")
-    chefs = BaseInFilter(field_name="chefs__id")
+    restaurant_id = filters.ModelMultipleChoiceFilter(
+        field_name="restaurant",
+        queryset=Restaurant.objects.all(),
+    )
+    chef_id = filters.ModelMultipleChoiceFilter(
+        field_name="chefs",
+        queryset=Chef.objects.all(),
+    )
 
     class Meta:
         model = MasterClass
-        fields = []
+        fields = [
+            "min_date",
+            "max_date",
+            "min_price",
+            "max_price",
+            "min_rating",
+            "max_rating",
+            "complexity",
+            "cuisine_id",
+            "restaurant_id",
+            "chef_id",
+        ]

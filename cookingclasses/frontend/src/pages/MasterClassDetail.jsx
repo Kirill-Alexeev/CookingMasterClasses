@@ -1,48 +1,51 @@
 import { useState, useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
-import {
-  getMasterClassDetail,
-  getChefs,
-  getRestaurants,
-} from "../api/workshops";
+import { masterClassesApi } from "../api/workshops";
 import Breadcrumbs from "../components/Breadcrumbs";
 import raitingStarIcon from "../assets/icons/raiting_star_icon.svg";
 
 function MasterClassDetail() {
   const { id } = useParams();
   const [masterClass, setMasterClass] = useState(null);
-  const [chefs, setChefs] = useState([]);
-  const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const masterClassData = await getMasterClassDetail(id);
+        const masterClassData = await masterClassesApi.getDetail(id);
         setMasterClass(masterClassData);
-
-        const chefsData = await getChefs();
-        const relatedChefs = chefsData.filter((chef) =>
-          masterClassData.chefs.includes(chef.id)
-        );
-        setChefs(relatedChefs);
-
-        const restaurantsData = await getRestaurants();
-        const relatedRestaurant = restaurantsData.find(
-          (rest) => rest.id === masterClassData.restaurant
-        );
-        setRestaurant(relatedRestaurant);
-
         setLoading(false);
       } catch (err) {
-        setError(err.error || "Ошибка при загрузке данных");
+        setError(err.error?.message || "Ошибка при загрузке данных");
         setLoading(false);
       }
     };
 
     fetchData();
   }, [id]);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date)
+      ? "Некорректная дата"
+      : date.toLocaleDateString("ru-RU", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+  };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return isNaN(date)
+      ? "Некорректное время"
+      : date.toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+  };
 
   if (loading) return <div className="loading">Загрузка...</div>;
   if (error) return <div className="error">{error}</div>;
@@ -54,7 +57,7 @@ function MasterClassDetail() {
         <div className="mc-detail__info">
           <div className="mc-detail__info-top">
             <img
-              src={masterClass.image}
+              src={masterClass.image || "/placeholder.jpg"} // Добавлено: заглушка для изображения
               alt={masterClass.title}
               className="mc-detail__info-img"
             />
@@ -80,24 +83,16 @@ function MasterClassDetail() {
       <div className="mc-detail__event-info">
         <div className="mc-detail__event-left">
           <p className="mc-detail__event-date">
-            {new Date(masterClass.date_event).toLocaleDateString("ru-RU", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
+            {formatDate(masterClass.date_event)}
           </p>
           <p className="mc-detail__event-time">
-            {new Date(masterClass.date_event).toLocaleTimeString("ru-RU", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatTime(masterClass.date_event)}
           </p>
           <p className="mc-detail__event-restaurant">
-            {restaurant ? restaurant.name : "Ресторан не указан"}
+            {masterClass.restaurant?.name || "Ресторан не указан"}
           </p>
           <p className="mc-detail__event-location">
-            {restaurant ? restaurant.address : "Адрес не указан"}
+            {masterClass.restaurant?.address || "Адрес не указан"}
           </p>
         </div>
         <p className="mc-detail__event-rating">
@@ -106,23 +101,23 @@ function MasterClassDetail() {
             className="mc-detail__rating-star"
             alt="Рейтинг"
           />
-          {masterClass.raiting || 0}
+          {masterClass.rating || 0} {/* Исправлено: raiting → rating */}
         </p>
       </div>
 
       <div className="mc-detail__description">
         <h2>О мастер-классе</h2>
-        <p>{masterClass.description}</p>
+        <p>{masterClass.description || "Описание отсутствует"}</p>
       </div>
 
       <div className="mc-detail__chefs">
         <h2>Занятие будут вести</h2>
-        {chefs.length > 0 ? (
+        {masterClass.chefs?.length > 0 ? (
           <div className="mc-detail__chefs-list">
-            {chefs.map((chef) => (
+            {masterClass.chefs.map((chef) => (
               <div key={chef.id} className="mc-detail__chef">
                 <img
-                  src={chef.image}
+                  src={chef.image || "/placeholder.jpg"} // Добавлено: заглушка для изображения
                   alt={`${chef.last_name} ${chef.first_name}`}
                   className="mc-detail__chef-image"
                 />
@@ -130,7 +125,9 @@ function MasterClassDetail() {
                   <h3 className="mc-detail__chef-name">
                     {chef.last_name} {chef.first_name}
                   </h3>
-                  <p className="mc-detail__chef-bio">{chef.profession}</p>
+                  <p className="mc-detail__chef-bio">
+                    {chef.profession || "Профессия не указана"}
+                  </p>
                 </div>
               </div>
             ))}

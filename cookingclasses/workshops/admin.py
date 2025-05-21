@@ -62,19 +62,19 @@ class MasterClassAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "date_event",
-        "cuisine_id",
+        "cuisine",
         "get_chefs",
         "price",
         "seats_available",
     )
-    list_filter = ("cuisine_id", "date_event", "complexity", "chefs")
+    list_filter = ("cuisine", "date_event", "complexity", "chefs")
     search_fields = ("title", "description", "restaurant")
-    raw_id_fields = ("restaurant", "cuisine_id")
+    raw_id_fields = ("restaurant", "cuisine")
     list_display_links = ("title",)
     date_hierarchy = "date_event"
     filter_horizontal = ("chefs",)
     inlines = [ChefInline]
-    readonly_fields = ("seats_available", "raiting", "created_at", "updated_at")
+    readonly_fields = ("seats_available", "rating", "created_at", "updated_at")
     ordering = ("-date_event",)
 
     @admin.display(description="Шеф-повара")

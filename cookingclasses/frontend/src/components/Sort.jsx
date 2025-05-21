@@ -9,13 +9,13 @@ function Sort({ sort, onSortChange }) {
 
   const handleSortFieldChange = (e) => {
     const newField = e.target.value;
-    onSortChange({ field: newField, direction: sort.direction }); // Направление остается прежним
+    onSortChange({ field: newField, direction: sort.direction });
   };
 
   return (
     <div className="sort">
       <button className="sort__button" onClick={handleSortDirectionToggle}>
-        <img src={sortIcon} className="sort__icon" />
+        <img src={sortIcon} className="sort__icon" alt="Сортировка" />
       </button>
       <select
         className="sort__select"
@@ -31,7 +31,9 @@ function Sort({ sort, onSortChange }) {
         <option className="sort__option" value="date_event">
           По дате
         </option>
-        <option className="sort__option" value="raiting">
+        <option className="sort__option" value="rating">
+          {" "}
+          {/* Исправлено: raiting -> rating */}
           По рейтингу
         </option>
       </select>
