@@ -33,7 +33,6 @@ function Sort({ sort, onSortChange }) {
         </option>
         <option className="sort__option" value="rating">
           {" "}
-          {/* Исправлено: raiting -> rating */}
           По рейтингу
         </option>
       </select>

@@ -161,6 +161,40 @@ export const getVideoDetail = async (id) => {
   }
 };
 
+export const getFilteredVideos = async (filters, page = 1) => {
+  try {
+    const params = new URLSearchParams({
+      max_duration: filters.maxDuration || "",
+      recent_days: filters.recentDays || "",
+      username: filters.username || "",
+      comment_text: filters.commentText || "",
+      sort_field: filters.sortField || "created_at",
+      sort_direction: filters.sortDirection || "desc",
+      page,
+    });
+    console.log(
+      "Filtered videos URL:",
+      `${API_BASE_URL}/videos/filtered?${params.toString()}`
+    );
+    const response = await axios.get(
+      `${API_BASE_URL}/videos/filtered?${params.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Get filtered videos error:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      headers: error.response?.headers,
+    });
+    throw (
+      error.response?.data || {
+        error: `Не удалось загрузить отфильтрованные видео: ${error.message}`,
+      }
+    );
+  }
+};
+
 // Лайки
 export const getLikes = async () => {
   try {

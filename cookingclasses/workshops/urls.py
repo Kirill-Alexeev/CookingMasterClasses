@@ -11,6 +11,7 @@ from .views import (
     VideoViewSet,
     LikeViewSet,
     CommentViewSet,
+    VideoListFilteredView,
 )
 
 router = DefaultRouter()
@@ -27,4 +28,7 @@ router.register(r"comments", CommentViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path(
+        "videos/filtered/", VideoListFilteredView.as_view(), name="video_list_filtered"
+    ),
 ]

@@ -67,8 +67,6 @@ function MasterClassList() {
           page,
         };
 
-        console.log("Фильтры, отправленные в API:", apiFilters);
-
         const response = await masterClassesApi.getList(apiFilters);
         setMasterClasses(
           Array.isArray(response.results) ? response.results : response

@@ -1,0 +1,154 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.video-detail {
+  @include container-center;
+  max-width: 1200px;
+  padding: 20px 0;
+  background: $header-text-color;
+  min-height: 100vh;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  &__info-top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__video {
+    width: 100%;
+    max-height: 400px;
+    border-radius: 12px;
+  }
+
+  &__title {
+    font-family: $headline-font-family;
+    font-size: 2.5rem;
+    color: $text-color;
+  }
+
+  &__info-bottom {
+    @include flex-between;
+    gap: 20px;
+  }
+
+  &__likes,
+  &__comments,
+  &__visibility {
+    font-size: 2rem;
+    color: $accent-color;
+    font-family: $regular-font-family;
+  }
+
+  &__rating-star {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+
+  &__event-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+
+  &__event-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__event-duration,
+  &__event-date {
+    font-size: 1.8rem;
+    color: #666;
+    font-family: $regular-font-family;
+  }
+
+  &__description {
+    margin: 20px 0;
+
+    h2 {
+      font-family: $headline-font-family;
+      font-size: 2rem;
+      color: $text-color;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.8rem;
+      color: #666;
+      font-family: $regular-font-family;
+      line-height: 1.5;
+    }
+  }
+
+  &__comments {
+    margin: 20px 0;
+
+    h2 {
+      font-family: $headline-font-family;
+      font-size: 2rem;
+      color: $text-color;
+      margin-bottom: 15px;
+    }
+  }
+
+  &__comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  &__comment {
+    background: $card-color;
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  &__comment-user {
+    font-family: $headline-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    margin-bottom: 5px;
+  }
+
+  &__comment-text {
+    font-size: 1.6rem;
+    color: #666;
+    font-family: $regular-font-family;
+    margin-bottom: 5px;
+  }
+
+  &__comment-date {
+    font-size: 1.4rem;
+    color: #999;
+    font-family: $regular-font-family;
+  }
+
+  &__comment-nothing {
+    font-size: 1.8rem;
+    color: #666;
+    font-family: $regular-font-family;
+  }
+
+  &__loading,
+  &__error {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    text-align: center;
+    padding: 20px;
+  }
+}
