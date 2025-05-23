@@ -42,7 +42,13 @@ class CuisineAdmin(admin.ModelAdmin):
 
 @admin.register(Chef)
 class ChefAdmin(admin.ModelAdmin):
-    list_display = ("last_name", "first_name", "profession", "restaurant_link", "created_at")
+    list_display = (
+        "last_name",
+        "first_name",
+        "profession",
+        "restaurant_link",
+        "created_at",
+    )
     list_filter = ("profession", "restaurant", "created_at")
     search_fields = ("first_name", "last_name", "profession")
     raw_id_fields = ("restaurant",)
@@ -54,6 +60,7 @@ class ChefAdmin(admin.ModelAdmin):
     def restaurant_link(self, obj):
         url = reverse("admin:workshops_restaurant_change", args=[obj.restaurant.id])
         return format_html('<a href="{}">{}</a>', url, obj.restaurant.name)
+
     restaurant_link.short_description = "Ресторан"
 
 
@@ -98,6 +105,7 @@ class RecordAdmin(admin.ModelAdmin):
     def master_class_link(self, obj):
         url = reverse("admin:workshops_masterclass_change", args=[obj.master_class.id])
         return format_html('<a href="{}">{}</a>', url, obj.master_class.title)
+
     master_class_link.short_description = "Мастер-класс"
 
 
@@ -115,18 +123,32 @@ class ReviewAdmin(admin.ModelAdmin):
     def master_class_link(self, obj):
         url = reverse("admin:workshops_masterclass_change", args=[obj.master_class.id])
         return format_html('<a href="{}">{}</a>', url, obj.master_class.title)
+
     master_class_link.short_description = "Мастер-класс"
+
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-    list_display = ("title", "duration", "likes_count", "comments_count", "is_visible", "created_at")
+    list_display = (
+        "title_link",
+        "duration",
+        "likes_count",
+        "comments_count",
+        "is_visible",
+        "created_at",
+    )
     list_filter = ("created_at",)
     search_fields = ("title", "description")
-    list_display_links = ("title",)
     date_hierarchy = "created_at"
     inlines = [CommentInline]
     readonly_fields = ("duration", "likes_count", "comments_count", "created_at")
     ordering = ("-created_at",)
+
+    def title_link(self, obj):
+        return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj.title)
+
+    title_link.short_description = "Название"
+    title_link.allow_tags = True
 
 
 @admin.register(Like)
@@ -143,6 +165,7 @@ class LikeAdmin(admin.ModelAdmin):
     def video_link(self, obj):
         url = reverse("admin:workshops_video_change", args=[obj.video.id])
         return format_html('<a href="{}">{}</a>', url, obj.video.title)
+
     video_link.short_description = "Видео"
 
 
@@ -171,6 +194,7 @@ class RestaurantImageAdmin(admin.ModelAdmin):
     def restaurant_link(self, obj):
         url = reverse("admin:workshops_restaurant_change", args=[obj.restaurant.id])
         return format_html('<a href="{}">{}</a>', url, obj.restaurant.name)
+
     restaurant_link.short_description = "Ресторан"
 
 
@@ -188,4 +212,5 @@ class CommentAdmin(admin.ModelAdmin):
     def video_link(self, obj):
         url = reverse("admin:workshops_video_change", args=[obj.video.id])
         return format_html('<a href="{}">{}</a>', url, obj.video.title)
+
     video_link.short_description = "Видео"

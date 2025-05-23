@@ -213,6 +213,26 @@ class Review(models.Model):
         ordering = ["-created_at"]
 
 
+class NewVideosManager(models.Manager):
+    def get_queryset(self):
+        cutoff_date = timezone.now() - timedelta(days=7)
+        return super().get_queryset().filter(created_at__gte=cutoff_date)
+
+
+class PopularVideosManager(models.Manager):
+    def __init__(self, min_likes=10):
+        super().__init__()
+        self.min_likes = min_likes
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .annotate(likes_count=models.Count("likes", distinct=True))
+            .filter(likes_count__gte=self.min_likes)
+        )
+
+
 class Video(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название")
     description = models.TextField(verbose_name="Описание")
@@ -228,8 +248,16 @@ class Video(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
+    objects = models.Manager()
+
+    new_videos = NewVideosManager()
+    popular_videos = PopularVideosManager(min_likes=10)
+
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("video-detail", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

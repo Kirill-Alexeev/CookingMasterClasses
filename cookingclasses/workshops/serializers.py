@@ -78,10 +78,23 @@ class VideoSerializer(serializers.ModelSerializer):
     comments_count = serializers.ReadOnlyField(source="calculated_comments_count")
     is_new = serializers.SerializerMethodField()
     duration = serializers.SerializerMethodField()
+    url = serializers.SerializerMethodField()
 
     class Meta:
         model = Video
-        fields = "__all__"
+        fields = [
+            "id",
+            "title",
+            "description",
+            "duration",
+            "video",
+            "likes_count",
+            "comments_count",
+            "created_at",
+            "updated_at",
+            "is_new",
+            "url",
+        ]
 
     def get_is_new(self, obj):
         return obj.is_new
@@ -94,6 +107,9 @@ class VideoSerializer(serializers.ModelSerializer):
             seconds = total_seconds % 60
             return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
         return "00:00:00"
+
+    def get_url(self, obj):
+        return obj.get_absolute_url()
 
 
 class LikeSerializer(serializers.ModelSerializer):

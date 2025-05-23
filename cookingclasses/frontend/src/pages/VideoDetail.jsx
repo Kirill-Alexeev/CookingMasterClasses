@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import raitingStarIcon from "../assets/icons/raiting_star_icon.svg";
+import { getVideoDetail } from "../api/workshops";
 
 function VideoDetail() {
   const { id } = useParams();
@@ -11,14 +12,14 @@ function VideoDetail() {
 
   useEffect(() => {
     const fetchVideo = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const response = await fetch(`/api/videos/${id}/`);
-        if (!response.ok) throw new Error("Ошибка загрузки видео");
-        const data = await response.json();
+        const data = await getVideoDetail(id);
         setVideo(data);
         setLoading(false);
       } catch (err) {
-        setError(err.message);
+        setError(err.error || "Ошибка загрузки видео");
         setLoading(false);
       }
     };

@@ -1,4 +1,5 @@
 from datetime import timedelta
+from itertools import count
 from rest_framework.views import APIView
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -182,6 +183,15 @@ class VideoListFilteredView(APIView):
 
         if comment_text:
             videos = videos.filter(comments__text__icontains=comment_text)
+
+        videos = Video.objects.annotate(
+            likes_count=count("likes", distinct=True),
+            comments_count=count("comments", distinct=True),
+        )
+
+        total_likes = (
+            videos.aggregate(total_likes=sum("likes_count"))["total_likes"] or 0
+        )
 
         valid_sort_fields = ["created_at", "likes_count", "duration", "comments_count"]
         if sort_field not in valid_sort_fields:
