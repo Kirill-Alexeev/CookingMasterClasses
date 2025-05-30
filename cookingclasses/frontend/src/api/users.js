@@ -71,3 +71,16 @@ export const updateUserProfile = async (userData) => {
     throw error.response?.data || { error: "Не удалось обновить профиль" };
   }
 };
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/current-user/`);
+    return response.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        error: "Не удалось получить текущего пользователя",
+      }
+    );
+  }
+};

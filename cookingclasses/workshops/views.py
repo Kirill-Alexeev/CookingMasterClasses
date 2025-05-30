@@ -38,7 +38,11 @@ from rest_framework.permissions import (
 
 
 class MasterClassViewSet(viewsets.ModelViewSet):
-    queryset = MasterClass.objects.all()
+    queryset = (
+        MasterClass.objects.all()
+        .select_related("restaurant", "cuisine")
+        .prefetch_related("masterclasschef_set", "chefs")
+    )
     serializer_class = MasterClassSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MasterClassFilter
@@ -63,7 +67,7 @@ class CuisineViewSet(viewsets.ModelViewSet):
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
-    queryset = Restaurant.objects.all()
+    queryset = Restaurant.objects.all().prefetch_related("images")
     serializer_class = RestaurantSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -72,19 +76,23 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
 
 class ChefViewSet(viewsets.ModelViewSet):
-    queryset = Chef.objects.all()
+    queryset = (
+        Chef.objects.all()
+        .select_related("restaurant")
+        .prefetch_related("master_classes")
+    )
     serializer_class = ChefSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class RestaurantImageViewSet(viewsets.ModelViewSet):
-    queryset = RestaurantImage.objects.all()
+    queryset = RestaurantImage.objects.all().select_related("restaurant")
     serializer_class = RestaurantImageSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class RecordViewSet(viewsets.ModelViewSet):
-    queryset = Record.objects.all()
+    queryset = Record.objects.all().select_related("user", "master_class")
     serializer_class = RecordSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -119,25 +127,27 @@ class RecordViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Review.objects.all().select_related("user", "master_class")
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["master_class"]
 
 
 class VideoViewSet(viewsets.ModelViewSet):
-    queryset = Video.objects.all()
+    queryset = Video.objects.all().prefetch_related("like_set", "comments")
     serializer_class = VideoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class LikeViewSet(viewsets.ModelViewSet):
-    queryset = Like.objects.all()
+    queryset = Like.objects.all().select_related("user", "video")
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().select_related("user", "video")
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 

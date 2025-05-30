@@ -1,0 +1,263 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.review-list {
+  @include container-center;
+  margin: 40px auto;
+  padding: 20px;
+  background: $card-color;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  &__title {
+    font-family: $headline-font-family;
+    font-size: 2.5rem;
+    color: $header-text-color;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .no-reviews {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    text-align: center;
+    margin: 20px 0;
+  }
+}
+
+.reviews-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-item {
+  @include container-center;
+  background: $header-text-color;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+
+  .review-header {
+    @include flex-between;
+    margin-bottom: 10px;
+  }
+
+  .review-user {
+    @include flex-center;
+    gap: 10px;
+  }
+
+  .review-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .review-username {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  .review-date {
+    font-family: $regular-font-family;
+    font-size: 1.6rem;
+    color: $text-color;
+    opacity: 0.7;
+  }
+
+  .review-text {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    line-height: 2.8rem;
+    margin: 10px 0;
+  }
+
+  .review-actions {
+    @include flex-center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    @include button-style;
+    font-family: $regular-font-family;
+    font-size: 1.6rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-edit {
+    background: $accent-color;
+    color: $header-text-color;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+  }
+
+  .btn-delete {
+    background: $error-color;
+    color: $header-text-color;
+
+    &:hover {
+      background: darken($error-color, 10%);
+    }
+  }
+
+  .edit-review {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .review-edit-textarea {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    background: $header-text-color;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 100px;
+    resize: vertical;
+    width: 100%;
+  }
+
+  .review-edit-actions {
+    @include flex-center;
+    gap: 10px;
+  }
+}
+
+.review-form {
+  @include container-center;
+  background: $card-color;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+
+  .review-form-title {
+    font-family: $headline-font-family;
+    font-size: 2.5rem;
+    color: $header-text-color;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    font-weight: 500;
+  }
+
+  .review-textarea {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    background: $header-text-color;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 120px;
+    resize: vertical;
+    width: 100%;
+  }
+
+  .error-message {
+    font-family: $regular-font-family;
+    font-size: 1.6rem;
+    color: $error-color;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .submit-review-btn {
+    @include button-style;
+    background: $accent-color;
+    color: $header-text-color;
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+
+    &:disabled {
+      background: darken($accent-color, 20%);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.auth-required {
+  @include container-center;
+  background: $card-color;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  text-align: center;
+
+  p {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    margin: 0;
+
+    a {
+      color: $accent-color;
+      text-decoration: none;
+
+      &:hover {
+        color: $accent-color-hover;
+      }
+    }
+  }
+}
+
+.star-rating {
+  display: flex;
+  gap: 5px;
+
+  .star {
+    font-size: 2.5rem;
+    color: $text-color;
+    cursor: default;
+    transition: color 0.3s ease, transform 0.2s ease;
+
+    &.filled {
+      color: $accent-color;
+    }
+
+    &.editable {
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.2);
+        color: $accent-color-hover;
+      }
+    }
+  }
+}

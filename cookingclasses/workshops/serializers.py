@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 from .models import (
     Cuisine,
@@ -11,6 +12,7 @@ from .models import (
     Like,
     Comment,
 )
+from django.contrib.auth import get_user_model
 
 
 class CuisineSerializer(serializers.ModelSerializer):
@@ -65,8 +67,13 @@ class RecordSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-    master_class = MasterClassSerializer(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=get_user_model().objects.all(),
+        default=serializers.CurrentUserDefault(),
+    )
+    master_class = serializers.PrimaryKeyRelatedField(
+        queryset=MasterClass.objects.all()
+    )
 
     class Meta:
         model = Review

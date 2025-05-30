@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
 from .models import CustomUser
 from .serializers import CustomUserSerializer, RegisterSerializer
+from rest_framework.views import APIView
 
 
 class RegisterView(generics.CreateAPIView):
@@ -53,3 +54,13 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response(
+            {"id": user.id, "username": user.username, "isAdmin": user.is_staff}
+        )

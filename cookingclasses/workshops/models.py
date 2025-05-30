@@ -118,7 +118,10 @@ class MasterClass(models.Model):
         upload_to="classes/", null=True, blank=True, verbose_name="Изображение"
     )
     chefs = models.ManyToManyField(
-        Chef, related_name="master_classes", verbose_name="Шеф-повар"
+        Chef,
+        related_name="master_classes",
+        verbose_name="Шеф-повар",
+        through="MasterClassChef",
     )
     cuisine = models.ForeignKey(Cuisine, on_delete=models.CASCADE, verbose_name="Кухня")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -152,6 +155,28 @@ class MasterClass(models.Model):
         verbose_name = "Мастер-класс"
         verbose_name_plural = "Мастер-классы"
         ordering = ["-date_event"]
+
+
+class MasterClassChef(models.Model):
+    master_class = models.ForeignKey(
+        MasterClass, on_delete=models.CASCADE, verbose_name="Мастер-класс"
+    )
+    chef = models.ForeignKey(Chef, on_delete=models.CASCADE, verbose_name="Шеф-повар")
+    role = models.CharField(
+        max_length=100,
+        verbose_name="Роль",
+        blank=True,
+        help_text="Например, ведущий, помощник и т.д.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата добавления")
+
+    class Meta:
+        verbose_name = "Связь Мастер-класс - Шеф-повар"
+        verbose_name_plural = "Связи Мастер-класс - Шеф-повар"
+        unique_together = [["master_class", "chef"]]
+
+    def __str__(self):
+        return f"{self.chef} на {self.master_class}"
 
 
 class Record(models.Model):

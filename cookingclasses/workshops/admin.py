@@ -4,6 +4,7 @@ from .models import (
     Cuisine,
     Chef,
     MasterClass,
+    MasterClassChef,
     Record,
     Restaurant,
     RestaurantImage,
@@ -13,6 +14,13 @@ from .models import (
     Comment,
 )
 from django.utils.html import format_html
+
+
+class MasterClassChefInline(admin.TabularInline):
+    model = MasterClassChef
+    extra = 1
+    fields = ["chef", "role"]
+    autocomplete_fields = ["chef"]
 
 
 class ChefInline(admin.TabularInline):
@@ -79,7 +87,6 @@ class MasterClassAdmin(admin.ModelAdmin):
     raw_id_fields = ("restaurant", "cuisine")
     list_display_links = ("title",)
     date_hierarchy = "date_event"
-    filter_horizontal = ("chefs",)
     inlines = [ChefInline]
     readonly_fields = ("seats_available", "rating", "created_at", "updated_at")
     ordering = ("-date_event",)

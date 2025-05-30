@@ -122,15 +122,6 @@ export const getRecords = async () => {
 };
 
 // Отзывы
-export const getReviews = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/reviews/`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить отзывы" };
-  }
-};
-
 export const createReview = async (reviewData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/reviews/`, reviewData, {
@@ -139,6 +130,40 @@ export const createReview = async (reviewData) => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { error: "Не удалось создать отзыв" };
+  }
+};
+
+export const deleteReview = async (id) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/reviews/${id}/`, {
+      headers: { "X-CSRFToken": getCsrfToken() },
+    });
+  } catch (error) {
+    throw error.response?.data || { error: "Не удалось удалить отзыв" };
+  }
+};
+
+export const updateReview = async (id, reviewData) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/reviews/${id}/`,
+      reviewData,
+      {
+        headers: { "X-CSRFToken": getCsrfToken() },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: "Не удалось обновить отзыв" };
+  }
+};
+
+export const getReviews = async (params = {}) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/reviews/`, { params });
+    return response.data.results || response.data;
+  } catch (error) {
+    throw error.response?.data || { error: "Не удалось загрузить отзывы" };
   }
 };
 

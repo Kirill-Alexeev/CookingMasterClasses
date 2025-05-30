@@ -1,0 +1,96 @@
+import { useState } from "react";
+import { createReview } from "../api/workshops";
+import StarRating from "./StarRating";
+import PropTypes from "prop-types";
+
+function ReviewForm({ masterClassId, onReviewAdded, currentUser }) {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const newReview = {
+        master_class: masterClassId,
+        rating,
+        comment,
+        user: currentUser.id,
+      };
+      console.log("Отправляемые данные:", newReview);
+      const response = await createReview(newReview);
+      onReviewAdded(response);
+      setRating(0);
+      setComment("");
+    } catch (err) {
+      setError(err.error || "Ошибка при отправке отзыва");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!currentUser) {
+    return (
+      <div className="auth-required">
+        <p>
+          Чтобы оставить отзыв, пожалуйста, <a href="/login">войдите</a> или{" "}
+          <a href="/register">зарегистрируйтесь</a>
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="review-form">
+      <h3 className="review-form-title">Оставить отзыв</h3>
+      <div className="form-group">
+        <label>Ваша оценка:</label>
+        <StarRating
+          rating={rating}
+          onRatingChange={setRating}
+          editable={true}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="comment">Ваш отзыв:</label>
+        <textarea
+          id="comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          required
+          minLength="10"
+          className="review-textarea"
+        />
+      </div>
+      {error && <div className="error-message">{error}</div>}
+      <button
+        type="submit"
+        disabled={isSubmitting || rating === 0}
+        className="submit-review-btn"
+      >
+        {isSubmitting ? "Отправка..." : "Отправить отзыв"}
+      </button>
+    </form>
+  );
+}
+
+ReviewForm.propTypes = {
+  masterClassId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  onReviewAdded: PropTypes.func.isRequired,
+  currentUser: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    username: PropTypes.string.isRequired,
+    isAdmin: PropTypes.bool,
+  }),
+};
+
+ReviewForm.defaultProps = {
+  currentUser: null,
+};
+
+export default ReviewForm;
