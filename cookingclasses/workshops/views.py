@@ -234,12 +234,29 @@ class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all().select_related("user", "video")
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["video", "user"]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        video = self.request.query_params.get("video")
+        user = self.request.query_params.get("user")
+        if video:
+            queryset = queryset.filter(video_id=video)
+        if user:
+            queryset = queryset.filter(user_id=user)
+        return queryset
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().select_related("user", "video")
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["video"]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

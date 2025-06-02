@@ -3,10 +3,19 @@ from .models import CustomUser
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    isAdmin = serializers.BooleanField(source="is_staff", read_only=True)
+
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "email", "image", "first_name", "last_name"]
-        read_only_fields = ["id"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "image",
+            "first_name",
+            "last_name",
+            "isAdmin",
+        ]
 
 
 class RegisterSerializer(serializers.ModelSerializer):

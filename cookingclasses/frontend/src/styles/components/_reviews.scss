@@ -205,7 +205,7 @@
     }
 
     &:disabled {
-      background: darken($accent-color, 20%);
+      background: $accent-color;
       cursor: not-allowed;
     }
   }

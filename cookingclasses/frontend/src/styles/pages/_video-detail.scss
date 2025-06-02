@@ -2,153 +2,356 @@
 @use "../abstracts/mixins" as *;
 
 .video-detail {
-  @include container-center;
-  max-width: 1200px;
-  padding: 20px 0;
   background: $header-text-color;
   min-height: 100vh;
+  padding: 20px 0;
 
-  &__header {
+  &__wrapper {
+    @include container-center;
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-
-  &__info {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  &__info-top {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
   }
 
   &__video {
     width: 100%;
-    max-height: 400px;
+    max-width: 800px;
+    height: auto;
     border-radius: 12px;
+    margin: 0 auto;
+  }
+
+  &__info {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   &__title {
     font-family: $headline-font-family;
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: $text-color;
+    margin: 0;
   }
 
-  &__info-bottom {
-    @include flex-between;
-    gap: 20px;
-  }
-
-  &__likes,
-  &__comments,
-  &__visibility {
-    font-size: 2rem;
-    color: $accent-color;
+  &__date {
     font-family: $regular-font-family;
-  }
-
-  &__rating-star {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-  }
-
-  &__event-info {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-  }
-
-  &__event-left {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  &__event-duration,
-  &__event-date {
     font-size: 1.8rem;
     color: #666;
+    margin: 0;
+  }
+
+  &__duration {
     font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: #666;
+    margin: 0;
   }
 
   &__description {
-    margin: 20px 0;
-
     h2 {
       font-family: $headline-font-family;
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: $text-color;
       margin-bottom: 10px;
     }
-
     p {
-      font-size: 1.8rem;
-      color: #666;
       font-family: $regular-font-family;
+      font-size: 2rem;
+      color: $text-color;
       line-height: 1.5;
     }
   }
 
-  &__comments {
-    margin: 20px 0;
-
-    h2 {
-      font-family: $headline-font-family;
-      font-size: 2rem;
-      color: $text-color;
-      margin-bottom: 15px;
-    }
+  &__actions {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  &__comments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  &__comment {
-    background: $card-color;
-    padding: 15px;
-    border-radius: 8px;
-  }
-
-  &__comment-user {
-    font-family: $headline-font-family;
+  &__comments-count {
+    font-family: $regular-font-family;
     font-size: 1.8rem;
     color: $text-color;
-    margin-bottom: 5px;
+    margin: 0;
   }
 
-  &__comment-text {
-    font-size: 1.6rem;
-    color: #666;
-    font-family: $regular-font-family;
-    margin-bottom: 5px;
-  }
-
-  &__comment-date {
-    font-size: 1.4rem;
-    color: #999;
-    font-family: $regular-font-family;
-  }
-
-  &__comment-nothing {
-    font-size: 1.8rem;
-    color: #666;
-    font-family: $regular-font-family;
-  }
-
-  &__loading,
-  &__error {
+  &__loading {
     font-family: $regular-font-family;
     font-size: 2rem;
     color: $text-color;
     text-align: center;
     padding: 20px;
+  }
+
+  &__error {
+    font-family: $regular-font-family;
+    font-size: 1.4rem;
+    color: $error-color;
+    text-align: center;
+    padding: 20px;
+  }
+
+  &__comments-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.like-button {
+  &__btn {
+    @include button-style;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: $primary-color;
+    color: $header-text-color;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: $regular-font-family;
+    font-size: 1.2rem;
+    font-weight: bold;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+
+    &.liked {
+      background: $accent-color;
+    }
+
+    &:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.comment-form {
+  background: $header-text-color;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 1200px;
+  margin: 0 auto;
+
+  &-title {
+    font-family: $headline-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    margin-bottom: 15px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      font-family: $regular-font-family;
+      font-size: 1.8rem;
+      color: $text-color;
+      display: block;
+      margin-bottom: 5px;
+    }
+  }
+
+  .comment-textarea {
+    @include input-style;
+    width: 100%;
+    min-height: 100px;
+    font-family: $regular-font-family;
+    font-size: 1.5rem;
+    border: 1px solid $text-color;
+    border-radius: 8px;
+    padding: 8px;
+
+    &:focus {
+      border-color: $accent-color;
+      outline: none;
+    }
+  }
+
+  .error-message {
+    font-family: $regular-font-family;
+    font-size: 1.5rem;
+    color: $error-color;
+    margin-bottom: 10px;
+  }
+
+  .submit-comment-btn {
+    @include button-style;
+    background: $accent-color;
+    color: $header-text-color;
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+
+    &:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.auth-required {
+  font-family: $regular-font-family;
+  font-size: 1.8rem;
+  color: $text-color;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  a {
+    color: $accent-color;
+    text-decoration: none;
+
+    &:hover {
+      color: $accent-color-hover;
+      text-decoration: underline;
+    }
+  }
+}
+
+.comment-list {
+  width: 1200px;
+  margin: 0 auto;
+
+  &-title {
+    font-family: $headline-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    margin-bottom: 15px;
+  }
+
+  .no-comments {
+    font-family: $regular-font-family;
+    font-size: 1.8rem;
+    color: $text-color;
+    padding: 20px;
+  }
+
+  .comments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.comment-item {
+  background: $header-text-color;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .comment-header {
+    @include flex-between;
+    margin-bottom: 10px;
+  }
+
+  .comment-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .comment-username {
+    font-family: $regular-font-family;
+    font-size: 1.6rem;
+    color: $text-color;
+    font-weight: bold;
+  }
+
+  .comment-date {
+    font-family: $regular-font-family;
+    font-size: 1.4rem;
+    color: #666;
+  }
+
+  .comment-text {
+    font-family: $regular-font-family;
+    font-size: 1.5rem;
+    color: $text-color;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .edit-comment {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .comment-edit-textarea {
+    @include input-style;
+    width: 100%;
+    min-height: 80px;
+    font-family: $regular-font-family;
+    font-size: 1.5rem;
+    border: 1px solid $text-color;
+    border-radius: 8px;
+    padding: 8px;
+
+    &:focus {
+      border-color: $accent-color;
+      outline: none;
+    }
+  }
+
+  .comment-edit-actions,
+  .comment-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-save,
+  .btn-cancel,
+  .btn-edit,
+  .btn-delete {
+    @include button-style;
+    font-family: $regular-font-family;
+    font-size: 1.4rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+  }
+
+  .btn-save,
+  .btn-edit {
+    background: $accent-color;
+    color: $header-text-color;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+  }
+
+  .btn-cancel,
+  .btn-delete {
+    background: $card-color;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
   }
 }

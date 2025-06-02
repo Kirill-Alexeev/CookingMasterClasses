@@ -1,5 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
+
+from users.serializers import CustomUserSerializer
 from .models import (
     Cuisine,
     Restaurant,
@@ -127,8 +129,9 @@ class LikeSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
+    user = CustomUserSerializer(read_only=True)
+    video = serializers.PrimaryKeyRelatedField(queryset=Video.objects.all())
 
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ["id", "user", "video", "text", "created_at"]

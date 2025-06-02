@@ -1,41 +1,68 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
-import likeIcon from "../assets/icons/like.png";
+import LikeButton from "../components/LikeButton";
+import CommentForm from "../components/CommentForm";
+import CommentList from "../components/CommentList";
 import { getVideoDetail, getComments } from "../api/workshops";
+import { getCurrentUser } from "../api/users";
 
 function VideoDetail() {
   const { id } = useParams();
   const [video, setVideo] = useState(null);
   const [comments, setComments] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchVideo = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const [videoData, commentsData] = await Promise.all([
+        const [videoData, commentsData, userData] = await Promise.all([
           getVideoDetail(id),
           getComments({ video: id }),
+          getCurrentUser().catch(() => null),
         ]);
         setVideo(videoData);
         setComments(commentsData);
+        setCurrentUser(userData);
+        console.log("Current user:", userData);
         setLoading(false);
       } catch (err) {
-        setError(err.error || "Ошибка загрузки видео");
+        setError(err.error || "Ошибка загрузки данных");
         setLoading(false);
       }
     };
 
-    fetchVideo();
+    fetchData();
   }, [id]);
 
+  const handleCommentAdded = (newComment) => {
+    setComments([...comments, newComment]);
+  };
+
+  const handleCommentUpdated = (commentId, updatedText) => {
+    setComments(
+      comments.map((comment) =>
+        comment.id === commentId ? { ...comment, text: updatedText } : comment
+      )
+    );
+  };
+
+  const handleCommentDeleted = (commentId) => {
+    setComments(comments.filter((comment) => comment.id !== commentId));
+  };
+
   const formatDuration = (duration) => {
-    if (!duration) return "0мин";
-    const [hours, minutes] = duration.split(":").map(Number);
-    return `${hours > 0 ? hours + "ч " : ""}${minutes}мин`;
+    if (!duration) return "0с";
+    const [hours, minutes, seconds] = duration.split(":").map(Number);
+    let result = "";
+    if (hours > 0) result += `${hours}ч `;
+    if (minutes > 0 || hours > 0) result += `${minutes}мин `;
+    if (seconds > 0 || result === "") result += `${seconds}с`;
+    return result.trim();
   };
 
   if (loading) return <div className="video-detail__loading">Загрузка...</div>;
@@ -43,41 +70,17 @@ function VideoDetail() {
 
   return (
     <div className="video-detail">
-      <div className="video-detail__header">
+      <div className="video-detail__wrapper">
         <Breadcrumbs />
+        <video
+          src={video.video}
+          controls
+          className="video-detail__video"
+          poster="/placeholder.jpg"
+        />
         <div className="video-detail__info">
-          <div className="video-detail__info-top">
-            <video
-              src={video.video}
-              controls
-              className="video-detail__video"
-              poster="/placeholder.jpg"
-            />
-            <h1 className="video-detail__title">{video.title}</h1>
-          </div>
-          <div className="video-detail__info-bottom">
-            <p className="video-detail__likes">
-              <img
-                src={likeIcon}
-                className="video-detail__rating-star"
-                alt="Лайки"
-              />
-              {video.likes_count || 0}
-            </p>
-            <p className="video-detail__comments">
-              Комментариев: {video.comments_count || 0}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="video-detail__event-info">
-        <div className="video-detail__event-left">
-          <p className="video-detail__event-duration">
-            {formatDuration(video.duration)}
-          </p>
-          <p className="video-detail__event-date">
-            Загружено:{" "}
+          <h1 className="video-detail__title">{video.title}</h1>
+          <p className="video-detail__date">
             {new Date(video.created_at).toLocaleDateString("ru-RU", {
               day: "numeric",
               month: "long",
@@ -85,30 +88,33 @@ function VideoDetail() {
             })}
           </p>
         </div>
-      </div>
-
-      <div className="video-detail__description">
-        <h2>О видео</h2>
-        <p>{video.description || "Описание отсутствует"}</p>
-      </div>
-
-      <div className="video-detail__comments">
-        <h2>Комментарии</h2>
-        {comments.length > 0 ? (
-          <div className="video-detail__comments-list">
-            {comments.map((comment) => (
-              <div key={comment.id} className="video-detail__comment">
-                <p className="video-detail__comment-user">{comment.user}</p>
-                <p className="video-detail__comment-text">{comment.text}</p>
-                <p className="video-detail__comment-date">
-                  {new Date(comment.created_at).toLocaleDateString("ru-RU")}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="video-detail__comment-nothing">Комментариев нет.</p>
-        )}
+        <p className="video-detail__duration">
+          {formatDuration(video.duration)}
+        </p>
+        <div className="video-detail__description">
+          <h2>О видео</h2>
+          <p>{video.description || "Описание отсутствует"}</p>
+        </div>
+        <div className="video-detail__actions">
+          <LikeButton
+            videoId={id}
+            likesCount={video.likes_count || "0"}
+            currentUser={currentUser}
+          />
+        </div>
+        <div className="video-detail__comments-section">
+          <CommentForm
+            videoId={id}
+            onCommentAdded={handleCommentAdded}
+            currentUser={currentUser}
+          />
+          <CommentList
+            comments={comments}
+            onDelete={handleCommentDeleted}
+            onUpdate={handleCommentUpdated}
+            currentUser={currentUser}
+          />
+        </div>
       </div>
     </div>
   );

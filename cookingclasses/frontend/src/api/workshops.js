@@ -205,50 +205,129 @@ export const getVideoDetail = async (id) => {
     const response = await axios.get(`${API_BASE_URL}/videos/${id}/`);
     return response.data;
   } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить видео" };
+    throw {
+      error: error.response?.data?.detail || "Ошибка загрузки видео",
+      status: error.response?.status,
+    };
   }
 };
 
-// Лайки
-export const getLikes = async () => {
+export const getComments = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/likes/`);
+    const response = await axios.get(`${API_BASE_URL}/comments/`, { params });
+    return response.data.results || response.data;
+  } catch (error) {
+    throw {
+      error: error.response?.data?.detail || "Ошибка загрузки комментариев",
+      status: error.response?.status,
+    };
+  }
+};
+
+export const createComment = async (commentData) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/comments/`,
+      commentData,
+      {
+        headers: { "X-CSRFToken": getCsrfToken() },
+      }
+    );
     return response.data;
   } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить лайки" };
+    throw {
+      error: error.response?.data?.detail || "Ошибка при создании комментария",
+      status: error.response?.status,
+    };
+  }
+};
+
+export const updateComment = async (id, commentData) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/comments/${id}/`,
+      commentData,
+      {
+        headers: { "X-CSRFToken": getCsrfToken() },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw {
+      error:
+        error.response?.data?.detail || "Ошибка при обновлении комментария",
+      status: error.response?.status,
+    };
+  }
+};
+
+export const deleteComment = async (id) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/comments/${id}/`, {
+      headers: { "X-CSRFToken": getCsrfToken() },
+    });
+    return { success: true };
+  } catch (error) {
+    throw {
+      error: error.response?.data?.detail || "Ошибка при удалении комментария",
+      status: error.response?.status,
+    };
+  }
+};
+
+export const getLikes = async (params = {}) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/likes/`, {
+      params,
+      withCredentials: true, // Для отправки cookies с токеном авторизации
+    });
+    // Обрабатываем возможные форматы ответа
+    const data = response.data.results || response.data || [];
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    throw {
+      error: error.response?.data?.detail || "Ошибка загрузки лайков",
+      status: error.response?.status,
+    };
   }
 };
 
 export const createLike = async (likeData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/likes/`, likeData, {
-      headers: { "X-CSRFToken": getCsrfToken() },
+      headers: {
+        "X-CSRFToken": getCsrfToken(),
+      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
-    throw error.response?.data || { error: "Не удалось поставить лайк" };
+    throw {
+      error: error.response?.data?.detail || "Ошибка при создании лайка",
+      status: error.response?.status,
+    };
   }
 };
 
-export const deleteLike = async (id) => {
+export const deleteLike = async ({ video, user }) => {
   try {
-    await axios.delete(`${API_BASE_URL}/likes/${id}/`, {
-      headers: { "X-CSRFToken": getCsrfToken() },
+    // Сначала находим ID лайка
+    const likes = await getLikes({ video, user });
+    if (likes.length === 0) {
+      throw { error: "Лайк не найден", status: 404 };
+    }
+    const likeId = likes[0].id;
+    const response = await axios.delete(`${API_BASE_URL}/likes/${likeId}/`, {
+      headers: {
+        "X-CSRFToken": getCsrfToken(),
+      },
+      withCredentials: true,
     });
-    return true;
+    return response.data || { success: true };
   } catch (error) {
-    throw error.response?.data || { error: "Не удалось удалить лайк" };
-  }
-};
-
-export const getComments = async (filters = {}) => {
-  try {
-    const params = new URLSearchParams(filters);
-    const response = await axios.get(
-      `${API_BASE_URL}/comments/?${params.toString()}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить комментарии" };
+    throw {
+      error: error.response?.data?.detail || "Ошибка при удалении лайка",
+      status: error.response?.status,
+    };
   }
 };

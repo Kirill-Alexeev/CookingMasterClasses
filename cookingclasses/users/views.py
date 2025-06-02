@@ -60,7 +60,5 @@ class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-        return Response(
-            {"id": user.id, "username": user.username, "isAdmin": user.is_staff}
-        )
+        serializer = CustomUserSerializer(request.user)
+        return Response(serializer.data)
