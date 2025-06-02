@@ -69,17 +69,11 @@ class RecordSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=get_user_model().objects.all(),
-        default=serializers.CurrentUserDefault(),
-    )
-    master_class = serializers.PrimaryKeyRelatedField(
-        queryset=MasterClass.objects.all()
-    )
+    user = CustomUserSerializer(read_only=True)
 
     class Meta:
         model = Review
-        fields = "__all__"
+        fields = ["id", "user", "master_class", "rating", "comment", "created_at"]
 
 
 class VideoSerializer(serializers.ModelSerializer):

@@ -124,6 +124,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["master_class"]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class VideoFilter(filters.FilterSet):
     max_duration_seconds = filters.NumberFilter(

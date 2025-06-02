@@ -8,8 +8,29 @@ function ReviewItem({ review, onDelete, onUpdate, currentUser }) {
   const [editedText, setEditedText] = useState(review.comment);
   const [editedRating, setEditedRating] = useState(review.rating);
 
+  // Отладка: логируем данные
+  console.log("ReviewItem props:", {
+    reviewId: review.id,
+    reviewUserId: review.user.id,
+    reviewUser: review.user,
+    currentUser: currentUser,
+  });
+
+  // Приводим id к числу и проверяем isAdmin или is_staff
   const canEdit =
-    currentUser && (currentUser.id === review.user.id || currentUser.isAdmin);
+    currentUser &&
+    (parseInt(currentUser.id) === parseInt(review.user.id) ||
+      currentUser.isAdmin === true ||
+      currentUser.is_staff === true);
+
+  console.log(
+    "canEdit:",
+    canEdit,
+    "isAdmin:",
+    currentUser?.isAdmin,
+    "is_staff:",
+    currentUser?.is_staff
+  );
 
   const handleUpdate = async () => {
     try {
@@ -94,7 +115,7 @@ ReviewItem.propTypes = {
   review: PropTypes.shape({
     id: PropTypes.number.isRequired,
     user: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
       username: PropTypes.string.isRequired,
       avatar: PropTypes.string,
     }).isRequired,
@@ -105,9 +126,10 @@ ReviewItem.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     username: PropTypes.string.isRequired,
     isAdmin: PropTypes.bool,
+    is_staff: PropTypes.bool,
   }),
 };
 

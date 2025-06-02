@@ -20,14 +20,17 @@ function MasterClassDetail() {
     const fetchData = async () => {
       try {
         setReviews([]);
+        setLoading(true);
+        setError(null);
         const [masterClassData, reviewsData, userData] = await Promise.all([
           masterClassesApi.getDetail(id),
           getReviews({ master_class: id }),
-          getCurrentUser(),
+          getCurrentUser().catch(() => null), // Обработка неавторизованного пользователя
         ]);
         setMasterClass(masterClassData);
         setReviews(reviewsData);
         setCurrentUser(userData);
+        console.log("Current user:", userData); // Отладка
         setLoading(false);
       } catch (err) {
         setError(err.error?.message || "Ошибка при загрузке данных");
@@ -187,7 +190,7 @@ function MasterClassDetail() {
 
 MasterClassDetail.propTypes = {
   currentUser: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     username: PropTypes.string.isRequired,
     isAdmin: PropTypes.bool,
   }),

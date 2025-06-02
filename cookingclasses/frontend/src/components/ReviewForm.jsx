@@ -16,12 +16,12 @@ function ReviewForm({ masterClassId, onReviewAdded, currentUser }) {
 
     try {
       const newReview = {
-        master_class: masterClassId,
+        master_class: parseInt(masterClassId), // Приводим к числу
         rating,
         comment,
         user: currentUser.id,
       };
-      console.log("Отправляемые данные:", newReview);
+      console.log("Отправляемые данные:", newReview); // Отладка
       const response = await createReview(newReview);
       onReviewAdded(response);
       setRating(0);
@@ -83,7 +83,7 @@ ReviewForm.propTypes = {
     .isRequired,
   onReviewAdded: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     username: PropTypes.string.isRequired,
     isAdmin: PropTypes.bool,
   }),
