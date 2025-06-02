@@ -3,29 +3,24 @@ import { NavLink, useSearchParams } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import VideoSort from "../components/VideoSort";
 import VideoFilter from "../components/VideoFilter";
-import raitingStarIcon from "../assets/icons/raiting_star_icon.svg";
-import { getVideos, getFilteredVideos } from "../api/workshops";
+import likeIcon from "../assets/icons/like.png";
+import placehold from "../assets/icons/placeholder_photo.png";
+import { getVideos } from "../api/workshops";
 
 function VideoList() {
   const [videos, setVideos] = useState([]);
+  const [totalLikes, setTotalLikes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pagination, setPagination] = useState({
-    next: null,
-    previous: null,
-    count: 0,
-  });
-  const [isFiltered, setIsFiltered] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const getFiltersFromURL = useCallback(() => {
     const params = Object.fromEntries(searchParams.entries());
     return {
-      maxDuration: params.max_duration || "",
-      recentDays: params.recent_days || "",
-      username: params.username || "",
-      commentText: params.comment_text || "",
-      sortField: params.sort_field || "created_at",
+      maxDurationSeconds: params.max_duration_seconds || "",
+      minLikes: params.min_likes || "",
+      minComments: params.min_comments || "",
+      sortField: params.sort_field || "title",
       sortDirection: params.sort_direction || "desc",
     };
   }, [searchParams]);
@@ -34,54 +29,24 @@ function VideoList() {
     async (page = 1) => {
       setLoading(true);
       setError(null);
-
       try {
         const filters = getFiltersFromURL();
         console.log("Fetching with filters:", filters, "Page:", page);
-        if (isFiltered) {
-          const data = await getFilteredVideos(filters, page);
-          console.log("Filtered videos response:", data);
-          setVideos(data.results || []);
-          setPagination({
-            next: data.next,
-            previous: data.previous,
-            count: data.count || 0,
-          });
-        } else {
-          const data = await getVideos();
-          console.log("All videos response:", data);
-          setVideos(data || []);
-          setPagination({
-            next: null,
-            previous: null,
-            count: data.length || 0,
-          });
-        }
+        const data = await getVideos(filters, page);
+        console.log("Videos response:", data);
+        setVideos(data.results || []);
+        setTotalLikes(data.total_likes || 0);
       } catch (err) {
         console.error("Fetch videos error:", err);
-        setError(
-          err.error ||
-            `Ошибка загрузки видео: ${err.message || "Неизвестная ошибка"}`
-        );
+        setError(err.error || `Ошибка загрузки видео: ${JSON.stringify(err)}`);
       } finally {
         setLoading(false);
       }
     },
-    [getFiltersFromURL, isFiltered]
+    [getFiltersFromURL]
   );
 
   useEffect(() => {
-    const hasFilters = Array.from(searchParams.keys()).some((key) =>
-      [
-        "max_duration",
-        "recent_days",
-        "username",
-        "comment_text",
-        "sort_field",
-        "sort_direction",
-      ].includes(key)
-    );
-    setIsFiltered(hasFilters);
     fetchVideos();
   }, [fetchVideos, searchParams]);
 
@@ -89,32 +54,24 @@ function VideoList() {
     const params = new URLSearchParams(searchParams);
     params.set("sort_field", newSort.field);
     params.set("sort_direction", newSort.direction);
+    params.set("page", "1");
     setSearchParams(params);
-    setIsFiltered(true);
     fetchVideos();
   };
 
   const handleFilterChange = (newFilters) => {
     const params = new URLSearchParams();
-    if (newFilters.maxDuration)
-      params.set("max_duration", newFilters.maxDuration);
-    if (newFilters.recentDays) params.set("recent_days", newFilters.recentDays);
-    if (newFilters.username) params.set("username", newFilters.username);
-    if (newFilters.commentText)
-      params.set("comment_text", newFilters.commentText);
-    // Сохраняем параметры сортировки
+    if (newFilters.maxDurationSeconds)
+      params.set("max_duration_seconds", newFilters.maxDurationSeconds);
+    if (newFilters.minLikes) params.set("min_likes", newFilters.minLikes);
+    if (newFilters.minComments)
+      params.set("min_comments", newFilters.minComments);
     if (newFilters.sortField) params.set("sort_field", newFilters.sortField);
     if (newFilters.sortDirection)
       params.set("sort_direction", newFilters.sortDirection);
+    params.set("page", "1");
     setSearchParams(params);
-    setIsFiltered(!!params.toString());
     fetchVideos();
-  };
-
-  const handlePageChange = (page) => {
-    if (page && isFiltered) {
-      fetchVideos(page);
-    }
   };
 
   const truncateDescription = (text = "", wordLimit = 10) => {
@@ -125,11 +82,13 @@ function VideoList() {
   };
 
   const formatDuration = (duration) => {
-    if (!duration) return "0мин";
-    const [hours, minutes] = duration.split(":");
-    const h = parseInt(hours, 10);
-    const m = parseInt(minutes, 10);
-    return `${h > 0 ? h + "ч " : ""}${m}мин`;
+    if (!duration) return "0с";
+    const [hours, minutes, seconds] = duration.split(":").map(Number);
+    let result = "";
+    if (hours > 0) result += `${hours}ч `;
+    if (minutes > 0 || hours > 0) result += `${minutes}мин `;
+    if (seconds > 0 || result === "") result += `${seconds}с`;
+    return result.trim();
   };
 
   if (loading) return <div className="video-list__loading">Загрузка...</div>;
@@ -142,6 +101,9 @@ function VideoList() {
       <div className="video-list__wrapper">
         <Breadcrumbs />
         <h1 className="video-list__title">Видеоуроки</h1>
+        <div className="video-list__stats">
+          Общее количество лайков: {totalLikes}
+        </div>
         <div className="video-list__content">
           <div className="video-list__controls">
             <VideoSort
@@ -150,6 +112,11 @@ function VideoList() {
                 direction: currentFilters.sortDirection,
               }}
               onSortChange={handleSortChange}
+              sortOptions={[
+                { value: "title", label: "Название" },
+                { value: "duration", label: "Длительность" },
+                { value: "likes_count", label: "Лайки" },
+              ]}
             />
             <VideoFilter
               onFilterChange={handleFilterChange}
@@ -168,21 +135,25 @@ function VideoList() {
                     >
                       <div className="card__img-wrapper">
                         <img
-                          src={video.video ? video.video : "/placeholder.jpg"}
+                          src={placehold}
                           alt={video.title}
                           className="card__img"
+                          loading="lazy"
                         />
+                        {video.is_new && (
+                          <span className="card__new-badge">Новое</span>
+                        )}
                       </div>
                       <div className="card__content">
                         <div className="card__top">
                           <h3 className="card__title">{video.title}</h3>
                           <div className="card__rating">
                             <img
-                              src={raitingStarIcon}
+                              src={likeIcon}
                               className="card__rating-img"
                               alt="Лайки"
                             />
-                            {video.likes_count || 0}
+                            {video.actual_likes_count || 0}
                           </div>
                         </div>
                         <p className="card__duration">
@@ -191,7 +162,6 @@ function VideoList() {
                         <p className="card__desc">
                           {truncateDescription(video.description)}
                         </p>
-                        <button className="card__button">Смотреть</button>
                       </div>
                     </NavLink>
                   </div>
@@ -202,24 +172,10 @@ function VideoList() {
                 </div>
               )}
             </div>
-            {pagination.count > 0 && isFiltered && (
+            {videos.length > 0 && (
               <div className="pagination">
-                <button
-                  onClick={() => handlePageChange(pagination.previous)}
-                  disabled={!pagination.previous}
-                  className="pagination__button"
-                >
-                  Предыдущая
-                </button>
-                <button
-                  onClick={() => handlePageChange(pagination.next)}
-                  disabled={!pagination.next}
-                  className="pagination__button"
-                >
-                  Следующая
-                </button>
                 <span className="pagination__count">
-                  Всего: {pagination.count}
+                  Всего: {videos.length}
                 </span>
               </div>
             )}

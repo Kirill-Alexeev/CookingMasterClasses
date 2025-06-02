@@ -168,12 +168,35 @@ export const getReviews = async (params = {}) => {
 };
 
 // Видео
-export const getVideos = async () => {
+export const getVideos = async (filters = {}, page = 1) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/videos/`);
+    const params = new URLSearchParams();
+    if (filters.maxDurationSeconds)
+      params.append("max_duration_seconds", filters.maxDurationSeconds);
+    if (filters.minLikes) params.append("min_likes", filters.minLikes);
+    if (filters.minComments) params.append("min_comments", filters.minComments);
+    if (filters.sortField) {
+      const direction = filters.sortDirection === "asc" ? "" : "-";
+      params.append("ordering", `${direction}${filters.sortField}`);
+    }
+    params.append("page", page);
+
+    console.log(
+      "API request URL:",
+      `${API_BASE_URL}/videos/?${params.toString()}`
+    );
+    const response = await axios.get(
+      `${API_BASE_URL}/videos/?${params.toString()}`
+    );
     return response.data;
   } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить видео" };
+    throw {
+      error: error.response?.data?.detail || "Ошибка загрузки видео",
+      status: error.response?.status,
+      data: error.response?.data,
+      headers: error.response?.headers,
+      message: error.message,
+    };
   }
 };
 
@@ -183,40 +206,6 @@ export const getVideoDetail = async (id) => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { error: "Не удалось загрузить видео" };
-  }
-};
-
-export const getFilteredVideos = async (filters, page = 1) => {
-  try {
-    const params = new URLSearchParams({
-      max_duration: filters.maxDuration || "",
-      recent_days: filters.recentDays || "",
-      username: filters.username || "",
-      comment_text: filters.commentText || "",
-      sort_field: filters.sortField || "created_at",
-      sort_direction: filters.sortDirection || "desc",
-      page,
-    });
-    console.log(
-      "Filtered videos URL:",
-      `${API_BASE_URL}/videos/filtered?${params.toString()}`
-    );
-    const response = await axios.get(
-      `${API_BASE_URL}/videos/filtered?${params.toString()}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Get filtered videos error:", {
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-      headers: error.response?.headers,
-    });
-    throw (
-      error.response?.data || {
-        error: `Не удалось загрузить отфильтрованные видео: ${error.message}`,
-      }
-    );
   }
 };
 
@@ -249,5 +238,17 @@ export const deleteLike = async (id) => {
     return true;
   } catch (error) {
     throw error.response?.data || { error: "Не удалось удалить лайк" };
+  }
+};
+
+export const getComments = async (filters = {}) => {
+  try {
+    const params = new URLSearchParams(filters);
+    const response = await axios.get(
+      `${API_BASE_URL}/comments/?${params.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: "Не удалось загрузить комментарии" };
   }
 };

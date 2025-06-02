@@ -125,7 +125,7 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display_links = ("user",)
     date_hierarchy = "created_at"
     readonly_fields = ("created_at",)
-    ordering = ("-created_at",)
+    actions = ["make_visible"]
 
     def master_class_link(self, obj):
         url = reverse("admin:workshops_masterclass_change", args=[obj.master_class.id])
@@ -133,11 +133,16 @@ class ReviewAdmin(admin.ModelAdmin):
 
     master_class_link.short_description = "Мастер-класс"
 
+    @admin.action(description="Сделать выбранные отзывы видимыми")
+    def make_visible(self, request, queryset):
+        updated = queryset.update(is_visible=True)
+        self.message_user(request, f"Сделано видимыми {updated} отзывов.")
+
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
     list_display = (
-        "title_link",
+        "title",
         "duration",
         "likes_count",
         "comments_count",
@@ -147,15 +152,10 @@ class VideoAdmin(admin.ModelAdmin):
     list_filter = ("created_at",)
     search_fields = ("title", "description")
     date_hierarchy = "created_at"
+    list_display_links = ("title",)
     inlines = [CommentInline]
     readonly_fields = ("duration", "likes_count", "comments_count", "created_at")
     ordering = ("-created_at",)
-
-    def title_link(self, obj):
-        return format_html('<a href="{}">{}</a>', obj.get_absolute_url(), obj.title)
-
-    title_link.short_description = "Название"
-    title_link.allow_tags = True
 
 
 @admin.register(Like)
@@ -215,9 +215,15 @@ class CommentAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
     readonly_fields = ("created_at", "updated_at")
     ordering = ("-created_at",)
+    actions = ["make_visible"]
 
     def video_link(self, obj):
         url = reverse("admin:workshops_video_change", args=[obj.video.id])
         return format_html('<a href="{}">{}</a>', url, obj.video.title)
 
     video_link.short_description = "Видео"
+
+    @admin.action(description="Сделать выбранные комментарии видимыми")
+    def make_visible(self, request, queryset):
+        updated = queryset.update(is_visible=True)
+        self.message_user(request, f"Сделано видимыми {updated} комментариев.")

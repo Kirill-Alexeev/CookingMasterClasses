@@ -1,0 +1,59 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.video-filter {
+  background: $header-text-color;
+  padding: 20px;
+  border-radius: 12px;
+  width: 280px;
+  font-family: $regular-font-family;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
+
+  h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: $text-color;
+    margin-bottom: 10px;
+  }
+
+  .filter-group {
+    margin-bottom: 15px;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 1.8rem;
+      color: $text-color;
+      gap: 5px;
+    }
+
+    input {
+      @include input-style;
+      font-size: 1.5rem;
+      border: 1px solid $text-color;
+      border-radius: 8px;
+      padding: 8px;
+      max-width: 240px;
+
+      &:focus {
+        border-color: $accent-color;
+        outline: none;
+      }
+    }
+  }
+
+  button {
+    @include button-style;
+    font-size: 1.8rem;
+    border-radius: 8px;
+    background: $card-color;
+    color: $header-text-color;
+    width: 100%;
+    padding: 10px;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+  }
+}

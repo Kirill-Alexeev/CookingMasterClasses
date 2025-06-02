@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
-import raitingStarIcon from "../assets/icons/raiting_star_icon.svg";
-import { getVideoDetail } from "../api/workshops";
+import likeIcon from "../assets/icons/like.png";
+import { getVideoDetail, getComments } from "../api/workshops";
 
 function VideoDetail() {
   const { id } = useParams();
   const [video, setVideo] = useState(null);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,8 +16,12 @@ function VideoDetail() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getVideoDetail(id);
-        setVideo(data);
+        const [videoData, commentsData] = await Promise.all([
+          getVideoDetail(id),
+          getComments({ video: id }),
+        ]);
+        setVideo(videoData);
+        setComments(commentsData);
         setLoading(false);
       } catch (err) {
         setError(err.error || "Ошибка загрузки видео");
@@ -28,9 +33,8 @@ function VideoDetail() {
   }, [id]);
 
   const formatDuration = (duration) => {
-    const seconds = Math.floor(new Date(duration).getTime() / 1000);
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+    if (!duration) return "0мин";
+    const [hours, minutes] = duration.split(":").map(Number);
     return `${hours > 0 ? hours + "ч " : ""}${minutes}мин`;
   };
 
@@ -54,7 +58,7 @@ function VideoDetail() {
           <div className="video-detail__info-bottom">
             <p className="video-detail__likes">
               <img
-                src={raitingStarIcon}
+                src={likeIcon}
                 className="video-detail__rating-star"
                 alt="Лайки"
               />
@@ -62,9 +66,6 @@ function VideoDetail() {
             </p>
             <p className="video-detail__comments">
               Комментариев: {video.comments_count || 0}
-            </p>
-            <p className="video-detail__visibility">
-              {video.is_visible ? "Видимое" : "Скрытое"}
             </p>
           </div>
         </div>
@@ -93,9 +94,9 @@ function VideoDetail() {
 
       <div className="video-detail__comments">
         <h2>Комментарии</h2>
-        {video.comments?.length > 0 ? (
+        {comments.length > 0 ? (
           <div className="video-detail__comments-list">
-            {video.comments.map((comment) => (
+            {comments.map((comment) => (
               <div key={comment.id} className="video-detail__comment">
                 <p className="video-detail__comment-user">{comment.user}</p>
                 <p className="video-detail__comment-text">{comment.text}</p>

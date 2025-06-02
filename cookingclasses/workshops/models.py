@@ -241,7 +241,16 @@ class Review(models.Model):
 class NewVideosManager(models.Manager):
     def get_queryset(self):
         cutoff_date = timezone.now() - timedelta(days=7)
-        return super().get_queryset().filter(created_at__gte=cutoff_date)
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                is_new_annotation=models.ExpressionWrapper(
+                    models.Q(created_at__gte=cutoff_date),
+                    output_field=models.BooleanField(),
+                )
+            )
+        )
 
 
 class PopularVideosManager(models.Manager):
@@ -253,7 +262,7 @@ class PopularVideosManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .annotate(likes_count=models.Count("likes", distinct=True))
+            .annotate(likes_count=models.Count("like_set", distinct=True))
             .filter(likes_count__gte=self.min_likes)
         )
 
@@ -274,7 +283,6 @@ class Video(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     objects = models.Manager()
-
     new_videos = NewVideosManager()
     popular_videos = PopularVideosManager(min_likes=10)
 
@@ -286,7 +294,6 @@ class Video(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
         if self.video and os.path.exists(self.video.path):
             try:
                 clip = VideoFileClip(self.video.path)
@@ -320,13 +327,21 @@ class Video(models.Model):
         verbose_name = "Видео"
         verbose_name_plural = "Видео"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["duration"]),
+            models.Index(fields=["likes_count"]),
+            models.Index(fields=["comments_count"]),
+        ]
 
 
 class Like(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь"
     )
-    video = models.ForeignKey(Video, on_delete=models.CASCADE, verbose_name="Видео")
+    video = models.ForeignKey(
+        Video, on_delete=models.CASCADE, related_name="like_set", verbose_name="Видео"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     def __str__(self):
@@ -337,6 +352,9 @@ class Like(models.Model):
         verbose_name_plural = "Лайки"
         ordering = ["user"]
         unique_together = [["user", "video"]]
+        indexes = [
+            models.Index(fields=["user", "video"]),
+        ]
 
 
 class Comment(models.Model):
@@ -358,3 +376,7 @@ class Comment(models.Model):
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
         ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["video"]),
+        ]

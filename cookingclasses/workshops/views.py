@@ -1,11 +1,11 @@
 from datetime import timedelta
-from itertools import count
-from rest_framework.views import APIView
+from django.db.models import Count, Sum
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import (
     Cuisine,
     Restaurant,
@@ -31,10 +31,6 @@ from .serializers import (
     CommentSerializer,
 )
 from .filters import MasterClassFilter
-from django.utils import timezone
-from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly,
-)
 
 
 class MasterClassViewSet(viewsets.ModelViewSet):
@@ -46,12 +42,7 @@ class MasterClassViewSet(viewsets.ModelViewSet):
     serializer_class = MasterClassSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MasterClassFilter
-    ordering_fields = [
-        "title",
-        "price",
-        "date_event",
-        "rating",
-    ]
+    ordering_fields = ["title", "price", "date_event", "rating"]
     ordering = ["title"]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -134,10 +125,109 @@ class ReviewViewSet(viewsets.ModelViewSet):
     filterset_fields = ["master_class"]
 
 
+class VideoFilter(filters.FilterSet):
+    max_duration_seconds = filters.NumberFilter(
+        field_name="duration", lookup_expr="lte", method="filter_max_duration_seconds"
+    )
+    min_likes = filters.NumberFilter(field_name="likes_count", lookup_expr="gte")
+    min_comments = filters.NumberFilter(field_name="comments_count", lookup_expr="gte")
+
+    class Meta:
+        model = Video
+        fields = ["max_duration_seconds", "min_likes", "min_comments"]
+
+    def filter_max_duration_seconds(self, queryset, name, value):
+        max_duration = timedelta(seconds=int(value))
+        return queryset.filter(duration__lte=max_duration)
+
+
 class VideoViewSet(viewsets.ModelViewSet):
-    queryset = Video.objects.all().prefetch_related("like_set", "comments")
+    queryset = (
+        Video.new_videos.all()
+        .prefetch_related("like_set", "comments")
+        .filter(is_visible=True)
+    )
     serializer_class = VideoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = VideoFilter
+
+    def get_queryset(self):
+        queryset = (
+            super()
+            .get_queryset()
+            .annotate(actual_likes_count=Count("like_set", distinct=True))
+        )
+
+        # Применяем фильтры
+        filter_params = self.request.query_params
+        if "max_duration_seconds" in filter_params:
+            try:
+                max_duration = timedelta(
+                    seconds=int(filter_params.get("max_duration_seconds"))
+                )
+                queryset = queryset.filter(duration__lte=max_duration)
+            except ValueError:
+                pass
+        if "min_likes" in filter_params:
+            try:
+                queryset = queryset.filter(
+                    likes_count__gte=int(filter_params.get("min_likes"))
+                )
+            except ValueError:
+                pass
+        if "min_comments" in filter_params:
+            try:
+                queryset = queryset.filter(
+                    comments_count__gte=int(filter_params.get("min_comments"))
+                )
+            except ValueError:
+                pass
+
+        # Применяем сортировку через order_by
+        ordering = filter_params.get("ordering", "-title")
+        # Защита от SQL-инъекций: проверяем, что ordering — допустимое поле
+        allowed_fields = [
+            "title",
+            "duration",
+            "likes_count",
+            "-title",
+            "-duration",
+            "-likes_count",
+        ]
+        if ordering in allowed_fields:
+            queryset = queryset.order_by(ordering)
+        else:
+            queryset = queryset.order_by("-title")  # Значение по умолчанию
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        total_likes = self.get_queryset().aggregate(total_likes=Sum("likes_count"))
+        response = super().list(request, *args, **kwargs)
+
+        # Создаём новый словарь для ответа
+        result = {
+            "results": (
+                response.data
+                if isinstance(response.data, list)
+                else response.data.get("results", [])
+            ),
+            "total_likes": total_likes["total_likes"] or 0,
+        }
+
+        # Если пагинация включена, добавляем count, next, previous
+        if not isinstance(response.data, list):
+            result.update(
+                {
+                    "count": response.data.get("count", 0),
+                    "next": response.data.get("next"),
+                    "previous": response.data.get("previous"),
+                }
+            )
+
+        response.data = result
+        return response
 
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -153,79 +243,3 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-
-class VideoListFilteredView(APIView):
-    def get(self, request):
-        max_duration = request.query_params.get("max_duration", None)
-        recent_days = request.query_params.get("recent_days", None)
-        username = request.query_params.get("username", None)
-        comment_text = request.query_params.get("comment_text", None)
-        sort_field = request.query_params.get("sort_field", "created_at")
-        sort_direction = request.query_params.get("sort_direction", "desc")
-
-        videos = Video.objects.all()
-
-        if max_duration:
-            try:
-                max_duration_seconds = int(max_duration) * 60
-                videos = videos.filter(
-                    duration__lte=timedelta(seconds=max_duration_seconds)
-                )
-            except ValueError:
-                return Response(
-                    {"error": "max_duration должен быть числом"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-        if recent_days:
-            try:
-                cutoff_date = timezone.now() - timedelta(days=int(recent_days))
-                videos = videos.filter(created_at__gte=cutoff_date)
-            except ValueError:
-                return Response(
-                    {"error": "recent_days должен быть числом"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-        if username:
-            videos = videos.filter(like__user__username__icontains=username)
-
-        if comment_text:
-            videos = videos.filter(comments__text__icontains=comment_text)
-
-        videos = Video.objects.annotate(
-            likes_count=count("likes", distinct=True),
-            comments_count=count("comments", distinct=True),
-        )
-
-        total_likes = (
-            videos.aggregate(total_likes=sum("likes_count"))["total_likes"] or 0
-        )
-
-        valid_sort_fields = ["created_at", "likes_count", "duration", "comments_count"]
-        if sort_field not in valid_sort_fields:
-            sort_field = "created_at"
-
-        sort_prefix = "-" if sort_direction == "desc" else ""
-        videos = videos.order_by(f"{sort_prefix}{sort_field}")
-
-        videos = videos.distinct()
-
-        page = int(request.query_params.get("page", 1))
-        page_size = 9
-        start = (page - 1) * page_size
-        end = start + page_size
-        total = videos.count()
-        paginated_videos = videos[start:end]
-
-        serializer = VideoSerializer(paginated_videos, many=True)
-        return Response(
-            {
-                "results": serializer.data,
-                "count": total,
-                "next": page + 1 if end < total else None,
-                "previous": page - 1 if start > 0 else None,
-            },
-            status=status.HTTP_200_OK,
-        )
