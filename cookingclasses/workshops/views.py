@@ -162,7 +162,6 @@ class VideoViewSet(viewsets.ModelViewSet):
             .annotate(actual_likes_count=Count("like_set", distinct=True))
         )
 
-        # Применяем фильтры
         filter_params = self.request.query_params
         if "max_duration_seconds" in filter_params:
             try:
@@ -187,9 +186,7 @@ class VideoViewSet(viewsets.ModelViewSet):
             except ValueError:
                 pass
 
-        # Применяем сортировку через order_by
         ordering = filter_params.get("ordering", "-title")
-        # Защита от SQL-инъекций: проверяем, что ordering — допустимое поле
         allowed_fields = [
             "title",
             "duration",
@@ -201,7 +198,7 @@ class VideoViewSet(viewsets.ModelViewSet):
         if ordering in allowed_fields:
             queryset = queryset.order_by(ordering)
         else:
-            queryset = queryset.order_by("-title")  # Значение по умолчанию
+            queryset = queryset.order_by("-title")
 
         return queryset
 
@@ -209,7 +206,6 @@ class VideoViewSet(viewsets.ModelViewSet):
         total_likes = self.get_queryset().aggregate(total_likes=Sum("likes_count"))
         response = super().list(request, *args, **kwargs)
 
-        # Создаём новый словарь для ответа
         result = {
             "results": (
                 response.data
@@ -219,7 +215,6 @@ class VideoViewSet(viewsets.ModelViewSet):
             "total_likes": total_likes["total_likes"] or 0,
         }
 
-        # Если пагинация включена, добавляем count, next, previous
         if not isinstance(response.data, list):
             result.update(
                 {
@@ -248,9 +243,9 @@ class LikeViewSet(viewsets.ModelViewSet):
         video = self.request.query_params.get("video")
         user = self.request.query_params.get("user")
         if video:
-            queryset = queryset.filter(video_id=video)
+            queryset = queryset.filter(video__id=video)
         if user:
-            queryset = queryset.filter(user_id=user)
+            queryset = queryset.filter(user__id=user)
         return queryset
 
 

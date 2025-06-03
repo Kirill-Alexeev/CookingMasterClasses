@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчёт по мастер-классам</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 14pt;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .master-class {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .chefs-list {
+            margin-left: 20px;
+        }
+        .records-section {
+            margin-top: 15px;
+            margin-left: 20px;
+        }
+        .records-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 10px;
+        }
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .records-table th, .records-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .records-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .no-records {
+            color: #777;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Отчёт по мастер-классам</h1>
+    {% for master_class in master_classes %}
+    <div class="master-class">
+        <p><span class="label">Название:</span> {{ master_class.title }}</p>
+        <p><span class="label">Описание:</span> {{ master_class.description }}</p>
+        <p><span class="label">Дата мероприятия:</span> {{ master_class.date_event|date:"d.m.Y H:i" }}</p>
+        <p><span class="label">Ресторан:</span> {% if master_class.restaurant %}{{ master_class.restaurant.name }}{% else %}Не указан{% endif %}</p>
+        <p><span class="label">Кухня:</span> {{ master_class.cuisine.name }}</p>
+        <p><span class="label">Шеф-повара:</span>
+            <ul class="chefs-list">
+                {% for chef in master_class.chefs.all %}
+                <li>{{ chef.first_name }} {{ chef.last_name }}</li>
+                {% empty %}
+                <li>Не указаны</li>
+                {% endfor %}
+            </ul>
+        </p>
+        <p><span class="label">Цена:</span> {{ master_class.price }} руб.</p>
+        <p><span class="label">Сложность:</span> {{ master_class.complexity }}</p>
+        <p><span class="label">Рейтинг:</span> {{ master_class.rating }}</p>
+        <p><span class="label">Свободных мест:</span> {{ master_class.seats_available }} из {{ master_class.seats_total }}</p>
+        <div class="records-section">
+            <p class="records-title">Записанные пользователи:</p>
+            {% if master_class.record_set.all %}
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th>Пользователь</th>
+                        <th>Статус оплаты</th>
+                        <th>Дата записи</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in master_class.record_set.all %}
+                    <tr>
+                        <td>{{ record.user.username }}</td>
+                        <td>{{ record.payment_status }}</td>
+                        <td>{{ record.created_at|date:"d.m.Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="no-records">Нет записанных пользователей</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

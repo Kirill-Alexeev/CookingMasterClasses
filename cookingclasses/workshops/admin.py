@@ -14,6 +14,9 @@ from .models import (
     Comment,
 )
 from django.utils.html import format_html
+from weasyprint import HTML
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 
 class MasterClassChefInline(admin.TabularInline):
@@ -90,12 +93,30 @@ class MasterClassAdmin(admin.ModelAdmin):
     inlines = [ChefInline]
     readonly_fields = ("seats_available", "rating", "created_at", "updated_at")
     ordering = ("-date_event",)
+    actions = ["generate_pdf"]
 
     @admin.display(description="Шеф-повара")
     def get_chefs(self, obj):
         return ", ".join(
             [chef.first_name + " " + chef.last_name for chef in obj.chefs.all()]
         )
+
+    @admin.action(description="Сгенерировать PDF для выбранных мастер-классов")
+    def generate_pdf(self, request, queryset):
+        html_string = render_to_string(
+            "workshops/masterclass_pdf.html",
+            {
+                "master_classes": queryset,
+            },
+        )
+
+        html = HTML(string=html_string)
+        pdf_file = html.write_pdf()
+
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="master_classes.pdf"'
+        response.write(pdf_file)
+        return response
 
 
 @admin.register(Record)
@@ -156,6 +177,12 @@ class VideoAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
     readonly_fields = ("duration", "likes_count", "comments_count", "created_at")
     ordering = ("-created_at",)
+    actions = ["make_visible"]
+
+    @admin.action(description="Сделать выбранные видео видимыми")
+    def make_visible(self, request, queryset):
+        updated = queryset.update(is_visible=True)
+        self.message_user(request, f"Сделано видимыми {updated} видео.")
 
 
 @admin.register(Like)
