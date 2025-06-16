@@ -91,7 +91,7 @@ function MasterClassDetail() {
         <div className="mc-detail__info">
           <div className="mc-detail__info-top">
             <img
-              src={masterClass.image || "/placeholder.jpg"}
+              src={masterClass.image}
               alt={masterClass.title}
               className="mc-detail__info-img"
             />
@@ -151,7 +151,7 @@ function MasterClassDetail() {
             {masterClass.chefs.map((chef) => (
               <div key={chef.id} className="mc-detail__chef">
                 <img
-                  src={chef.image || "/placeholder.jpg"}
+                  src={chef.image}
                   alt={`${chef.last_name} ${chef.first_name}`}
                   className="mc-detail__chef-image"
                 />

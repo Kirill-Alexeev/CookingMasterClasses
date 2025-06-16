@@ -1,7 +1,9 @@
+import SearchBar from "../components/SearchBar";
+
 function MainPage() {
   return (
     <div>
-      <h1>Главная страница</h1>
+      <SearchBar />
     </div>
   );
 }

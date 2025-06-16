@@ -4,7 +4,6 @@ import { getUserProfile, logoutUser } from "../api/users";
 import kylinarLogo from "../assets/icons/kylinar_logo.svg";
 import mailIcon from "../assets/icons/mail_icon.svg";
 import phoneIcon from "../assets/icons/phone_icon.svg";
-import searchIcon from "../assets/icons/search_icon.svg";
 import locationIcon from "../assets/icons/location_icon.svg";
 
 function Header() {
@@ -40,19 +39,9 @@ function Header() {
           <NavLink to="/" className="header__logo" end>
             <img src={kylinarLogo} alt="Кулинар" className="header__logo-img" />
           </NavLink>
-          <div className="header__search">
-            <input
-              type="text"
-              placeholder="Поиск по сайту"
-              className="header__search-input"
-            />
-            <button className="header__search-btn">
-              <img src={searchIcon} className="header__search-img" />
-            </button>
-          </div>
           <div className="header__contacts">
             <a href="mailto:kylinar@mail.ru" className="header__contacts-link">
-              <img src={mailIcon} className="header__contactsimg" />
+              <img src={mailIcon} className="header__contacts-img" />
               kylinar@mail.ru
             </a>
             <a href="tel:+79500000000" className="header__contacts-link">

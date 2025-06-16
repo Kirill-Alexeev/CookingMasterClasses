@@ -51,7 +51,7 @@ function Profile() {
           <div>
             <h3>Фото профиля</h3>
             <img
-              src={user.image || "https://via.placeholder.com/150"}
+              src={user.image}
               alt="Profile"
               style={{ width: "150px", height: "150px" }}
             />

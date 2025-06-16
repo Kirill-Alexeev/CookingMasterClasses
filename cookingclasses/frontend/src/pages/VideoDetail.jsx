@@ -76,7 +76,6 @@ function VideoDetail() {
           src={video.video}
           controls
           className="video-detail__video"
-          poster="/placeholder.jpg"
         />
         <div className="video-detail__info">
           <h1 className="video-detail__title">{video.title}</h1>

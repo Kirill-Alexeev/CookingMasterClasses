@@ -5,7 +5,7 @@ axios.defaults.withCredentials = true;
 
 const API_BASE_URL = "/api/workshops";
 
-function getCsrfToken() {
+export function getCsrfToken() {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; csrftoken=`);
   if (parts.length === 2) return parts.pop().split(";").shift();

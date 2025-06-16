@@ -30,9 +30,40 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class ChefSerializer(serializers.ModelSerializer):
+    masterclasses_count = serializers.SerializerMethodField()
+    restaurant_data = serializers.SerializerMethodField()
+
     class Meta:
         model = Chef
-        fields = "__all__"
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "profession",
+            "biography",
+            "restaurant",
+            "restaurant_data",
+            "image",
+            "created_at",
+            "masterclasses_count",
+        ]
+        extra_kwargs = {
+            "restaurant": {"write_only": True}
+        }
+
+    def get_masterclasses_count(self, obj):
+        return obj.masterclass_set.count()
+
+    def get_restaurant_data(self, obj):
+        restaurant_serializer = self.context.get(
+            "restaurant_serializer",
+            RestaurantSerializer(obj.restaurant, context=self.context),
+        )
+
+        if isinstance(restaurant_serializer, serializers.BaseSerializer):
+            return restaurant_serializer.data
+
+        return restaurant_serializer
 
 
 class RestaurantImageSerializer(serializers.ModelSerializer):

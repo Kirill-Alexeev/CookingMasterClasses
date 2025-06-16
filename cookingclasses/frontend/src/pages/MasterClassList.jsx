@@ -189,7 +189,7 @@ function MasterClassList() {
                     >
                       <div className="card__img-wrapper">
                         <img
-                          src={mc.image || "/placeholder.jpg"}
+                          src={mc.image}
                           alt={mc.title}
                           className="card__img"
                         />

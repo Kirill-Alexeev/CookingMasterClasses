@@ -52,35 +52,15 @@
   }
 
   &__search {
-    max-width: 700px;
+    max-width: $max-width;
     flex-grow: 1;
     margin: 0 20px;
     display: flex;
     justify-content: center;
     background-color: $header-text-color;
     border-radius: 10px;
-
-    &-input {
-      @include input-style;
-      color: $text-color;
-      width: 100%;
-      max-width: 700px;
-      padding: 8px;
-      border: none;
-    }
-
-    &-btn {
-      @include button-like-link;
-      @include flex-center;
-      height: 100%;
-      max-height: 50px;
-      padding: 8px;
-      cursor: pointer;
-    }
-
-    &-img {
-      width: 35px;
-    }
+    z-index: 10;
+    width: 100%; // Гарантируем полную ширину
   }
 
   &__contacts {

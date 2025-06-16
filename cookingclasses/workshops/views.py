@@ -31,6 +31,8 @@ from .serializers import (
     CommentSerializer,
 )
 from .filters import MasterClassFilter
+from django.db.models import Q
+from django.http import JsonResponse
 
 
 class MasterClassViewSet(viewsets.ModelViewSet):
@@ -74,6 +76,19 @@ class ChefViewSet(viewsets.ModelViewSet):
     )
     serializer_class = ChefSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        
+        chefs = self.get_queryset() if self.action == 'list' else [self.get_object()]
+        restaurants = {chef.restaurant for chef in chefs if chef.restaurant}
+        
+        context['restaurants_data'] = {
+            r.id: RestaurantSerializer(r, context=context).data
+            for r in restaurants
+        }
+        
+        return context
 
 
 class RestaurantImageViewSet(viewsets.ModelViewSet):
@@ -258,3 +273,39 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+def search(request):
+    if request.method == "POST":
+        query = request.POST.get("query", "").strip()
+
+        if not query:
+            return JsonResponse({"error": "Пустой запрос"}, status=400)
+
+        # Ищем мастер-классы
+        master_classes = MasterClass.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        ).values("id", "title")[:10]
+
+        # Ищем шеф-поваров
+        chefs = Chef.objects.filter(
+            Q(first_name__contains=query) | Q(last_name__contains=query)
+        ).values("id", "first_name", "last_name")[:10]
+
+        return JsonResponse(
+            {
+                "master_classes": [
+                    {"id": mc["id"], "title": mc["title"], "type": "Мастер-класс"}
+                    for mc in master_classes
+                ],
+                "chefs": [
+                    {
+                        "id": c["id"],
+                        "name": f"{c['first_name']} {c['last_name']}",
+                        "type": "Шеф-повар",
+                    }
+                    for c in chefs
+                ],
+            }
+        )
+    return JsonResponse({"error": "Метод не разрешен"}, status=405)
