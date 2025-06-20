@@ -14,10 +14,14 @@ import MasterClassDetail from "./pages/MasterClassDetail";
 import VideoList from "./pages/VideoList";
 import VideoDetail from "./pages/VideoDetail";
 import Record from "./pages/Record";
+import "./styles/components/_skip-link.scss";
 
 function App() {
   return (
     <BrowserRouter>
+      <a href="#main-content" className="skip-link">
+        Перейти к основному содержимому
+      </a>
       <Header />
       <Routes>
         <Route path="/" element={<MainPage />} />

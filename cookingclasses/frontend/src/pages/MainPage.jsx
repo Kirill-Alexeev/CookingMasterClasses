@@ -4,7 +4,7 @@ import TopChefs from "../components/TopChefs";
 
 const MainPage = () => {
   return (
-    <div className="home-page">
+    <div className="home-page" id="main-content">
       <header className="home-header">
         <h1>Добро пожаловать в мир кулинарных мастер-классов</h1>
         <p>

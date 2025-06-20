@@ -5,28 +5,113 @@
   @include container-center;
   padding: 20px;
 
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 10px;
+  }
+
   h2 {
     font-family: $headline-font-family;
     font-size: $headline-font-size;
     color: $text-color;
     margin-bottom: 20px;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($headline-font-size * 0.9);
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($headline-font-size * 0.8);
+      margin-bottom: 10px;
+    }
   }
 
   &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
     list-style: none;
     padding: 0;
+
+    @media (max-width: 1250px) {
+      gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      gap: 8px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 6px;
+    }
   }
 
   &__item {
     background: $header-text-color;
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    flex: 0 0 calc(33.333% - 10px);
+    max-width: calc(33.333% - 10px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @media (max-width: 1250px) {
+      flex: 0 0 calc(50% - 8px);
+      max-width: calc(50% - 8px);
+      padding: 12px;
+    }
+
+    @media (max-width: 900px) {
+      flex: 0 0 calc(33.333% - 6.67px);
+      max-width: calc(33.333% - 6.67px);
+    }
+
+    @media (max-width: 764px) {
+      flex: 0 0 calc(50% - 5px);
+      max-width: calc(50% - 5px);
+      padding: 10px;
+    }
+
+    @media (max-width: 600px) {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding: 12px;
+    }
+
+    @media (max-width: $min-width) {
+      padding: 10px;
+    }
+
+    &:hover {
+      transform: translateY(-5px);
+    }
 
     p {
       font-size: $regular-font-size;
       color: $text-color;
       margin: 5px 0;
+
+      @media (max-width: $mid-width) {
+        font-size: calc($regular-font-size * 0.9);
+        margin: 4px 0;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: calc($regular-font-size * 0.8);
+        margin: 3px 0;
+      }
     }
   }
 
@@ -34,5 +119,17 @@
     color: $error-color;
     text-align: center;
     font-size: $regular-font-size;
+    width: 100%;
+    padding: 20px;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($regular-font-size * 0.9);
+      padding: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($regular-font-size * 0.8);
+      padding: 10px;
+    }
   }
 }

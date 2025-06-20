@@ -5,11 +5,29 @@
   @include container-center;
   padding: 20px;
 
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 10px;
+  }
+
   h1 {
     font-family: $headline-font-family;
     font-size: $headline-font-size;
     color: $text-color;
     margin-bottom: 20px;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($headline-font-size * 0.9);
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($headline-font-size * 0.8);
+      margin-bottom: 10px;
+    }
   }
 
   &__form {
@@ -19,21 +37,56 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+
+    @media (max-width: 600px) {
+      padding: 15px;
+      gap: 12px;
+    }
+
+    @media (max-width: $min-width) {
+      padding: 10px;
+      gap: 10px;
+    }
   }
 
   &__input {
     @include input-style;
     padding: 10px;
+    font-size: $regular-font-size;
+
+    @media (max-width: $mid-width) {
+      padding: 8px;
+      font-size: calc($regular-font-size * 0.9);
+    }
+
+    @media (max-width: $min-width) {
+      padding: 6px;
+      font-size: calc($regular-font-size * 0.8);
+    }
   }
 
   &__actions {
     @include flex-between;
+    margin-top: 15px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 8px;
+      margin-top: 10px;
+    }
   }
 
   &__button {
     @include button-style;
     background: $accent-color;
     color: $header-text-color;
+    padding: 10px 20px;
+    font-size: $regular-font-size;
 
     &:hover {
       background: $accent-color-hover;
@@ -46,16 +99,42 @@
         background: red;
       }
     }
+
+    @media (max-width: $mid-width) {
+      padding: 8px 16px;
+      font-size: calc($regular-font-size * 0.9);
+    }
+
+    @media (max-width: $min-width) {
+      padding: 6px 12px;
+      font-size: calc($regular-font-size * 0.8);
+    }
   }
 
   .error {
     color: $error-color;
     text-align: center;
     font-size: $regular-font-size;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($regular-font-size * 0.9);
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($regular-font-size * 0.8);
+    }
   }
 
   label {
     font-size: $regular-font-size;
     color: $text-color;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($regular-font-size * 0.9);
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($regular-font-size * 0.8);
+    }
   }
 }

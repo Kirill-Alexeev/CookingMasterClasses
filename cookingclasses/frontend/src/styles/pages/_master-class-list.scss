@@ -12,21 +12,55 @@
     flex-direction: column;
     margin-bottom: 40px;
     gap: 20px;
-    max-width: 1200px;
+
+    @media (max-width: 1250px) {
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+      gap: 12px;
+      padding: 10px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 10px;
+    }
   }
 
   &__title {
     font-family: $headline-font-family;
-    font-size: 3rem;
+    font-size: 2rem;
     color: $text-color;
     text-align: left;
     margin-bottom: 20px;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+    }
   }
 
   &__content {
     display: flex;
     flex-direction: row;
     gap: 20px;
+
+    @media (max-width: 764px) {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+      gap: 12px;
+    }
   }
 
   &__controls {
@@ -34,6 +68,17 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    @media (max-width: 764px) {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 10px;
+    }
   }
 }
 
@@ -42,21 +87,81 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  @media (max-width: 1250px) {
+    gap: 18px;
+  }
+
+  @media (max-width: 900px) {
+    gap: 15px;
+  }
+
+  @media (max-width: 600px) {
+    gap: 12px;
+  }
 }
 
 .catalog__list {
-  display: grid;
-  grid-template-columns: repeat(3, 283px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 15px;
+  justify-content: space-between;
+
+  & > .card {
+    flex: 0 0 calc(33.333% - 10px); // 3 колонки
+    max-width: 283px;
+
+    @media (max-width: 1250px) {
+      flex: 0 0 calc(50% - 10px); // 2 колонки
+      max-width: none;
+    }
+
+    @media (max-width: 900px) {
+      flex: 0 0 100%; // 1 колонка
+      max-width: none;
+    }
+
+    @media (max-width: 764px) {
+      flex: 0 0 calc(50% - 10px); // 2 колонки
+      max-width: none;
+    }
+
+    @media (max-width: 600px) {
+      flex: 0 0 100%; // 1 колонка
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 1250px) {
+    gap: 12px;
+  }
+
+  @media (max-width: 900px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 600px) {
+    gap: 8px;
+  }
 }
 
 .catalog__empty {
-  grid-column: 1 / -1;
+  width: 100%;
   text-align: center;
   font-size: 2rem;
   color: $text-color;
   font-family: $regular-font-family;
   padding: 20px;
+
+  @media (max-width: $mid-width) {
+    font-size: 1.8rem;
+    padding: 15px;
+  }
+
+  @media (max-width: $min-width) {
+    font-size: 1.6rem;
+    padding: 10px;
+  }
 }
 
 .card {
@@ -73,6 +178,22 @@
     transform: translateY(-5px);
   }
 
+  @media (max-width: 1250px) {
+    min-height: 380px;
+  }
+
+  @media (max-width: 900px) {
+    min-height: 360px;
+  }
+
+  @media (max-width: 600px) {
+    min-height: 340px;
+  }
+
+  @media (max-width: $min-width) {
+    min-height: 300px;
+  }
+
   &__link {
     text-decoration: none;
     color: inherit;
@@ -86,6 +207,22 @@
     width: 100%;
     height: 180px;
     overflow: hidden;
+
+    @media (max-width: 1250px) {
+      height: 170px;
+    }
+
+    @media (max-width: 900px) {
+      height: 160px;
+    }
+
+    @media (max-width: 600px) {
+      height: 150px;
+    }
+
+    @media (max-width: $min-width) {
+      height: 120px;
+    }
   }
 
   &__img {
@@ -101,6 +238,26 @@
     padding: 15px;
     gap: 10px;
     flex-grow: 1;
+
+    @media (max-width: 1250px) {
+      padding: 14px;
+      gap: 9px;
+    }
+
+    @media (max-width: 900px) {
+      padding: 13px;
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      padding: 12px;
+      gap: 7px;
+    }
+
+    @media (max-width: $min-width) {
+      padding: 10px;
+      gap: 6px;
+    }
   }
 
   &__top {
@@ -113,6 +270,14 @@
     font-weight: bold;
     color: $text-color;
     margin: 0;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__rating {
@@ -121,17 +286,53 @@
     font-size: 2rem;
     color: $accent-color;
     font-family: $regular-font-family;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__rating-img {
     width: 20px;
     height: 20px;
+
+    @media (max-width: 1250px) {
+      width: 19px;
+      height: 19px;
+    }
+
+    @media (max-width: 900px) {
+      width: 18px;
+      height: 18px;
+    }
+
+    @media (max-width: 600px) {
+      width: 17px;
+      height: 17px;
+    }
+
+    @media (max-width: $min-width) {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   &__date {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: #666;
     font-family: $regular-font-family;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__desc {
@@ -139,6 +340,14 @@
     color: #666;
     font-family: $regular-font-family;
     line-height: 1.4;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__price {
@@ -146,6 +355,14 @@
     font-weight: bold;
     color: $accent-color;
     font-family: $regular-font-family;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__button {
@@ -157,9 +374,20 @@
     font-weight: bold;
     border-radius: 8px;
     margin-top: auto;
+    font-size: 2rem;
 
     &:hover {
       background: $accent-color-hover;
+    }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+      padding: 8px 16px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      padding: 6px 12px;
     }
   }
 }
@@ -171,15 +399,21 @@
   gap: 10px;
   margin-top: 20px;
 
+  @media (max-width: 600px) {
+    gap: 8px;
+  }
+
+  @media (max-width: $min-width) {
+    gap: 6px;
+  }
+
   &__button {
+    @include button-style;
     padding: 8px 16px;
     background: $card-color;
-    color: $header-text-color;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    color: $text-color;
     font-family: $regular-font-family;
-    font-size: 1.6rem;
+    font-size: 2rem;
 
     &:hover:not(:disabled) {
       background: $accent-color-hover;
@@ -189,11 +423,29 @@
       background: #cccccc;
       cursor: not-allowed;
     }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+      padding: 6px 12px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      padding: 5px 10px;
+    }
   }
 
   &__count {
-    font-size: 1.6rem;
+    font-size: 2rem;
     color: $text-color;
     font-family: $regular-font-family;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 }

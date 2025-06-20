@@ -11,14 +11,31 @@
 
     h1 {
       font-family: $headline-font-family;
-      font-size: $headline-font-size;
+      font-size: 2rem;
       color: $primary-color;
       margin-bottom: 15px;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+      }
     }
 
     p {
-      font-size: $regular-font-size;
+      font-family: $regular-font-family;
+      font-size: 2rem;
       color: $text-color;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+      }
     }
   }
 
@@ -30,6 +47,11 @@
 
     @media (max-width: $mid-width) {
       grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 15px;
     }
   }
 }

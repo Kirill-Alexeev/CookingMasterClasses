@@ -9,12 +9,32 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
+  @media (max-width: 600px) {
+    margin: 30px auto;
+    padding: 15px;
+  }
+
+  @media (max-width: $min-width) {
+    margin: 20px auto;
+    padding: 10px;
+  }
+
   &__title {
     font-family: $headline-font-family;
     font-size: 2.5rem;
     color: $header-text-color;
     margin-bottom: 20px;
     text-align: center;
+
+    @media (max-width: $mid-width) {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
   }
 
   .no-reviews {
@@ -23,30 +43,109 @@
     color: $text-color;
     text-align: center;
     margin: 20px 0;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+      margin: 15px 0;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      margin: 10px 0;
+    }
   }
 }
 
 .reviews-container {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+
+  @media (max-width: 1250px) {
+    gap: 12px;
+  }
+
+  @media (max-width: 900px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 600px) {
+    gap: 8px;
+  }
+
+  @media (max-width: $min-width) {
+    gap: 6px;
+  }
 }
 
 .review-item {
-  @include container-center;
   background: $header-text-color;
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 calc(33.333% - 10px); // 3 колонки
+  max-width: calc(33.333% - 10px);
+  min-height: 100%; // Растягивание по высоте
+
+  @media (max-width: 1250px) {
+    flex: 0 0 calc(50% - 8px); // 2 колонки
+    max-width: calc(50% - 8px);
+    padding: 14px;
+  }
+
+  @media (max-width: 900px) {
+    flex: 0 0 100%; // 1 колонка
+    max-width: 100%;
+    padding: 13px;
+  }
+
+  @media (max-width: 764px) {
+    flex: 0 0 calc(50% - 5px); // 2 колонки
+    max-width: calc(50% - 5px);
+    padding: 12px;
+  }
+
+  @media (max-width: 600px) {
+    flex: 0 0 100%; // 1 колонка
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 10px;
+  }
 
   .review-header {
     @include flex-between;
     margin-bottom: 10px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 6px;
+      margin-bottom: 6px;
+    }
   }
 
   .review-user {
     @include flex-center;
     gap: 10px;
+
+    @media (max-width: 600px) {
+      gap: 8px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 6px;
+    }
   }
 
   .review-avatar {
@@ -54,6 +153,26 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+
+    @media (max-width: 1250px) {
+      width: 35px;
+      height: 35px;
+    }
+
+    @media (max-width: 900px) {
+      width: 30px;
+      height: 30px;
+    }
+
+    @media (max-width: 600px) {
+      width: 28px;
+      height: 28px;
+    }
+
+    @media (max-width: $min-width) {
+      width: 25px;
+      height: 25px;
+    }
   }
 
   .review-username {
@@ -61,6 +180,14 @@
     font-size: 1.8rem;
     font-weight: 500;
     color: $text-color;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+    }
   }
 
   .review-date {
@@ -68,6 +195,14 @@
     font-size: 1.6rem;
     color: $text-color;
     opacity: 0.7;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.4rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.2rem;
+    }
   }
 
   .review-text {
@@ -76,12 +211,35 @@
     color: $text-color;
     line-height: 2.8rem;
     margin: 10px 0;
+    flex-grow: 1; // Растягиваем текст для выравнивания высоты
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+      line-height: 2.5rem;
+      margin: 8px 0;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+      line-height: 2.2rem;
+      margin: 6px 0;
+    }
   }
 
   .review-actions {
     @include flex-center;
     gap: 10px;
     margin-top: 10px;
+
+    @media (max-width: 600px) {
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 6px;
+      margin-top: 6px;
+    }
   }
 
   .btn-edit,
@@ -93,6 +251,16 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.4rem;
+      padding: 6px 12px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.2rem;
+      padding: 5px 10px;
+    }
   }
 
   .btn-edit {
@@ -117,6 +285,14 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+
+    @media (max-width: 600px) {
+      gap: 12px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 10px;
+    }
   }
 
   .review-edit-textarea {
@@ -130,11 +306,31 @@
     min-height: 100px;
     resize: vertical;
     width: 100%;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+      padding: 8px;
+      min-height: 80px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+      padding: 6px;
+      min-height: 60px;
+    }
   }
 
   .review-edit-actions {
     @include flex-center;
     gap: 10px;
+
+    @media (max-width: 600px) {
+      gap: 8px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 6px;
+    }
   }
 }
 
@@ -146,12 +342,32 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-bottom: 40px;
 
+  @media (max-width: 600px) {
+    padding: 15px;
+    margin-bottom: 30px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
   .review-form-title {
     font-family: $headline-font-family;
     font-size: 2.5rem;
-    color: $header-text-color;
+    color: $text-color; // Изменён цвет для согласованности
     margin-bottom: 20px;
     text-align: center;
+
+    @media (max-width: $mid-width) {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
   }
 
   .form-group {
@@ -159,6 +375,16 @@
     flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
+
+    @media (max-width: 600px) {
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 6px;
+      margin-bottom: 10px;
+    }
   }
 
   label {
@@ -166,6 +392,14 @@
     font-size: 1.8rem;
     color: $text-color;
     font-weight: 500;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+    }
   }
 
   .review-textarea {
@@ -179,6 +413,18 @@
     min-height: 120px;
     resize: vertical;
     width: 100%;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+      padding: 8px;
+      min-height: 100px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+      padding: 6px;
+      min-height: 80px;
+    }
   }
 
   .error-message {
@@ -187,6 +433,16 @@
     color: $error-color;
     margin-bottom: 10px;
     text-align: center;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
   }
 
   .submit-review-btn {
@@ -208,6 +464,16 @@
       background: $accent-color;
       cursor: not-allowed;
     }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+      padding: 8px 16px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+      padding: 6px 12px;
+    }
   }
 }
 
@@ -220,11 +486,29 @@
   margin-bottom: 40px;
   text-align: center;
 
+  @media (max-width: 600px) {
+    padding: 15px;
+    margin-bottom: 30px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+
   p {
     font-family: $regular-font-family;
     font-size: 1.8rem;
     color: $text-color;
     margin: 0;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.6rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.4rem;
+    }
 
     a {
       color: $accent-color;
@@ -240,6 +524,14 @@
 .star-rating {
   display: flex;
   gap: 5px;
+
+  @media (max-width: 600px) {
+    gap: 4px;
+  }
+
+  @media (max-width: $min-width) {
+    gap: 3px;
+  }
 
   .star {
     font-size: 2.5rem;
@@ -258,6 +550,14 @@
         transform: scale(1.2);
         color: $accent-color-hover;
       }
+    }
+
+    @media (max-width: $mid-width) {
+      font-size: 2.2rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 2rem;
     }
   }
 }

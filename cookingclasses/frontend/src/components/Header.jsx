@@ -8,6 +8,7 @@ import locationIcon from "../assets/icons/location_icon.svg";
 
 function Header() {
   const [user, setUser] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,8 +23,13 @@ function Header() {
       .then(() => {
         setUser(null);
         navigate("/");
+        setIsMenuOpen(false);
       })
       .catch((err) => console.error(err));
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -31,7 +37,11 @@ function Header() {
       <div className="header__wrapper">
         <div className="header__location">
           <button className="header__location-btn">
-            <img src={locationIcon} className="header__location-img" />
+            <img
+              src={locationIcon}
+              className="header__location-img"
+              alt="Location"
+            />
             Ваш адрес
           </button>
         </div>
@@ -41,19 +51,41 @@ function Header() {
           </NavLink>
           <div className="header__contacts">
             <a href="mailto:kylinar@mail.ru" className="header__contacts-link">
-              <img src={mailIcon} className="header__contacts-img" />
+              <img
+                src={mailIcon}
+                className="header__contacts-img"
+                alt="Email"
+              />
               kylinar@mail.ru
             </a>
             <a href="tel:+79500000000" className="header__contacts-link">
-              <img src={phoneIcon} className="header__contacts-img" />
+              <img
+                src={phoneIcon}
+                className="header__contacts-img"
+                alt="Phone"
+              />
               +7 (950) 000-00-00
             </a>
           </div>
+          <button
+            className="header__burger"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <span className="header__burger-line"></span>
+            <span className="header__burger-line"></span>
+            <span className="header__burger-line"></span>
+          </button>
         </div>
-        <nav className="header__nav">
+        <nav className={`header__nav ${isMenuOpen ? "header__nav--open" : ""}`}>
           <ul className="header__nav-list">
             <li className="header__nav-item">
-              <NavLink to="/" className="header__nav-link" end>
+              <NavLink
+                to="/"
+                className="header__nav-link"
+                end
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Главная
               </NavLink>
             </li>
@@ -62,6 +94,7 @@ function Header() {
                 to="/restaurant-list"
                 state={{ title: "Рестораны" }}
                 className="header__nav-link"
+                onClick={() => setIsMenuOpen(false)}
               >
                 Рестораны
               </NavLink>
@@ -71,6 +104,7 @@ function Header() {
                 to="/master-class-list"
                 state={{ title: "Мастер-классы" }}
                 className="header__nav-link"
+                onClick={() => setIsMenuOpen(false)}
               >
                 Мастер-классы
               </NavLink>
@@ -80,6 +114,7 @@ function Header() {
                 to="/video-list"
                 state={{ title: "Видео-уроки" }}
                 className="header__nav-link"
+                onClick={() => setIsMenuOpen(false)}
               >
                 Видео-уроки
               </NavLink>
@@ -87,7 +122,11 @@ function Header() {
             {user ? (
               <>
                 <li className="header__nav-item">
-                  <NavLink to="/profile" className="header__nav-link">
+                  <NavLink
+                    to="/profile"
+                    className="header__nav-link"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     Профиль
                   </NavLink>
                 </li>
@@ -100,12 +139,20 @@ function Header() {
             ) : (
               <>
                 <li className="header__nav-item">
-                  <NavLink to="/register" className="header__nav-link">
+                  <NavLink
+                    to="/register"
+                    className="header__nav-link"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     Зарегистрироваться
                   </NavLink>
                 </li>
                 <li className="header__nav-item">
-                  <NavLink to="/login" className="header__nav-link">
+                  <NavLink
+                    to="/login"
+                    className="header__nav-link"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     Войти
                   </NavLink>
                 </li>

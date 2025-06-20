@@ -2,7 +2,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 
 function Record() {
   return (
-    <div>
+    <div id="main-content">
       <Breadcrumbs />
       <h1>Запись на мастер-класс</h1>
     </div>

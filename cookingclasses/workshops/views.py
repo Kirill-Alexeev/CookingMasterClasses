@@ -80,7 +80,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         return [IsAuthenticatedOrReadOnly()]
 
     def get_queryset(self):
-        queryset = Restaurant.objects.exclude(masterclass__isnull=True)
+        queryset = Restaurant.objects
         search = self.request.query_params.get("search")
         if search:
             queryset = queryset.filter(

@@ -5,12 +5,14 @@
   display: flex;
   gap: 5px;
 
+  @media (max-width: $min-width) {
+    gap: 3px;
+  }
+
   &__button {
-    background: none;
-    border: none;
+    @include button-like-link;
+    @include flex-center;
     cursor: pointer;
-    display: flex;
-    align-items: center;
     transition: transform 0.4s ease-in-out;
 
     &:active {
@@ -20,24 +22,48 @@
 
   &__icon {
     width: 20px;
+
+    @media (max-width: $mid-width) {
+      width: 18px;
+    }
+
+    @media (max-width: $min-width) {
+      width: 16px;
+    }
   }
 
   &__select {
+    @include input-style;
     background: none;
     border: none;
     color: $text-color;
-    font-size: 1.6rem;
+    font-family: $regular-font-family;
+    font-size: 2rem;
     padding: 8px 12px;
-    border-radius: 8px;
     cursor: pointer;
     transition: border-color 0.3s ease-in-out;
 
-    &::-webkit-dropdown-list {
-      transition: max-height 0.3s ease-in-out;
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+      padding: 6px 10px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      padding: 5px 8px;
     }
   }
 
   &__option {
     background-color: $header-text-color;
+    font-size: 2rem;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 }

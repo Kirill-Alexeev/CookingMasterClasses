@@ -7,6 +7,8 @@ import {
   getLikes,
   deleteLike,
 } from "../api/workshops";
+import "../styles/components/_user-reviews-comments-likes.scss"
+
 
 const UserReviewsCommentsLikes = () => {
   const [reviews, setReviews] = useState([]);

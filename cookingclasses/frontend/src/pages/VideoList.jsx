@@ -97,7 +97,7 @@ function VideoList() {
   const currentFilters = getFiltersFromURL();
 
   return (
-    <div className="video-list">
+    <div className="video-list" id="main-content">
       <div className="video-list__wrapper">
         <Breadcrumbs />
         <h1 className="video-list__title">Видеоуроки</h1>
@@ -123,43 +123,43 @@ function VideoList() {
               initialFilters={currentFilters}
             />
           </div>
-          <div className="catalog">
-            <div className="catalog__list">
+          <div className="video-catalog">
+            <div className="video-catalog__list">
               {videos.length > 0 ? (
                 videos.map((video) => (
-                  <div key={video.id} className="card">
+                  <div key={video.id} className="video-card">
                     <NavLink
                       to={`/video-detail/${video.id}`}
                       state={{ title: video.title }}
-                      className="card__link"
+                      className="video-card__link"
                     >
-                      <div className="card__img-wrapper">
+                      <div className="video-card__img-wrapper">
                         <img
                           src={placehold}
                           alt={video.title}
-                          className="card__img"
+                          className="video-card__img"
                           loading="lazy"
                         />
                         {video.is_new && (
-                          <span className="card__new-badge">Новое</span>
+                          <span className="video-card__new-badge">Новое</span>
                         )}
                       </div>
-                      <div className="card__content">
-                        <div className="card__top">
-                          <h3 className="card__title">{video.title}</h3>
-                          <div className="card__rating">
+                      <div className="video-card__content">
+                        <div className="video-card__top">
+                          <h3 className="video-card__title">{video.title}</h3>
+                          <div className="video-card__rating">
                             <img
                               src={likeIcon}
-                              className="card__rating-img"
+                              className="video-card__rating-img"
                               alt="Лайки"
                             />
                             {video.actual_likes_count || 0}
                           </div>
                         </div>
-                        <p className="card__duration">
+                        <p className="video-card__duration">
                           {formatDuration(video.duration)}
                         </p>
-                        <p className="card__desc">
+                        <p className="video-card__desc">
                           {truncateDescription(video.description)}
                         </p>
                       </div>
@@ -167,7 +167,7 @@ function VideoList() {
                   </div>
                 ))
               ) : (
-                <div className="catalog__empty">
+                <div className="video-catalog__empty">
                   Нет доступных видеоуроков. Попробуйте изменить фильтры.
                 </div>
               )}

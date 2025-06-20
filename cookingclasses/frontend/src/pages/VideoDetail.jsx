@@ -69,7 +69,7 @@ function VideoDetail() {
   if (error) return <div className="video-detail__error">{error}</div>;
 
   return (
-    <div className="video-detail">
+    <div className="video-detail" id="main-content">
       <div className="video-detail__wrapper">
         <Breadcrumbs />
         <video

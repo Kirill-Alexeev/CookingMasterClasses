@@ -157,7 +157,7 @@ function MasterClassList() {
   const currentFilters = getFiltersFromURL();
 
   return (
-    <div className="master-classes">
+    <div className="master-classes" id="main-content">
       <div className="master-classes__wrapper">
         <Breadcrumbs />
         <h1 className="master-classes__title">Мастер-классы</h1>

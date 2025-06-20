@@ -5,11 +5,29 @@
   @include container-center;
   padding: 20px;
 
+  @media (max-width: 600px) {
+    padding: 15px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 10px;
+  }
+
   h1 {
     font-family: $headline-font-family;
     font-size: $headline-font-size;
     color: $text-color;
     margin-bottom: 20px;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($headline-font-size * 0.9);
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($headline-font-size * 0.8);
+      margin-bottom: 10px;
+    }
   }
 
   &__info {
@@ -18,10 +36,30 @@
     border-radius: 10px;
     margin-bottom: 20px;
 
+    @media (max-width: 600px) {
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
     p {
       font-size: $regular-font-size;
       color: $text-color;
       margin: 10px 0;
+
+      @media (max-width: $mid-width) {
+        font-size: calc($regular-font-size * 0.9);
+        margin: 8px 0;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: calc($regular-font-size * 0.8);
+        margin: 6px 0;
+      }
     }
   }
 
@@ -29,17 +67,40 @@
     max-width: 150px;
     border-radius: 50%;
     margin-bottom: 20px;
+
+    @media (max-width: $mid-width) {
+      max-width: 120px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
   }
 
   &__actions {
     @include flex-between;
     margin-top: 20px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      margin-top: 10px;
+      gap: 8px;
+    }
   }
 
   &__button {
     @include button-style;
     background: $accent-color;
     color: $header-text-color;
+    padding: 10px 20px;
+    font-size: $regular-font-size;
 
     &:hover {
       background: $accent-color-hover;
@@ -52,11 +113,29 @@
         background: red;
       }
     }
+
+    @media (max-width: $mid-width) {
+      padding: 8px 16px;
+      font-size: calc($regular-font-size * 0.9);
+    }
+
+    @media (max-width: $min-width) {
+      padding: 6px 12px;
+      font-size: calc($regular-font-size * 0.8);
+    }
   }
 
   .error {
     color: $error-color;
     text-align: center;
     font-size: $regular-font-size;
+
+    @media (max-width: $mid-width) {
+      font-size: calc($regular-font-size * 0.9);
+    }
+
+    @media (max-width: $min-width) {
+      font-size: calc($regular-font-size * 0.8);
+    }
   }
 }

@@ -72,7 +72,7 @@ const RestaurantDetail = () => {
     if (window.confirm("Вы уверены, что хотите удалить ресторан?")) {
       try {
         await deleteRestaurant(id);
-        navigate("/restaurants");
+        navigate("/restaurant-list");
       } catch (error) {
         console.error("Error deleting restaurant:", error);
         alert(error.error || "Ошибка при удалении ресторана");
@@ -102,7 +102,7 @@ const RestaurantDetail = () => {
   if (!restaurant) return <p>Ресторан не найден</p>;
 
   return (
-    <div className="restaurant-detail">
+    <div className="restaurant-detail" id="main-content">
       <h2 className="restaurant-title">{restaurant.name}</h2>
 
       {/* Карусель изображений */}

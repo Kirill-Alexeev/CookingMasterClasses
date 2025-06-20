@@ -64,7 +64,7 @@ const RestaurantList = () => {
   };
 
   return (
-    <div className="restaurant-list">
+    <div className="restaurant-list" id="main-content">
       <h2 className="restaurant-list-title">Рестораны</h2>
 
       {isAdmin ? (

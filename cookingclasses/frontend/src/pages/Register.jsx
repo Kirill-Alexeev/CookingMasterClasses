@@ -39,7 +39,7 @@ function Register() {
   };
 
   return (
-    <div className="register">
+    <div className="register" id="main-content">
       <div className="register__container">
         <h1 className="register__title">Регистрация</h1>
         {error && <p className="register__error">{error}</p>}

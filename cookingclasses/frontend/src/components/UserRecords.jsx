@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getRecords } from "../api/workshops";
+import "../styles/components/_user-records.scss"
 
 const UserRecords = () => {
   const [records, setRecords] = useState([]);

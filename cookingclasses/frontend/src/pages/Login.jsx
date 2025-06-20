@@ -28,7 +28,7 @@ function Login() {
   };
 
   return (
-    <div className="login">
+    <div className="login" id="main-content">
       <div className="login__container">
         <h1 className="login__title">Вход</h1>
         {error && <p className="login__error">{error}</p>}

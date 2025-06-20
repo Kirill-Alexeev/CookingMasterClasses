@@ -2,7 +2,7 @@
 @use "../abstracts/mixins" as *;
 
 .widget {
-  background-color: white;
+  background-color: $header-text-color;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -15,30 +15,62 @@
   .widget-title {
     color: $primary-color;
     font-family: $headline-font-family;
-    font-size: 1.5rem;
+    font-size: 2rem;
     margin-bottom: 20px;
     border-bottom: 2px solid $accent-color;
     padding-bottom: 10px;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   .search-form {
     margin-bottom: 15px;
     display: flex;
+    gap: 10px;
 
     input {
       @include input-style;
       flex-grow: 1;
-      margin-right: 10px;
-      padding: 8px 12px;
+      font-family: $regular-font-family;
+      font-size: 2rem;
+      color: $text-color;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 6px 10px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 5px 8px;
+      }
     }
 
     button {
       @include button-style;
       background-color: $accent-color;
-      color: white;
+      color: $header-text-color;
+      font-family: $regular-font-family;
+      font-size: 2rem;
 
       &:hover {
         background-color: $accent-color-hover;
+      }
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 6px 12px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 5px 10px;
       }
     }
   }
@@ -55,6 +87,7 @@
       border-bottom: 1px solid #eee;
       position: relative;
       padding-left: 30px;
+      list-style: none;
 
       &::before {
         content: counter(item-counter);
@@ -62,19 +95,37 @@
         left: 0;
         top: 0;
         color: $accent-color;
+        font-family: $regular-font-family;
+        font-size: 2rem;
         font-weight: bold;
+
+        @media (max-width: $mid-width) {
+          font-size: 1.8rem;
+        }
+
+        @media (max-width: $min-width) {
+          font-size: 1.6rem;
+        }
       }
 
-      /* Убираем стандартную нумерацию списка */
-      list-style: none;
+      @media (max-width: $mid-width) {
+        padding-left: 25px;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+      }
+
+      @media (max-width: $min-width) {
+        padding-left: 20px;
+      }
     }
   }
 
   .widget-link {
     color: $primary-color;
     text-decoration: none;
+    font-family: $regular-font-family;
+    font-size: 2rem;
     font-weight: bold;
-    font-size: 1.1rem;
     display: block;
     margin-bottom: 5px;
 
@@ -82,47 +133,74 @@
       color: $accent-color-hover;
       text-decoration: underline;
     }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   .widget-details {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    font-size: 0.9rem;
+    font-family: $regular-font-family;
+    font-size: 2rem;
     color: $text-color;
 
     span {
       background-color: #f5f5f5;
-      padding: 3px 8px;
+      padding: 3px 10px;
       border-radius: 5px;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 2px 8px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 2px 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 5px;
     }
   }
 
   .widget-more-link {
     display: inline-block;
-    margin-top: 15px;
+    margin-top: 10px;
     color: $accent-color;
-    text-decoration: none;
+    font-family: $regular-font-family;
+    font-size: 2rem;
     font-weight: bold;
+    text-decoration: none;
 
     &:hover {
       color: $accent-color-hover;
       text-decoration: underline;
     }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
-}
 
-@media (max-width: $mid-width) {
-  .widget {
+  @media (max-width: $mid-width) {
     padding: 15px;
+  }
 
-    .widget-title {
-      font-size: 1.3rem;
-    }
-
-    .widget-details {
-      flex-direction: column;
-      gap: 5px;
-    }
+  @media (max-width: $min-width) {
+    padding: 10px;
   }
 }

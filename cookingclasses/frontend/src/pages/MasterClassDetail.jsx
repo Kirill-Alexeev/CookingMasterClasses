@@ -112,7 +112,7 @@ function MasterClassDetail() {
   if (!masterClass) return <div className="error">Мастер-класс не найден</div>;
 
   return (
-    <div className="mc-detail">
+    <div className="mc-detail" id="main-content">
       <div className="mc-detail__header">
         <Breadcrumbs />
         <div className="mc-detail__info">

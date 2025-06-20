@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, updateUserProfile } from "../api/users";
+import "../styles/pages/_edit-profile.scss";
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -59,7 +60,7 @@ const EditProfile = () => {
   };
 
   return (
-    <div className="edit-profile">
+    <div className="edit-profile" id="main-content">
       <h1>Редактировать профиль</h1>
       {error && <div className="error">{error}</div>}
       <form onSubmit={handleSubmit} className="edit-profile__form">

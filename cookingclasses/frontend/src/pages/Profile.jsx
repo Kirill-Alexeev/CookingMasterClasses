@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getCurrentUser, deleteUserProfile } from "../api/users";
 import UserRecords from "../components/UserRecords";
 import UserReviewsCommentsLikes from "../components/UserReviewsCommentsLikes";
+import "../styles/pages/_profile.scss";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -40,7 +41,7 @@ const Profile = () => {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="profile">
+    <div className="profile" id="main-content">
       <h1>Профиль пользователя</h1>
       <div className="profile__info">
         {user.image && (

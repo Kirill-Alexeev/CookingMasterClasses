@@ -2,22 +2,25 @@
 @use "../abstracts/mixins" as *;
 
 .footer {
-  width: 100vw;
-  padding: 10px 0 15px;
-  background-color: $text-color;
+  width: 100%;
   padding: 20px 0;
+  background-color: $text-color;
 
   &__wrapper {
     @include container-center;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
   }
 
   &__top {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
+
+    @media (max-width: $mid-width) {
+      align-items: center;
+    }
   }
 
   &__logo {
@@ -34,25 +37,53 @@
     &-img {
       height: 50px;
       width: auto;
+
+      @media (max-width: $mid-width) {
+        height: 45px;
+      }
+
+      @media (max-width: $min-width) {
+        height: 40px;
+      }
     }
   }
 
   &__nav {
     &-list {
       display: flex;
-      gap: 15px;
+      gap: 20px;
+      list-style: none;
+      padding: 0;
+
+      @media (max-width: $mid-width) {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
     }
 
     &-link {
       display: block;
       text-decoration: none;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: $regular-font-size;
-      padding: 5px 10px;
+      font-family: $regular-font-family;
+      font-size: 2rem;
+      padding: 8px 15px;
       color: $header-text-color;
+      transition: color 0.3s;
 
       &:hover {
+        color: $accent-color;
         text-decoration: underline;
+      }
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 6px 10px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 5px 8px;
       }
     }
   }
@@ -61,22 +92,43 @@
     display: flex;
     justify-content: space-between;
     margin-top: 40px;
+
+    @media (max-width: $mid-width) {
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
   }
 
   &__apps {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
 
     &-title {
       color: $header-text-color;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: $regular-font-size;
+      font-family: $regular-font-family;
+      font-size: 2rem;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        text-align: center;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+      }
     }
 
     &-links {
       display: flex;
-      gap: 10px;
+      gap: 15px;
+
+      @media (max-width: $min-width) {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
     }
 
     &-link {
@@ -88,15 +140,40 @@
       max-height: 65px;
       background-color: $primary-color;
       color: $header-text-color;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: $regular-font-size;
+      font-family: $regular-font-family;
+      font-size: 2rem;
       text-decoration: none;
       padding: 10px 20px;
       border-radius: 10px;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: $accent-color;
+      }
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 8px 15px;
+        max-width: 300px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 6px 12px;
+        max-width: 250px;
+      }
     }
 
     &-icon {
       width: 45px;
+
+      @media (max-width: $mid-width) {
+        width: 40px;
+      }
+
+      @media (max-width: $min-width) {
+        width: 35px;
+      }
     }
   }
 
@@ -104,39 +181,67 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    gap: 15px;
+
+    @media (max-width: $mid-width) {
+      align-items: center;
+    }
   }
 
   &__social {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 
     &-link {
       display: block;
+      transition: transform 0.3s;
+
+      &:hover {
+        transform: scale(1.1);
+      }
     }
 
     &-icon {
       width: 50px;
       height: auto;
+
+      @media (max-width: $mid-width) {
+        width: 45px;
+      }
+
+      @media (max-width: $min-width) {
+        width: 40px;
+      }
     }
   }
 
   &__contacts {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
 
     &-link {
       color: $header-text-color;
       text-decoration: none;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 1.6rem;
+      font-family: $regular-font-family;
+      font-size: 2rem;
       display: flex;
       align-items: center;
       gap: 10px;
+      transition: color 0.3s;
 
       &:hover {
+        color: $accent-color;
         text-decoration: underline;
+      }
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
       }
     }
 
@@ -146,14 +251,39 @@
       &:last-of-type {
         width: 25px;
       }
+
+      @media (max-width: $mid-width) {
+        width: 18px;
+
+        &:last-of-type {
+          width: 23px;
+        }
+      }
+
+      @media (max-width: $min-width) {
+        width: 16px;
+
+        &:last-of-type {
+          width: 21px;
+        }
+      }
     }
   }
 
   &__copyright {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 1.5rem;
+    font-family: $regular-font-family;
+    font-size: 2rem;
     font-weight: 300;
     color: $header-text-color;
     margin-top: 30px;
+    text-align: center;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 }

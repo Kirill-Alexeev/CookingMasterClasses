@@ -4,12 +4,10 @@
 @use "base/base";
 @use "base/typography";
 
-@use "components/chef-list";
 @use "components/footer";
 @use "components/header";
 @use "components/reviews";
 @use "components/like-button";
-@use "components/video-player";
 @use "components/record-item";
 @use "components/record-list";
 @use "components/breadcrumbs";
@@ -27,8 +25,8 @@
 @use "pages/edit-profile";
 @use "pages/restaurant-list";
 @use "pages/restaurant-detail";
-@use "pages/chef-detail";
-@use "pages/master-class-list";
+@use "pages/chef-list";
 @use "pages/master-class-detail";
 @use "pages/video-list";
 @use "pages/video-detail";
+@use "pages/master-class-list";

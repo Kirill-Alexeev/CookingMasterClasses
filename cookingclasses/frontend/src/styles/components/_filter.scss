@@ -5,27 +5,70 @@
   background: $header-text-color;
   padding: 20px;
   border-radius: 12px;
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
   font-family: $regular-font-family;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   align-self: flex-start;
+
+  @media (max-width: 764px) {
+    max-width: 600px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  @media (max-width: $min-width) {
+    padding: 8px;
+  }
 
   &__title {
     font-size: 2rem;
     font-weight: bold;
     color: $text-color;
     margin-bottom: 10px;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__group {
     margin-bottom: 15px;
+
+    @media (max-width: 600px) {
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: $min-width) {
+      margin-bottom: 10px;
+    }
   }
 
   &__group-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     color: $text-color;
     margin-bottom: 5px;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__range {
@@ -33,16 +76,34 @@
     max-width: 240px;
     flex-wrap: wrap;
     gap: 5px;
+
+    @media (max-width: 600px) {
+      max-width: 100%;
+      gap: 4px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 3px;
+    }
   }
 
   &__range-separator {
+    font-size: 2rem;
     font-weight: bold;
     color: $text-color;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
   }
 
   &__input {
     @include input-style;
-    font-size: 1.5rem;
+    font-size: 2rem;
     border: 1px solid $text-color;
     border-radius: 8px;
     padding: 8px;
@@ -52,34 +113,72 @@
       border-color: $accent-color;
       outline: none;
     }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+      padding: 6px;
+      max-width: 90px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      padding: 5px;
+      max-width: 80px;
+    }
   }
 
   &__checkbox-label {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: $text-color;
     margin-bottom: 5px;
     cursor: pointer;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
 
     .filter__checkbox {
       width: 16px;
       height: 16px;
       cursor: pointer;
       accent-color: $accent-color;
+
+      @media (max-width: $mid-width) {
+        width: 14px;
+        height: 14px;
+      }
+
+      @media (max-width: $min-width) {
+        width: 12px;
+        height: 12px;
+      }
     }
   }
 
   &__show-more {
     @include button-like-link;
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: $accent-color;
     cursor: pointer;
 
     &:hover {
       color: $accent-color-hover;
       text-decoration: underline;
+    }
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
     }
   }
 
@@ -88,14 +187,32 @@
     flex-direction: column;
     gap: 7px;
     margin-top: 10px;
+
+    @media (max-width: 600px) {
+      gap: 6px;
+    }
+
+    @media (max-width: $min-width) {
+      gap: 5px;
+    }
   }
 
   &__show-all,
   &__apply,
   &__reset {
     @include button-style;
-    font-size: 1.8rem;
+    font-size: 2rem;
     border-radius: 8px;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+      padding: 8px 16px;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+      padding: 6px 12px;
+    }
   }
 
   &__show-all {
