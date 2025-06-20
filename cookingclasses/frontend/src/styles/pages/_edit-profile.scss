@@ -1,0 +1,61 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.edit-profile {
+  @include container-center;
+  padding: 20px;
+
+  h1 {
+    font-family: $headline-font-family;
+    font-size: $headline-font-size;
+    color: $text-color;
+    margin-bottom: 20px;
+  }
+
+  &__form {
+    background: $header-text-color;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  &__input {
+    @include input-style;
+    padding: 10px;
+  }
+
+  &__actions {
+    @include flex-between;
+  }
+
+  &__button {
+    @include button-style;
+    background: $accent-color;
+    color: $header-text-color;
+
+    &:hover {
+      background: $accent-color-hover;
+    }
+
+    &--cancel {
+      background: $error-color;
+
+      &:hover {
+        background: red;
+      }
+    }
+  }
+
+  .error {
+    color: $error-color;
+    text-align: center;
+    font-size: $regular-font-size;
+  }
+
+  label {
+    font-size: $regular-font-size;
+    color: $text-color;
+  }
+}

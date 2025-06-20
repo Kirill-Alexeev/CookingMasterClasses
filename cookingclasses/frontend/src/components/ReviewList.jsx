@@ -2,15 +2,20 @@ import PropTypes from "prop-types";
 import ReviewItem from "./ReviewItem";
 
 function ReviewList({ reviews, onDelete, onUpdate, currentUser }) {
+  console.log("ReviewList reviews:", reviews); // Отладка
+
+  // Фильтруем отзывы, чтобы исключить некорректные
+  const validReviews = reviews.filter((review) => review && review.id);
+
   return (
     <div className="review-list">
-      <h3 className="review-list-title">Отзывы ({reviews.length})</h3>
+      <h3 className="review-list-title">Отзывы ({validReviews.length})</h3>
 
-      {reviews.length === 0 ? (
+      {validReviews.length === 0 ? (
         <p className="no-reviews">Пока нет отзывов. Будьте первым!</p>
       ) : (
         <div className="reviews-container">
-          {reviews.map((review) => (
+          {validReviews.map((review) => (
             <ReviewItem
               key={review.id}
               review={review}
@@ -30,9 +35,9 @@ ReviewList.propTypes = {
     PropTypes.shape({
       id: PropTypes.number.isRequired,
       user: PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        username: PropTypes.string.isRequired,
-      }).isRequired,
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        username: PropTypes.string,
+      }), // user теперь необязательный
       rating: PropTypes.number.isRequired,
       comment: PropTypes.string.isRequired,
       created_at: PropTypes.string.isRequired,
@@ -41,8 +46,8 @@ ReviewList.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    username: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    username: PropTypes.string,
     isAdmin: PropTypes.bool,
   }),
 };

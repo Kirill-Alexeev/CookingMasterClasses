@@ -48,7 +48,6 @@ function MasterClassList() {
 
       try {
         const filters = getFiltersFromURL();
-
         const apiFilters = {
           min_price: filters.minPrice || undefined,
           max_price: filters.maxPrice || undefined,
@@ -68,13 +67,17 @@ function MasterClassList() {
         };
 
         const response = await masterClassesApi.getList(apiFilters);
-        setMasterClasses(
-          Array.isArray(response.results) ? response.results : response
-        );
+        console.log("MasterClasses response:", response); // Отладка
+        const data = Array.isArray(response.results)
+          ? response.results
+          : Array.isArray(response)
+          ? response
+          : [];
+        setMasterClasses(data.filter((mc) => mc && mc.id)); // Фильтрация некорректных элементов
         setPagination({
           next: response.next,
           previous: response.previous,
-          count: response.count || 0,
+          count: response.count || data.length || 0,
         });
       } catch (err) {
         console.error("Ошибка загрузки мастер-классов:", err);
@@ -101,14 +104,12 @@ function MasterClassList() {
 
   const handleFilterChange = (newFilters) => {
     const params = new URLSearchParams();
-
     if (newFilters.min_price) params.set("min_price", newFilters.min_price);
     if (newFilters.max_price) params.set("max_price", newFilters.max_price);
     if (newFilters.min_rating) params.set("min_rating", newFilters.min_rating);
     if (newFilters.max_rating) params.set("max_rating", newFilters.max_rating);
     if (newFilters.min_date) params.set("min_date", newFilters.min_date);
     if (newFilters.max_date) params.set("max_date", newFilters.max_date);
-
     (newFilters.complexity || []).forEach((c) =>
       params.append("complexity", c)
     );
@@ -119,7 +120,6 @@ function MasterClassList() {
       params.append("restaurant_id", id)
     );
     (newFilters.chef_id || []).forEach((id) => params.append("chef_id", id));
-
     navigate({ search: params.toString() });
   };
 
@@ -162,8 +162,6 @@ function MasterClassList() {
         <Breadcrumbs />
         <h1 className="master-classes__title">Мастер-классы</h1>
         <div className="master-classes__content">
-          {" "}
-          {/* Добавлено: новая обертка */}
           <div className="master-classes__controls">
             <Sort
               sort={{
@@ -189,14 +187,16 @@ function MasterClassList() {
                     >
                       <div className="card__img-wrapper">
                         <img
-                          src={mc.image}
-                          alt={mc.title}
+                          src={mc.image || "/static/images/placeholder.jpg"} // Запасное изображение
+                          alt={mc.title || "Мастер-класс"}
                           className="card__img"
                         />
                       </div>
                       <div className="card__content">
                         <div className="card__top">
-                          <h3 className="card__title">{mc.title}</h3>
+                          <h3 className="card__title">
+                            {mc.title || "Без названия"}
+                          </h3>
                           <div className="card__rating">
                             <img
                               src={raitingStarIcon}
@@ -212,7 +212,9 @@ function MasterClassList() {
                         <p className="card__desc">
                           {truncateDescription(mc.description)}
                         </p>
-                        <p className="card__price">{mc.price} ₽</p>
+                        <p className="card__price">
+                          {mc.price ? `${mc.price} ₽` : "Цена не указана"}
+                        </p>
                         <button className="card__button">Записаться</button>
                       </div>
                     </NavLink>

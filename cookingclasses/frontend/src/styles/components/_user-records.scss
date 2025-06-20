@@ -1,0 +1,38 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.user-records {
+  @include container-center;
+  padding: 20px;
+
+  h2 {
+    font-family: $headline-font-family;
+    font-size: $headline-font-size;
+    color: $text-color;
+    margin-bottom: 20px;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+  }
+
+  &__item {
+    background: $header-text-color;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+
+    p {
+      font-size: $regular-font-size;
+      color: $text-color;
+      margin: 5px 0;
+    }
+  }
+
+  .error {
+    color: $error-color;
+    text-align: center;
+    font-size: $regular-font-size;
+  }
+}

@@ -16,18 +16,24 @@ function ReviewForm({ masterClassId, onReviewAdded, currentUser }) {
 
     try {
       const newReview = {
-        master_class: parseInt(masterClassId), // Приводим к числу
+        master_class: parseInt(masterClassId),
         rating,
         comment,
-        user: currentUser.id,
       };
-      console.log("Отправляемые данные:", newReview); // Отладка
+      console.log("Отправка отзыва:", newReview);
       const response = await createReview(newReview);
+      console.log("Отзыв создан:", response);
       onReviewAdded(response);
       setRating(0);
       setComment("");
     } catch (err) {
-      setError(err.error || "Ошибка при отправке отзыва");
+      console.error("Ошибка при создании отзыва:", err);
+      const errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.error ||
+        err.message ||
+        "Ошибка при отправке отзыва";
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -62,7 +68,7 @@ function ReviewForm({ masterClassId, onReviewAdded, currentUser }) {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           required
-          minLength="10"
+          minLength="2"
           className="review-textarea"
         />
       </div>
@@ -83,9 +89,10 @@ ReviewForm.propTypes = {
     .isRequired,
   onReviewAdded: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    username: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    username: PropTypes.string,
     isAdmin: PropTypes.bool,
+    isStaff: PropTypes.bool,
   }),
 };
 

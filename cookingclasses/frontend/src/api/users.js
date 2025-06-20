@@ -84,3 +84,14 @@ export const getCurrentUser = async () => {
     );
   }
 };
+
+export const deleteUserProfile = async () => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/delete/`, {
+      headers: { "X-CSRFToken": getCsrfToken() },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: "Не удалось удалить профиль" };
+  }
+};

@@ -11,7 +11,6 @@ from .views import (
     VideoViewSet,
     LikeViewSet,
     CommentViewSet,
-    search,
 )
 
 router = DefaultRouter()
@@ -28,5 +27,4 @@ router.register(r"comments", CommentViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("search/", search, name="search"),
 ]

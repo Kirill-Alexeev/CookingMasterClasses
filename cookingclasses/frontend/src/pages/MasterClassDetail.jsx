@@ -14,35 +14,50 @@ function MasterClassDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [reviewsError, setReviewsError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setReviews([]);
         setLoading(true);
         setError(null);
-        const [masterClassData, reviewsData, userData] = await Promise.all([
-          masterClassesApi.getDetail(id),
-          getReviews({ master_class: id }),
-          getCurrentUser().catch(() => null), // Обработка неавторизованного пользователя
-        ]);
+        setReviews([]);
+        setReviewsError(null);
+
+        // Загружаем данные мастер-класса
+        const masterClassData = await masterClassesApi.getDetail(id);
+        console.log("MasterClass data:", masterClassData);
         setMasterClass(masterClassData);
-        setReviews(reviewsData);
+
+        // Загружаем отзывы отдельно
+        try {
+          const reviewsData = await getReviews({ master_class: id });
+          console.log("Reviews data:", reviewsData);
+          setReviews(reviewsData);
+        } catch (reviewsErr) {
+          console.error("Ошибка загрузки отзывов:", reviewsErr);
+          setReviewsError("Не удалось загрузить отзывы");
+        }
+
+        // Загружаем текущего пользователя
+        const userData = await getCurrentUser().catch(() => null);
+        console.log("Current user:", userData);
         setCurrentUser(userData);
-        console.log("Current user:", userData); // Отладка
+
         setLoading(false);
       } catch (err) {
-        setError(err.error?.message || "Ошибка при загрузке данных");
+        console.error("Ошибка загрузки данных:", err);
+        setError(err.message || "Ошибка при загрузке данных мастер-класса");
         setLoading(false);
       }
     };
-
     fetchData();
   }, [id]);
 
   const handleReviewAdded = (newReview) => {
     setReviews([newReview, ...reviews]);
+    setReviewsError(null);
   };
 
   const handleReviewDeleted = (reviewId) => {
@@ -81,8 +96,20 @@ function MasterClassDetail() {
         });
   };
 
+  console.log(
+    "Render: loading =",
+    loading,
+    "error =",
+    error,
+    "masterClass =",
+    masterClass,
+    "reviewsError =",
+    reviewsError
+  );
+
   if (loading) return <div className="loading">Загрузка...</div>;
   if (error) return <div className="error">{error}</div>;
+  if (!masterClass) return <div className="error">Мастер-класс не найден</div>;
 
   return (
     <div className="mc-detail">
@@ -91,22 +118,30 @@ function MasterClassDetail() {
         <div className="mc-detail__info">
           <div className="mc-detail__info-top">
             <img
-              src={masterClass.image}
-              alt={masterClass.title}
+              src={masterClass.image || "/static/images/placeholder.jpg"}
+              alt={masterClass.title || "Мастер-класс"}
               className="mc-detail__info-img"
             />
-            <h1 className="mc-detail__title">{masterClass.title}</h1>
+            <h1 className="mc-detail__title">
+              {masterClass.title || "Без названия"}
+            </h1>
           </div>
           <div className="mc-detail__info-bottom">
-            <p className="mc-detail__price">{masterClass.price} руб.</p>
+            <p className="mc-detail__price">
+              {masterClass.price
+                ? `${masterClass.price} руб.`
+                : "Цена не указана"}
+            </p>
             <p className="mc-detail__seats">
-              {masterClass.seats_available} из {masterClass.seats_total} мест
+              {masterClass.seats_available !== undefined &&
+              masterClass.seats_total !== undefined
+                ? `${masterClass.seats_available} из ${masterClass.seats_total} мест`
+                : "Места не указаны"}
             </p>
             <NavLink
               to={`/record`}
-              state={{ title: "Запись на мастер-класс" }}
+              state={{ title: "Запись на мастер-класс", masterClassId: id }}
               className="mc-detail__signup-button"
-              end
             >
               Записаться
             </NavLink>
@@ -151,13 +186,13 @@ function MasterClassDetail() {
             {masterClass.chefs.map((chef) => (
               <div key={chef.id} className="mc-detail__chef">
                 <img
-                  src={chef.image}
-                  alt={`${chef.last_name} ${chef.first_name}`}
+                  src={chef.image || "/static/images/placeholder.jpg"}
+                  alt={`${chef.last_name || ""} ${chef.first_name || ""}`}
                   className="mc-detail__chef-image"
                 />
                 <div className="mc-detail__chef-info">
                   <h3 className="mc-detail__chef-name">
-                    {chef.last_name} {chef.first_name}
+                    {chef.last_name || ""} {chef.first_name || ""}
                   </h3>
                   <p className="mc-detail__chef-bio">
                     {chef.profession || "Профессия не указана"}
@@ -177,6 +212,7 @@ function MasterClassDetail() {
           onReviewAdded={handleReviewAdded}
           currentUser={currentUser}
         />
+        {reviewsError && <div className="error">{reviewsError}</div>}
         <ReviewList
           reviews={reviews}
           onDelete={handleReviewDeleted}
@@ -190,9 +226,10 @@ function MasterClassDetail() {
 
 MasterClassDetail.propTypes = {
   currentUser: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    username: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    username: PropTypes.string,
     isAdmin: PropTypes.bool,
+    isStaff: PropTypes.bool,
   }),
 };
 

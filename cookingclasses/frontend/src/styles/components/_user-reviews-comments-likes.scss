@@ -1,56 +1,51 @@
 @use "../abstracts/variables" as *;
 @use "../abstracts/mixins" as *;
 
-.profile {
+.user-reviews-comments-likes {
   @include container-center;
   padding: 20px;
 
-  h1 {
+  h2,
+  h3 {
     font-family: $headline-font-family;
     font-size: $headline-font-size;
     color: $text-color;
     margin-bottom: 20px;
   }
 
-  &__info {
+  h3 {
+    font-size: $regular-font-size * 1.2;
+  }
+
+  &__section {
+    margin-bottom: 30px;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+  }
+
+  &__item {
     background: $header-text-color;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 
     p {
       font-size: $regular-font-size;
       color: $text-color;
-      margin: 10px 0;
+      margin: 5px 0;
     }
-  }
-
-  &__image {
-    max-width: 150px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-  }
-
-  &__actions {
-    @include flex-between;
-    margin-top: 20px;
   }
 
   &__button {
     @include button-style;
-    background: $accent-color;
+    background: $error-color;
     color: $header-text-color;
 
     &:hover {
-      background: $accent-color-hover;
-    }
-
-    &--delete {
-      background: $error-color;
-
-      &:hover {
-        background: red;
-      }
+      background: red;
     }
   }
 

@@ -1,9 +1,8 @@
 from datetime import timedelta
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, F
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as filters
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import (
@@ -32,7 +31,7 @@ from .serializers import (
 )
 from .filters import MasterClassFilter
 from django.db.models import Q
-from django.http import JsonResponse
+from django_filters import rest_framework as filters
 
 
 class MasterClassViewSet(viewsets.ModelViewSet):
@@ -79,15 +78,11 @@ class ChefViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        
-        chefs = self.get_queryset() if self.action == 'list' else [self.get_object()]
+        chefs = self.get_queryset() if self.action == "list" else [self.get_object()]
         restaurants = {chef.restaurant for chef in chefs if chef.restaurant}
-        
-        context['restaurants_data'] = {
-            r.id: RestaurantSerializer(r, context=context).data
-            for r in restaurants
+        context["restaurants_data"] = {
+            r.id: RestaurantSerializer(r, context=context).data for r in restaurants
         }
-        
         return context
 
 
@@ -95,52 +90,6 @@ class RestaurantImageViewSet(viewsets.ModelViewSet):
     queryset = RestaurantImage.objects.all().select_related("restaurant")
     serializer_class = RestaurantImageSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-
-
-class RecordViewSet(viewsets.ModelViewSet):
-    queryset = Record.objects.all().select_related("user", "master_class")
-    serializer_class = RecordSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        master_class_id = request.data.get("master_class")
-        try:
-            master_class = MasterClass.objects.get(id=master_class_id)
-        except MasterClass.DoesNotExist:
-            return Response(
-                {"error": "Мастер-класс не найден"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        if master_class.seats_available <= 0:
-            return Response(
-                {"error": "Нет свободных мест"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        master_class.seats_available -= 1
-        master_class.save()
-
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all().select_related("user", "master_class")
-    serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["master_class"]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
 
 
 class VideoFilter(filters.FilterSet):
@@ -176,7 +125,6 @@ class VideoViewSet(viewsets.ModelViewSet):
             .get_queryset()
             .annotate(actual_likes_count=Count("like_set", distinct=True))
         )
-
         filter_params = self.request.query_params
         if "max_duration_seconds" in filter_params:
             try:
@@ -200,7 +148,6 @@ class VideoViewSet(viewsets.ModelViewSet):
                 )
             except ValueError:
                 pass
-
         ordering = filter_params.get("ordering", "-title")
         allowed_fields = [
             "title",
@@ -214,13 +161,11 @@ class VideoViewSet(viewsets.ModelViewSet):
             queryset = queryset.order_by(ordering)
         else:
             queryset = queryset.order_by("-title")
-
         return queryset
 
     def list(self, request, *args, **kwargs):
         total_likes = self.get_queryset().aggregate(total_likes=Sum("likes_count"))
         response = super().list(request, *args, **kwargs)
-
         result = {
             "results": (
                 response.data
@@ -229,7 +174,6 @@ class VideoViewSet(viewsets.ModelViewSet):
             ),
             "total_likes": total_likes["total_likes"] or 0,
         }
-
         if not isinstance(response.data, list):
             result.update(
                 {
@@ -238,9 +182,88 @@ class VideoViewSet(viewsets.ModelViewSet):
                     "previous": response.data.get("previous"),
                 }
             )
-
         response.data = result
         return response
+
+
+class RecordViewSet(viewsets.ModelViewSet):
+    queryset = Record.objects.all().select_related("user", "master_class")
+    serializer_class = RecordSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            return Record.objects.filter(user=self.request.user).select_related(
+                "master_class"
+            )
+        return Record.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        master_class_id = request.data.get("master_class")
+        try:
+            master_class = MasterClass.objects.get(id=master_class_id)
+        except MasterClass.DoesNotExist:
+            return Response(
+                {"error": "Мастер-класс не найден"}, status=status.HTTP_404_NOT_FOUND
+            )
+        if master_class.seats_available <= 0:
+            return Response(
+                {"error": "Нет свободных мест"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        MasterClass.objects.filter(id=master_class_id).update(
+            seats_available=F("seats_available") - 1
+        )
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Record.objects.filter(id=instance.id, user=request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all().select_related("user", "master_class")
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["master_class"]
+
+    def get_queryset(self):
+        master_class_id = self.request.query_params.get("master_class")
+        print("Запрос отзывов, master_class_id:", master_class_id)  # Отладка
+        if master_class_id:
+            return Review.objects.filter(
+                master_class__id=master_class_id
+            ).select_related("user", "master_class")
+        return Review.objects.all().select_related("user", "master_class")
+
+    def perform_create(self, serializer):
+        try:
+            serializer.save(user=self.request.user)
+            print("Отзыв сохранён, user:", self.request.user.username)  # Отладка
+        except Exception as e:
+            print("Ошибка в perform_create:", str(e))
+            raise
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user != request.user and not (
+            request.user.is_superuser or request.user.is_staff
+        ):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -250,18 +273,29 @@ class LikeViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["video", "user"]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def get_queryset(self):
-        queryset = super().get_queryset()
-        video = self.request.query_params.get("video")
-        user = self.request.query_params.get("user")
-        if video:
-            queryset = queryset.filter(video__id=video)
-        if user:
-            queryset = queryset.filter(user__id=user)
-        return queryset
+        video_id = self.request.query_params.get("video")
+        print("Запрос лайков, video_id:", video_id)  # Отладка
+        if video_id:
+            return Like.objects.filter(video__id=video_id).select_related("video")
+        return Like.objects.all().select_related("video")
+
+    def perform_create(self, serializer):
+        try:
+            serializer.save(user=self.request.user)
+            print("Лайк сохранён, user:", self.request.user.username)  # Отладка
+        except Exception as e:
+            print("Ошибка в perform_create:", str(e))
+            raise
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user != request.user and not (
+            request.user.is_superuser or request.user.is_staff
+        ):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -271,41 +305,28 @@ class CommentViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["video"]
 
+    def get_queryset(self):
+        video_id = self.request.query_params.get("video")
+        print("Запрос комментариев, video_id:", video_id)  # Отладка
+        if video_id:
+            return Comment.objects.filter(video__id=video_id).select_related(
+                "user", "video"
+            )
+        return Comment.objects.all().select_related("user", "video")
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        try:
+            serializer.save(user=self.request.user)
+            print("Комментарий сохранён, user:", self.request.user.username)  # Отладка
+        except Exception as e:
+            print("Ошибка в perform_create:", str(e))
+            raise
 
-
-def search(request):
-    if request.method == "POST":
-        query = request.POST.get("query", "").strip()
-
-        if not query:
-            return JsonResponse({"error": "Пустой запрос"}, status=400)
-
-        # Ищем мастер-классы
-        master_classes = MasterClass.objects.filter(
-            Q(title__icontains=query) | Q(description__icontains=query)
-        ).values("id", "title")[:10]
-
-        # Ищем шеф-поваров
-        chefs = Chef.objects.filter(
-            Q(first_name__contains=query) | Q(last_name__contains=query)
-        ).values("id", "first_name", "last_name")[:10]
-
-        return JsonResponse(
-            {
-                "master_classes": [
-                    {"id": mc["id"], "title": mc["title"], "type": "Мастер-класс"}
-                    for mc in master_classes
-                ],
-                "chefs": [
-                    {
-                        "id": c["id"],
-                        "name": f"{c['first_name']} {c['last_name']}",
-                        "type": "Шеф-повар",
-                    }
-                    for c in chefs
-                ],
-            }
-        )
-    return JsonResponse({"error": "Метод не разрешен"}, status=405)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user != request.user and not (
+            request.user.is_superuser or request.user.is_staff
+        ):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

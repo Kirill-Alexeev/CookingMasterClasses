@@ -1,69 +1,83 @@
 import { useState, useEffect } from "react";
-import { getUserProfile, updateUserProfile } from "../api/users";
+import { useNavigate } from "react-router-dom";
+import { getCurrentUser, deleteUserProfile } from "../api/users";
+import UserRecords from "../components/UserRecords";
+import UserReviewsCommentsLikes from "../components/UserReviewsCommentsLikes";
 
-function Profile() {
+const Profile = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [image, setImage] = useState(null);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getUserProfile()
-      .then((data) => {
-        setUser(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.error);
-        setLoading(false);
-      });
+    const fetchUser = async () => {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData);
+      } catch {
+        setError("Не удалось загрузить профиль");
+      }
+    };
+    fetchUser();
   }, []);
 
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+  const handleEdit = () => {
+    navigate("/profile/edit");
   };
 
-  const handleImageUpload = async () => {
-    if (!image) return;
-    const formData = new FormData();
-    formData.append("image", image);
-    try {
-      const updatedUser = await updateUserProfile(formData);
-      setUser(updatedUser);
-      setImage(null);
-    } catch (err) {
-      setError(err.error || "Ошибка загрузки фото");
+  const handleDelete = async () => {
+    if (window.confirm("Вы уверены, что хотите удалить профиль?")) {
+      try {
+        await deleteUserProfile();
+        navigate("/");
+      } catch {
+        setError("Не удалось удалить профиль");
+      }
     }
   };
 
-  if (loading) return <div>Загрузка...</div>;
-  if (error) return <div>{error}</div>;
+  if (!user) return <div>Загрузка...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
-    <div>
-      <h1>Профиль</h1>
-      {user && (
-        <div>
-          <p>Имя: {user.first_name}</p>
-          <p>Фамилия: {user.last_name}</p>
-          <p>Логин: {user.username}</p>
-          <p>Email: {user.email}</p>
-          <div>
-            <h3>Фото профиля</h3>
-            <img
-              src={user.image}
-              alt="Profile"
-              style={{ width: "150px", height: "150px" }}
-            />
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            {image && (
-              <button onClick={handleImageUpload}>Загрузить фото</button>
-            )}
-          </div>
+    <div className="profile">
+      <h1>Профиль пользователя</h1>
+      <div className="profile__info">
+        {user.image && (
+          <img src={user.image} alt="Фото профиля" className="profile__image" />
+        )}
+        <p>
+          <strong>Логин:</strong> {user.username}
+        </p>
+        <p>
+          <strong>Имя:</strong> {user.first_name}
+        </p>
+        <p>
+          <strong>Фамилия:</strong> {user.last_name}
+        </p>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
+        <p>
+          <strong>Дата регистрации:</strong>{" "}
+          {new Date(user.date_joined).toLocaleDateString()}
+        </p>
+        <div className="profile__actions">
+          <button className="profile__button" onClick={handleEdit}>
+            Редактировать
+          </button>
+          <button
+            className="profile__button profile__button--delete"
+            onClick={handleDelete}
+          >
+            Удалить профиль
+          </button>
         </div>
-      )}
+      </div>
+      <UserRecords />
+      <UserReviewsCommentsLikes />
     </div>
   );
-}
+};
 
 export default Profile;

@@ -11,25 +11,24 @@ function ReviewItem({ review, onDelete, onUpdate, currentUser }) {
   // Отладка: логируем данные
   console.log("ReviewItem props:", {
     reviewId: review.id,
-    reviewUserId: review.user.id,
     reviewUser: review.user,
     currentUser: currentUser,
   });
 
-  // Приводим id к числу и проверяем isAdmin или is_staff
+  // Проверяем, может ли пользователь редактировать/удалять
   const canEdit =
     currentUser &&
-    (parseInt(currentUser.id) === parseInt(review.user.id) ||
-      currentUser.isAdmin === true ||
-      currentUser.is_staff === true);
+    ((review.user && parseInt(currentUser.id) === parseInt(review.user.id)) ||
+      currentUser.isAdmin ||
+      currentUser.isStaff);
 
   console.log(
     "canEdit:",
     canEdit,
     "isAdmin:",
     currentUser?.isAdmin,
-    "is_staff:",
-    currentUser?.is_staff
+    "isStaff:",
+    currentUser?.isStaff
   );
 
   const handleUpdate = async () => {
@@ -42,15 +41,19 @@ function ReviewItem({ review, onDelete, onUpdate, currentUser }) {
       setIsEditing(false);
     } catch (error) {
       console.error("Ошибка при обновлении отзыва:", error);
+      alert("Не удалось обновить отзыв");
     }
   };
 
   const handleDelete = async () => {
-    try {
-      await deleteReview(review.id);
-      onDelete(review.id);
-    } catch (error) {
-      console.error("Ошибка при удалении отзыва:", error);
+    if (window.confirm("Удалить отзыв?")) {
+      try {
+        await deleteReview(review.id);
+        onDelete(review.id);
+      } catch (error) {
+        console.error("Ошибка при удалении отзыва:", error);
+        alert("Не удалось удалить отзыв");
+      }
     }
   };
 
@@ -59,11 +62,13 @@ function ReviewItem({ review, onDelete, onUpdate, currentUser }) {
       <div className="review-header">
         <div className="review-user">
           <img
-            src={review.user.avatar || "/default-avatar.png"}
-            alt={review.user.username}
+            src={review.user?.avatar || "/static/images/placeholder.jpg"}
+            alt={review.user?.username || "Аноним"}
             className="review-avatar"
           />
-          <span className="review-username">{review.user.username}</span>
+          <span className="review-username">
+            {review.user?.username || "Аноним"}
+          </span>
         </div>
         <div className="review-date">
           {new Date(review.created_at).toLocaleDateString("ru-RU")}
@@ -115,10 +120,12 @@ ReviewItem.propTypes = {
   review: PropTypes.shape({
     id: PropTypes.number.isRequired,
     user: PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-      username: PropTypes.string.isRequired,
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      username: PropTypes.string,
       avatar: PropTypes.string,
-    }).isRequired,
+      isAdmin: PropTypes.bool,
+      isStaff: PropTypes.bool,
+    }),
     rating: PropTypes.number.isRequired,
     comment: PropTypes.string.isRequired,
     created_at: PropTypes.string.isRequired,
@@ -126,10 +133,10 @@ ReviewItem.propTypes = {
   onDelete: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired,
   currentUser: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    username: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    username: PropTypes.string,
     isAdmin: PropTypes.bool,
-    is_staff: PropTypes.bool,
+    isStaff: PropTypes.bool,
   }),
 };
 

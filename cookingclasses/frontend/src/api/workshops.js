@@ -112,14 +112,14 @@ export const masterClassesApi = {
 };
 
 // Записи
-export const getRecords = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/records/`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить записи" };
-  }
-};
+// export const getRecords = async () => {
+//   try {
+//     const response = await axios.get(`${API_BASE_URL}/records/`);
+//     return response.data;
+//   } catch (error) {
+//     throw error.response?.data || { error: "Не удалось загрузить записи" };
+//   }
+// };
 
 // Отзывы
 export const createReview = async (reviewData) => {
@@ -158,14 +158,14 @@ export const updateReview = async (id, reviewData) => {
   }
 };
 
-export const getReviews = async (params = {}) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/reviews/`, { params });
-    return response.data.results || response.data;
-  } catch (error) {
-    throw error.response?.data || { error: "Не удалось загрузить отзывы" };
-  }
-};
+// export const getReviews = async (params = {}) => {
+//   try {
+//     const response = await axios.get(`${API_BASE_URL}/reviews/`, { params });
+//     return response.data.results || response.data;
+//   } catch (error) {
+//     throw error.response?.data || { error: "Не удалось загрузить отзывы" };
+//   }
+// };
 
 // Видео
 export const getVideos = async (filters = {}, page = 1) => {
@@ -212,17 +212,17 @@ export const getVideoDetail = async (id) => {
   }
 };
 
-export const getComments = async (params = {}) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/comments/`, { params });
-    return response.data.results || response.data;
-  } catch (error) {
-    throw {
-      error: error.response?.data?.detail || "Ошибка загрузки комментариев",
-      status: error.response?.status,
-    };
-  }
-};
+// export const getComments = async (params = {}) => {
+//   try {
+//     const response = await axios.get(`${API_BASE_URL}/comments/`, { params });
+//     return response.data.results || response.data;
+//   } catch (error) {
+//     throw {
+//       error: error.response?.data?.detail || "Ошибка загрузки комментариев",
+//       status: error.response?.status,
+//     };
+//   }
+// };
 
 export const createComment = async (commentData) => {
   try {
@@ -275,22 +275,22 @@ export const deleteComment = async (id) => {
   }
 };
 
-export const getLikes = async (params = {}) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/likes/`, {
-      params,
-      withCredentials: true, // Для отправки cookies с токеном авторизации
-    });
-    // Обрабатываем возможные форматы ответа
-    const data = response.data.results || response.data || [];
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    throw {
-      error: error.response?.data?.detail || "Ошибка загрузки лайков",
-      status: error.response?.status,
-    };
-  }
-};
+// export const getLikes = async (params = {}) => {
+//   try {
+//     const response = await axios.get(`${API_BASE_URL}/likes/`, {
+//       params,
+//       withCredentials: true, // Для отправки cookies с токеном авторизации
+//     });
+//     // Обрабатываем возможные форматы ответа
+//     const data = response.data.results || response.data || [];
+//     return Array.isArray(data) ? data : [];
+//   } catch (error) {
+//     throw {
+//       error: error.response?.data?.detail || "Ошибка загрузки лайков",
+//       status: error.response?.status,
+//     };
+//   }
+// };
 
 export const createLike = async (likeData) => {
   try {
@@ -329,5 +329,58 @@ export const deleteLike = async ({ video, user }) => {
       error: error.response?.data?.detail || "Ошибка при удалении лайка",
       status: error.response?.status,
     };
+  }
+};
+
+export const getRecords = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/records/`);
+    console.log("API getRecords response:", response.data);
+    return response.data.results || response.data || [];
+  } catch (error) {
+    console.error(
+      "API getRecords error:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || { error: "Не удалось загрузить записи" };
+  }
+};
+
+export const getReviews = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/reviews/`);
+    console.log("API getReviews response:", response.data);
+    return response.data.results || response.data || [];
+  } catch (error) {
+    console.error(
+      "API getReviews error:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || { error: "Не удалось загрузить отзывы" };
+  }
+};
+
+export const getComments = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/comments/`);
+    console.log("API getComments response:", response.data);
+    return response.data.results || response.data || [];
+  } catch (error) {
+    console.error(
+      "API getComments error:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || { error: "Не удалось загрузить комментарии" };
+  }
+};
+
+export const getLikes = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/likes/`);
+    console.log("API getLikes response:", response.data);
+    return response.data.results || response.data || [];
+  } catch (error) {
+    console.error("API getLikes error:", error.response?.data || error.message);
+    throw error.response?.data || { error: "Не удалось загрузить лайки" };
   }
 };
