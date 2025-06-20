@@ -1,0 +1,257 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.restaurant-detail {
+  @include container-center;
+  padding: 20px;
+
+  .restaurant-title {
+    font-family: $headline-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    margin-bottom: 20px;
+    text-align: center;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
+  }
+
+  .carousel {
+    position: relative;
+    width: 100%;
+    max-height: 400px;
+    margin-bottom: 20px;
+
+    .carousel-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+
+      @media (max-width: $mid-width) {
+        height: 300px;
+      }
+
+      @media (max-width: $min-width) {
+        height: 200px;
+      }
+    }
+
+    .carousel-button {
+      @include button-style;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: $header-text-color;
+      font-size: 2rem;
+
+      &.prev {
+        left: 10px;
+      }
+
+      &.next {
+        right: 10px;
+      }
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 8px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 6px;
+      }
+    }
+
+    .carousel-indicators {
+      @include flex-center;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      gap: 10px;
+
+      .indicator {
+        width: 10px;
+        height: 10px;
+        background-color: $header-text-color;
+        border-radius: 50%;
+        cursor: pointer;
+
+        &.active {
+          background-color: $accent-color;
+        }
+
+        @media (max-width: $min-width) {
+          width: 8px;
+          height: 8px;
+        }
+      }
+    }
+  }
+
+  .no-image {
+    @include flex-center;
+    width: 100%;
+    height: 400px;
+    background-color: $header-text-color;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: $text-color;
+    font-family: $regular-font-family;
+    font-size: 2rem;
+
+    @media (max-width: $mid-width) {
+      height: 300px;
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      height: 200px;
+      font-size: 1.6rem;
+    }
+  }
+
+  .restaurant-description,
+  .restaurant-address,
+  .restaurant-phone,
+  .restaurant-email,
+  .restaurant-website,
+  .restaurant-opening-hours,
+  .restaurant-created-at,
+  .restaurant-updated-at {
+    font-family: $regular-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    margin-bottom: 15px;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
+
+    strong {
+      color: $text-color;
+    }
+  }
+
+  .admin-controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .edit-button,
+    .delete-button {
+      @include button-style;
+      font-family: $regular-font-family;
+      font-size: 2rem;
+      color: $header-text-color;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 8px 16px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 6px 12px;
+      }
+    }
+
+    .edit-button {
+      background-color: $accent-color;
+
+      &:hover {
+        background-color: $accent-color-hover;
+      }
+    }
+
+    .delete-button {
+      background-color: $error-color;
+
+      &:hover {
+        background-color: $error-color;
+      }
+    }
+
+    .edit-form {
+      background-color: $header-text-color;
+      padding: 20px;
+      border-radius: 8px;
+
+      h3 {
+        font-family: $headline-font-family;
+        font-size: 2rem;
+        margin-bottom: 15px;
+
+        @media (max-width: $mid-width) {
+          font-size: 1.8rem;
+        }
+
+        @media (max-width: $min-width) {
+          font-size: 1.6rem;
+        }
+      }
+
+      input,
+      textarea {
+        @include input-style;
+        font-family: $regular-font-family;
+        color: $text-color;
+        font-size: 2rem;
+
+        @media (max-width: $mid-width) {
+          font-size: 1.8rem;
+          padding: 8px;
+        }
+
+        @media (max-width: $min-width) {
+          font-size: 1.6rem;
+          padding: 6px;
+        }
+      }
+
+      textarea {
+        height: 100px;
+        resize: vertical;
+      }
+
+      button {
+        @include button-style;
+        background-color: $accent-color;
+        color: $header-text-color;
+        font-family: $regular-font-family;
+        font-size: 2rem;
+
+        &:hover {
+          background-color: $accent-color-hover;
+        }
+
+        @media (max-width: $mid-width) {
+          font-size: 1.8rem;
+          padding: 8px 16px;
+        }
+
+        @media (max-width: $min-width) {
+          font-size: 1.6rem;
+          padding: 6px 12px;
+        }
+      }
+    }
+  }
+}

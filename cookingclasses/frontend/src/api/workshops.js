@@ -23,24 +23,93 @@ export const getCuisines = async () => {
 };
 
 // Рестораны
-export const getRestaurants = async () => {
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+export const getRestaurants = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/restaurants/`);
+    const response = await axios.get(`${API_BASE_URL}/restaurants/`, {
+      headers: getAuthHeader(),
+      params,
+      paramsSerializer: (params) =>
+        qs.stringify(params, { arrayFormat: "repeat" }),
+    });
     return response.data.map((restaurant) => ({
       ...restaurant,
       selected: false,
     }));
   } catch (error) {
+    console.error("Get restaurants error:", error.response?.data);
     throw error.response?.data || { error: "Не удалось загрузить рестораны" };
   }
 };
 
 export const getRestaurantDetail = async (id) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/restaurants/${id}/`);
+    const response = await axios.get(`${API_BASE_URL}/restaurants/${id}/`, {
+      headers: getAuthHeader(),
+    });
     return response.data;
   } catch (error) {
+    console.error("Get restaurant detail error:", error.response?.data);
     throw error.response?.data || { error: "Не удалось загрузить ресторан" };
+  }
+};
+
+export const createRestaurant = async (restaurantData) => {
+  try {
+    console.log("Sending create restaurant request with data:", restaurantData);
+    const response = await axios.post(
+      `${API_BASE_URL}/restaurants/`,
+      restaurantData,
+      {
+        headers: {
+          ...getAuthHeader(),
+          "X-CSRFToken": getCsrfToken(),
+        },
+      }
+    );
+    console.log("Create restaurant response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Create restaurant error:", error.response?.data);
+    throw error.response?.data || { error: "Не удалось создать ресторан" };
+  }
+};
+
+export const updateRestaurant = async (id, restaurantData) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/restaurants/${id}/`,
+      restaurantData,
+      {
+        headers: {
+          ...getAuthHeader(),
+          "X-CSRFToken": getCsrfToken(),
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Update restaurant error:", error.response?.data);
+    throw error.response?.data || { error: "Не удалось обновить ресторан" };
+  }
+};
+
+export const deleteRestaurant = async (id) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/restaurants/${id}/`, {
+      headers: {
+        ...getAuthHeader(),
+        "X-CSRFToken": getCsrfToken(),
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Delete restaurant error:", error.response?.data);
+    throw error.response?.data || { error: "Не удалось удалить ресторан" };
   }
 };
 
@@ -85,11 +154,9 @@ export const masterClassesApi = {
     try {
       const response = await axios.get(`${API_BASE_URL}/master-classes/`, {
         params,
-        paramsSerializer: (params) => {
-          return qs.stringify(params, { arrayFormat: "repeat" });
-        },
+        paramsSerializer: (params) =>
+          qs.stringify(params, { arrayFormat: "repeat" }),
       });
-
       return response.data.results || response.data;
     } catch (error) {
       console.error("MasterClasses API error:", error);
@@ -260,7 +327,6 @@ export const createLike = async (likeData) => {
 
 export const deleteLike = async ({ video, user }) => {
   try {
-    // Сначала находим ID лайка
     const likes = await getLikes({ video, user });
     if (likes.length === 0) {
       throw { error: "Лайк не найден", status: 404 };

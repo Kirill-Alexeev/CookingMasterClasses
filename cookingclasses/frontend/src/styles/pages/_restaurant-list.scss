@@ -1,0 +1,191 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.restaurant-list {
+  @include container-center;
+  padding: 20px;
+
+  .restaurant-list-title {
+    font-family: $headline-font-family;
+    font-size: 2rem;
+    color: $text-color;
+    margin-bottom: 20px;
+    text-align: center;
+
+    @media (max-width: $mid-width) {
+      font-size: 1.8rem;
+    }
+
+    @media (max-width: $min-width) {
+      font-size: 1.6rem;
+    }
+  }
+
+  .create-restaurant-form {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: $header-text-color;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+
+    h3 {
+      font-family: $headline-font-family;
+      font-size: 2rem;
+      color: $text-color;
+      margin-bottom: 10px;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+      }
+    }
+
+    input,
+    textarea {
+      @include input-style;
+      font-family: $regular-font-family;
+      color: $text-color;
+      font-size: 2rem;
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 8px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 6px;
+      }
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      @include button-style;
+      background: $accent-color;
+      color: $header-text-color;
+      font-family: $regular-font-family;
+      font-size: 2rem;
+
+      &:hover {
+        background: $accent-color-hover;
+      }
+
+      @media (max-width: $mid-width) {
+        font-size: 1.8rem;
+        padding: 8px 16px;
+      }
+
+      @media (max-width: $min-width) {
+        font-size: 1.6rem;
+        padding: 6px 12px;
+      }
+    }
+  }
+
+  .restaurant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+
+    @media (max-width: $mid-width) {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    @media (max-width: $min-width) {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .restaurant-card {
+      border: 1px solid $primary-color;
+      border-radius: 8px;
+      padding: 15px;
+      background: $card-color;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      .restaurant-link {
+        text-decoration: none;
+        color: $text-color;
+
+        .restaurant-image {
+          width: 100%;
+          height: 150px;
+          object-fit: cover;
+          border-radius: 5px;
+          margin-bottom: 10px;
+
+          @media (max-width: $mid-width) {
+            height: 120px;
+          }
+
+          @media (max-width: $min-width) {
+            height: 100px;
+          }
+        }
+
+        .no-image {
+          @include flex-center;
+          width: 100%;
+          height: 150px;
+          background: $header-text-color;
+          color: $text-color;
+          border-radius: 5px;
+          margin-bottom: 10px;
+          font-size: 2rem;
+
+          @media (max-width: $mid-width) {
+            height: 120px;
+            font-size: 1.8rem;
+          }
+
+          @media (max-width: $min-width) {
+            height: 100px;
+            font-size: 1.6rem;
+          }
+        }
+
+        h3 {
+          font-family: $headline-font-family;
+          font-size: 2rem;
+          margin: 10px 0;
+
+          @media (max-width: $mid-width) {
+            font-size: 1.8rem;
+          }
+
+          @media (max-width: $min-width) {
+            font-size: 1.6rem;
+          }
+        }
+      }
+
+      p {
+        font-family: $regular-font-family;
+        font-size: 1.6rem;
+        color: $text-color;
+        margin: 5px 0;
+
+        @media (max-width: $mid-width) {
+          font-size: 1.5rem;
+        }
+
+        strong {
+          color: $text-color;
+        }
+      }
+    }
+  }
+}

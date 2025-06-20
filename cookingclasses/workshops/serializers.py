@@ -20,10 +20,23 @@ class CuisineSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class RestaurantImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RestaurantImage
+        fields = ["id", "image", "restaurant"]
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
+    first_image = serializers.SerializerMethodField()
+    images = RestaurantImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Restaurant
-        fields = "__all__"
+        fields = ["id", "name", "description", "address", "phone", "email", "website", "opening_hours", "first_image", "images"]
+
+    def get_first_image(self, obj):
+        first_image = obj.images.values_list("image", flat=True).first()
+        return first_image if first_image else None
 
 
 class ChefSerializer(serializers.ModelSerializer):
@@ -54,12 +67,6 @@ class ChefSerializer(serializers.ModelSerializer):
         if isinstance(restaurant_serializer, serializers.BaseSerializer):
             return restaurant_serializer.data
         return restaurant_serializer
-
-
-class RestaurantImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RestaurantImage
-        fields = "__all__"
 
 
 class MasterClassSerializer(serializers.ModelSerializer):

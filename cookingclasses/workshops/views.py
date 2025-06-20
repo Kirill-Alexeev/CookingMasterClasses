@@ -1,10 +1,10 @@
 from datetime import timedelta
-from django.db.models import Count, Sum, F
+from django.db.models import Count, Sum, F, Q
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from .models import (
     Cuisine,
     Restaurant,
@@ -30,9 +30,8 @@ from .serializers import (
     CommentSerializer,
 )
 from .filters import MasterClassFilter
-from django.db.models import Q
 from django_filters import rest_framework as filters
-
+import logging
 
 class MasterClassViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -58,7 +57,6 @@ class MasterClassViewSet(viewsets.ModelViewSet):
             )
         return queryset.distinct()
 
-
 class CuisineViewSet(viewsets.ModelViewSet):
     queryset = Cuisine.objects.all()
     serializer_class = CuisineSerializer
@@ -71,11 +69,15 @@ class CuisineViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(name__icontains=search)
         return queryset
 
-
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all().prefetch_related("images")
     serializer_class = RestaurantSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUser()]
+        return [IsAuthenticatedOrReadOnly()]
 
     def get_queryset(self):
         queryset = Restaurant.objects.exclude(masterclass__isnull=True)
@@ -87,7 +89,6 @@ class RestaurantViewSet(viewsets.ModelViewSet):
                 | Q(address__icontains=search)
             )
         return queryset
-
 
 class ChefViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -104,10 +105,10 @@ class ChefViewSet(viewsets.ModelViewSet):
         search = self.request.query_params.get("search")
         if search:
             queryset = queryset.filter(
-                Q(first_name__contains=search)
-                | Q(last_name__contains=search)
+                Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
                 | Q(profession__icontains=search)
-                | Q(restaurant__name__contains=search)
+                | Q(restaurant__name__icontains=search, restaurant__name__isnull=False)
             )
         return queryset
 
@@ -120,12 +121,10 @@ class ChefViewSet(viewsets.ModelViewSet):
         }
         return context
 
-
 class RestaurantImageViewSet(viewsets.ModelViewSet):
     queryset = RestaurantImage.objects.all().select_related("restaurant")
     serializer_class = RestaurantImageSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-
 
 class VideoFilter(filters.FilterSet):
     max_duration_seconds = filters.NumberFilter(
@@ -141,7 +140,6 @@ class VideoFilter(filters.FilterSet):
     def filter_max_duration_seconds(self, queryset, name, value):
         max_duration = timedelta(seconds=int(value))
         return queryset.filter(duration__lte=max_duration)
-
 
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -234,7 +232,6 @@ class VideoViewSet(viewsets.ModelViewSet):
         response.data = result
         return response
 
-
 class RecordViewSet(viewsets.ModelViewSet):
     queryset = Record.objects.all().select_related("user", "master_class")
     serializer_class = RecordSerializer
@@ -280,7 +277,6 @@ class RecordViewSet(viewsets.ModelViewSet):
         Record.objects.filter(id=instance.id, user=request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all().select_related("user", "master_class")
     serializer_class = ReviewSerializer
@@ -290,7 +286,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         master_class_id = self.request.query_params.get("master_class")
-        print("Запрос отзывов, master_class_id:", master_class_id)  # Отладка
         if master_class_id:
             return Review.objects.filter(
                 master_class__id=master_class_id
@@ -300,9 +295,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         try:
             serializer.save(user=self.request.user)
-            print("Отзыв сохранён, user:", self.request.user.username)  # Отладка
         except Exception as e:
-            print("Ошибка в perform_create:", str(e))
             raise
 
     def destroy(self, request, *args, **kwargs):
@@ -313,7 +306,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all().select_related("user", "video")
@@ -324,7 +316,6 @@ class LikeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         video_id = self.request.query_params.get("video")
-        print("Запрос лайков, video_id:", video_id)  # Отладка
         if video_id:
             return Like.objects.filter(video__id=video_id).select_related("video")
         return Like.objects.all().select_related("video")
@@ -332,9 +323,7 @@ class LikeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         try:
             serializer.save(user=self.request.user)
-            print("Лайк сохранён, user:", self.request.user.username)  # Отладка
         except Exception as e:
-            print("Ошибка в perform_create:", str(e))
             raise
 
     def destroy(self, request, *args, **kwargs):
@@ -346,7 +335,6 @@ class LikeViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().select_related("user", "video")
     serializer_class = CommentSerializer
@@ -356,7 +344,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         video_id = self.request.query_params.get("video")
-        print("Запрос комментариев, video_id:", video_id)  # Отладка
         if video_id:
             return Comment.objects.filter(video__id=video_id).select_related(
                 "user", "video"
@@ -366,9 +353,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         try:
             serializer.save(user=self.request.user)
-            print("Комментарий сохранён, user:", self.request.user.username)  # Отладка
         except Exception as e:
-            print("Ошибка в perform_create:", str(e))
             raise
 
     def destroy(self, request, *args, **kwargs):
