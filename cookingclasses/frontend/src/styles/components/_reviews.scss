@@ -109,7 +109,7 @@
     color: $header-text-color;
 
     &:hover {
-      background: darken($error-color, 10%);
+      background: red;
     }
   }
 

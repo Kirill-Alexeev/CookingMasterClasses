@@ -28,6 +28,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 class ChefSerializer(serializers.ModelSerializer):
     restaurant_data = serializers.SerializerMethodField()
+    master_classes_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Chef
@@ -41,6 +42,7 @@ class ChefSerializer(serializers.ModelSerializer):
             "restaurant_data",
             "image",
             "created_at",
+            "master_classes_count",
         ]
         extra_kwargs = {"restaurant": {"write_only": True}}
 
@@ -79,7 +81,7 @@ class MasterClassSerializer(serializers.ModelSerializer):
         return obj.days_until_event
 
 
-class RecordSerializer(serializers.Serializer):  # Изменён на Serializer
+class RecordSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     master_class__id = serializers.IntegerField(
         source="master_class.id", read_only=True
@@ -130,15 +132,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             master_class = validated_data.pop("master_class")
-            print(
-                "Создание отзыва:", validated_data, "Master class:", master_class
-            )  # Отладка
+            print("Создание отзыва:", validated_data, "Master class:", master_class)
             review = Review.objects.create(
                 master_class=master_class,
                 user=self.context["request"].user,
                 **validated_data,
             )
-            print("Отзыв создан:", review.id)  # Отладка
+            print("Отзыв создан:", review.id)
             return review
         except MasterClass.DoesNotExist:
             raise serializers.ValidationError("Мастер-класс с указанным ID не найден")
@@ -199,13 +199,13 @@ class LikeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             video = validated_data.pop("video")
-            print("Создание лайка:", validated_data, "Video:", video)  # Отладка
+            print("Создание лайка:", validated_data, "Video:", video)
             like, created = Like.objects.get_or_create(
                 video=video, user=self.context["request"].user, defaults=validated_data
             )
             if not created:
                 raise serializers.ValidationError("Лайк уже существует")
-            print("Лайк создан:", like.id)  # Отладка
+            print("Лайк создан:", like.id)
             return like
         except Video.DoesNotExist:
             raise serializers.ValidationError("Видео с указанным ID не найдено")
@@ -226,11 +226,11 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             video = validated_data.pop("video")
-            print("Создание комментария:", validated_data, "Video:", video)  # Отладка
+            print("Создание комментария:", validated_data, "Video:", video)
             comment = Comment.objects.create(
                 video=video, user=self.context["request"].user, **validated_data
             )
-            print("Комментарий создан:", comment.id)  # Отладка
+            print("Комментарий создан:", comment.id)
             return comment
         except Video.DoesNotExist:
             raise serializers.ValidationError("Видео с указанным ID не найдено")

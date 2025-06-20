@@ -49,6 +49,13 @@ class MasterClassViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        search = self.request.query_params.get("search")
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search)
+                | Q(description__icontains=search)
+                | Q(restaurant__name__contains=search)
+            )
         return queryset.distinct()
 
 
@@ -57,6 +64,13 @@ class CuisineViewSet(viewsets.ModelViewSet):
     serializer_class = CuisineSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get("search")
+        if search:
+            queryset = queryset.filter(name__icontains=search)
+        return queryset
+
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all().prefetch_related("images")
@@ -64,7 +78,15 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        return Restaurant.objects.exclude(masterclass__isnull=True)
+        queryset = Restaurant.objects.exclude(masterclass__isnull=True)
+        search = self.request.query_params.get("search")
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search)
+                | Q(description__icontains=search)
+                | Q(address__icontains=search)
+            )
+        return queryset
 
 
 class ChefViewSet(viewsets.ModelViewSet):
@@ -72,9 +94,22 @@ class ChefViewSet(viewsets.ModelViewSet):
         Chef.objects.all()
         .select_related("restaurant")
         .prefetch_related("master_classes")
+        .annotate(master_classes_count=Count("master_classes"))
     )
     serializer_class = ChefSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.query_params.get("search")
+        if search:
+            queryset = queryset.filter(
+                Q(first_name__contains=search)
+                | Q(last_name__contains=search)
+                | Q(profession__icontains=search)
+                | Q(restaurant__name__contains=search)
+            )
+        return queryset
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -116,8 +151,17 @@ class VideoViewSet(viewsets.ModelViewSet):
     )
     serializer_class = VideoSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = VideoFilter
+    ordering_fields = [
+        "title",
+        "duration",
+        "likes_count",
+        "-title",
+        "-duration",
+        "-likes_count",
+    ]
+    ordering = ["-likes_count"]
 
     def get_queryset(self):
         queryset = (
@@ -148,7 +192,12 @@ class VideoViewSet(viewsets.ModelViewSet):
                 )
             except ValueError:
                 pass
-        ordering = filter_params.get("ordering", "-title")
+        search = filter_params.get("search")
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) | Q(description__icontains=search)
+            )
+        ordering = filter_params.get("ordering", "-likes_count")
         allowed_fields = [
             "title",
             "duration",
@@ -160,7 +209,7 @@ class VideoViewSet(viewsets.ModelViewSet):
         if ordering in allowed_fields:
             queryset = queryset.order_by(ordering)
         else:
-            queryset = queryset.order_by("-title")
+            queryset = queryset.order_by("-likes_count")
         return queryset
 
     def list(self, request, *args, **kwargs):

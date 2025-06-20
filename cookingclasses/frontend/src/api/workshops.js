@@ -45,9 +45,13 @@ export const getRestaurantDetail = async (id) => {
 };
 
 // Шеф-повара
-export const getChefs = async () => {
+export const getChefs = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/chefs/`);
+    const response = await axios.get(`${API_BASE_URL}/chefs/`, {
+      params,
+      paramsSerializer: (params) =>
+        qs.stringify(params, { arrayFormat: "repeat" }),
+    });
     return response.data.map((chef) => ({ ...chef, selected: false }));
   } catch (error) {
     throw error.response?.data || { error: "Не удалось загрузить шеф-поваров" };
@@ -111,16 +115,6 @@ export const masterClassesApi = {
   },
 };
 
-// Записи
-// export const getRecords = async () => {
-//   try {
-//     const response = await axios.get(`${API_BASE_URL}/records/`);
-//     return response.data;
-//   } catch (error) {
-//     throw error.response?.data || { error: "Не удалось загрузить записи" };
-//   }
-// };
-
 // Отзывы
 export const createReview = async (reviewData) => {
   try {
@@ -158,36 +152,20 @@ export const updateReview = async (id, reviewData) => {
   }
 };
 
-// export const getReviews = async (params = {}) => {
-//   try {
-//     const response = await axios.get(`${API_BASE_URL}/reviews/`, { params });
-//     return response.data.results || response.data;
-//   } catch (error) {
-//     throw error.response?.data || { error: "Не удалось загрузить отзывы" };
-//   }
-// };
-
 // Видео
-export const getVideos = async (filters = {}, page = 1) => {
+export const getVideos = async (params = {}, page = 1) => {
   try {
-    const params = new URLSearchParams();
-    if (filters.maxDurationSeconds)
-      params.append("max_duration_seconds", filters.maxDurationSeconds);
-    if (filters.minLikes) params.append("min_likes", filters.minLikes);
-    if (filters.minComments) params.append("min_comments", filters.minComments);
-    if (filters.sortField) {
-      const direction = filters.sortDirection === "asc" ? "" : "-";
-      params.append("ordering", `${direction}${filters.sortField}`);
-    }
-    params.append("page", page);
-
-    console.log(
-      "API request URL:",
-      `${API_BASE_URL}/videos/?${params.toString()}`
-    );
-    const response = await axios.get(
-      `${API_BASE_URL}/videos/?${params.toString()}`
-    );
+    const queryParams = {
+      ...params,
+      page,
+    };
+    console.log("API getVideos params:", queryParams);
+    const response = await axios.get(`${API_BASE_URL}/videos/`, {
+      params: queryParams,
+      paramsSerializer: (params) =>
+        qs.stringify(params, { arrayFormat: "repeat" }),
+    });
+    console.log("API getVideos response:", response.data);
     return response.data;
   } catch (error) {
     throw {
@@ -211,18 +189,6 @@ export const getVideoDetail = async (id) => {
     };
   }
 };
-
-// export const getComments = async (params = {}) => {
-//   try {
-//     const response = await axios.get(`${API_BASE_URL}/comments/`, { params });
-//     return response.data.results || response.data;
-//   } catch (error) {
-//     throw {
-//       error: error.response?.data?.detail || "Ошибка загрузки комментариев",
-//       status: error.response?.status,
-//     };
-//   }
-// };
 
 export const createComment = async (commentData) => {
   try {
@@ -274,23 +240,6 @@ export const deleteComment = async (id) => {
     };
   }
 };
-
-// export const getLikes = async (params = {}) => {
-//   try {
-//     const response = await axios.get(`${API_BASE_URL}/likes/`, {
-//       params,
-//       withCredentials: true, // Для отправки cookies с токеном авторизации
-//     });
-//     // Обрабатываем возможные форматы ответа
-//     const data = response.data.results || response.data || [];
-//     return Array.isArray(data) ? data : [];
-//   } catch (error) {
-//     throw {
-//       error: error.response?.data?.detail || "Ошибка загрузки лайков",
-//       status: error.response?.status,
-//     };
-//   }
-// };
 
 export const createLike = async (likeData) => {
   try {

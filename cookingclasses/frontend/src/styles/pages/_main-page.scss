@@ -1,0 +1,35 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.home-page {
+  @include container-center;
+  padding: 20px 15px;
+
+  .home-header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    h1 {
+      font-family: $headline-font-family;
+      font-size: $headline-font-size;
+      color: $primary-color;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: $regular-font-size;
+      color: $text-color;
+    }
+  }
+
+  .widgets-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+
+    @media (max-width: $mid-width) {
+      grid-template-columns: 1fr;
+    }
+  }
+}

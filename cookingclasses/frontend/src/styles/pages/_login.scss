@@ -1,101 +1,101 @@
-// @use "../abstracts/variables" as *;
-// @use "../abstracts/mixins" as *;
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
 
-// .login {
-//   background-color: $secondary-color;
-//   min-height: 100vh;
-//   @include flex-center;
+.login {
+  background-color: $header-text-color;
+  min-height: 100vh;
+  @include flex-center;
 
-//   &__container {
-//     background-color: $secondary-color;
-//     padding: 20px;
-//     border-radius: 10px;
-//     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-//     width: 100%;
-//     max-width: 400px;
-//     margin: 20px;
-//     border: 1px solid $border-color;
-//   }
+  &__container {
+    background-color: $header-text-color;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin: 20px;
+    border: 1px solid grey;
+  }
 
-//   &__title {
-//     text-align: center;
-//     margin-bottom: 20px;
-//     color: $text-color;
-//   }
+  &__title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: $text-color;
+  }
 
-//   &__error {
-//     color: #ff0000;
-//     text-align: center;
-//     margin-bottom: 15px;
-//   }
+  &__error {
+    color: #ff0000;
+    text-align: center;
+    margin-bottom: 15px;
+  }
 
-//   &__form {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 15px;
-//   }
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 
-//   &__field {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 5px;
-//   }
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-//   &__label {
-//     font-size: 16px;
-//     color: $text-color;
-//   }
+  &__label {
+    font-size: 16px;
+    color: $text-color;
+  }
 
-//   &__input {
-//     @include input-style;
-//   }
+  &__input {
+    @include input-style;
+  }
 
-//   &__button {
-//     @include button-style;
-//   }
+  &__button {
+    @include button-style;
+  }
 
-//   &__register-link {
-//     text-align: center;
-//     margin-top: 10px;
-//     color: $text-color;
+  &__register-link {
+    text-align: center;
+    margin-top: 10px;
+    color: $text-color;
 
-//     a {
-//       color: $primary-color;
-//       text-decoration: none;
+    a {
+      color: $primary-color;
+      text-decoration: none;
 
-//       &:hover {
-//         text-decoration: underline;
-//       }
-//     }
-//   }
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 
-//   &__social {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 10px;
-//     margin-top: 20px;
-//   }
+  &__social {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
 
-//   &__social-button {
-//     @include button-style;
-//     width: 100%;
-//     padding: 12px;
-//     font-size: 14px;
+  &__social-button {
+    @include button-style;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
 
-//     &.login__social-vk {
-//       background-color: $social-login-color;
+    &.login__social-vk {
+      background-color: $primary-color;
 
-//       &:hover {
-//         background-color: darken($social-login-color, 10%);
-//       }
-//     }
+      &:hover {
+        background-color: $primary-color;
+      }
+    }
 
-//     &.login__social-google {
-//       background-color: $social-login-color;
+    &.login__social-google {
+      background-color: $primary-color;
 
-//       &:hover {
-//         background-color: darken($social-login-color, 10%);
-//       }
-//     }
-//   }
-// }
+      &:hover {
+        background-color: $primary-color;
+      }
+    }
+  }
+}
