@@ -1,4 +1,6 @@
+from typing import Union, Optional, Dict, Any
 from rest_framework import serializers
+from django.db.models import QuerySet
 from .models import (
     Cuisine,
     Restaurant,
@@ -32,9 +34,29 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ["id", "name", "description", "address", "phone", "email", "website", "opening_hours", "first_image", "images"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "address",
+            "phone",
+            "email",
+            "website",
+            "opening_hours",
+            "first_image",
+            "images",
+        ]
 
-    def get_first_image(self, obj):
+    def get_first_image(self, obj: Restaurant) -> Optional[str]:
+        """
+        Получает URL первого изображения ресторана.
+
+        Args:
+            obj (Restaurant): Объект ресторана.
+
+        Returns:
+            Optional[str]: URL первого изображения или None, если изображений нет.
+        """
         first_image = obj.images.values_list("image", flat=True).first()
         return first_image if first_image else None
 
@@ -59,7 +81,16 @@ class ChefSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {"restaurant": {"write_only": True}}
 
-    def get_restaurant_data(self, obj):
+    def get_restaurant_data(self, obj: Chef) -> Union[Dict[str, Any], None]:
+        """
+        Получает сериализованные данные о ресторане шеф-повара.
+
+        Args:
+            obj (Chef): Объект шеф-повара.
+
+        Returns:
+            Union[Dict[str, Any], None]: Сериализованные данные ресторана или None, если ресторан не указан.
+        """
         restaurant_serializer = self.context.get(
             "restaurant_serializer",
             RestaurantSerializer(obj.restaurant, context=self.context),
@@ -81,34 +112,104 @@ class MasterClassSerializer(serializers.ModelSerializer):
         model = MasterClass
         fields = "__all__"
 
-    def get_is_upcoming(self, obj):
+    def get_is_upcoming(self, obj: MasterClass) -> bool:
+        """
+        Проверяет, является ли мастер-класс предстоящим.
+
+        Args:
+            obj (MasterClass): Объект мастер-класса.
+
+        Returns:
+            bool: True, если мастер-класс в будущем, иначе False.
+        """
         return obj.is_upcoming
 
-    def get_days_until_event(self, obj):
+    def get_days_until_event(self, obj: MasterClass) -> int:
+        """
+        Возвращает количество дней до мастер-класса.
+
+        Args:
+            obj (MasterClass): Объект мастер-класса.
+
+        Returns:
+            int: Количество дней до мероприятия, 0 если событие прошло.
+        """
         return obj.days_until_event
 
 
-class RecordSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
+class RecordSerializer(serializers.ModelSerializer):
     master_class__id = serializers.IntegerField(
         source="master_class.id", read_only=True
     )
     master_class__title = serializers.CharField(
         source="master_class.title", read_only=True
     )
-    payment_status = serializers.CharField()
-    created_at = serializers.DateTimeField(read_only=True)
-    updated_at = serializers.DateTimeField(read_only=True)
 
-    def create(self, validated_data):
-        master_class_data = validated_data.pop("master_class", {})
-        master_class_id = master_class_data.get("id")
-        master_class = MasterClass.objects.get(id=master_class_id)
-        return Record.objects.create(
-            master_class=master_class,
-            user=self.context["request"].user,
-            **validated_data,
-        )
+    class Meta:
+        model = Record
+        fields = [
+            "id",
+            "master_class",
+            "master_class__id",
+            "master_class__title",
+            "payment_status",
+            "email",
+            "phone",
+            "tickets",
+            "total_price",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def validate(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Проверяет корректность данных для записи на мастер-класс.
+
+        Args:
+            data (Dict[str, Any]): Данные для валидации (master_class, tickets, total_price, email, phone).
+
+        Returns:
+            Dict[str, Any]: Проверенные данные.
+
+        Raises:
+            serializers.ValidationError: Если данные не прошли валидацию (недостаточно мест, неверный email, телефон или total_price).
+        """
+        import re
+
+        master_class = data.get("master_class")
+        tickets = data.get("tickets", 1)
+        total_price = data.get("total_price")
+        if master_class.seats_available < tickets:
+            raise serializers.ValidationError(
+                f"Доступно только {master_class.seats_available} мест"
+            )
+        if total_price != master_class.price * tickets:
+            raise serializers.ValidationError(
+                "Итоговая стоимость не соответствует количеству билетов"
+            )
+        email = data.get("email")
+        if not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email):
+            raise serializers.ValidationError("Некорректный email")
+        phone = data.get("phone")
+        if not re.match(r"^\+?\d{10,15}$", phone):
+            raise serializers.ValidationError("Некорректный номер телефона")
+        return data
+
+    def create(self, validated_data: Dict[str, Any]) -> Record:
+        """
+        Создаёт новую запись на мастер-класс.
+
+        Args:
+            validated_data (Dict[str, Any]): Проверенные данные для создания записи.
+
+        Returns:
+            Record: Созданный объект записи.
+
+        Raises:
+            serializers.ValidationError: Если создание записи не удалось.
+        """
+        return Record.objects.create(**validated_data)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -136,7 +237,19 @@ class ReviewSerializer(serializers.ModelSerializer):
             "user",
         ]
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> Review:
+        """
+        Создаёт новый отзыв для мастер-класса.
+
+        Args:
+            validated_data (Dict[str, Any]): Проверенные данные для создания отзыва.
+
+        Returns:
+            Review: Созданный объект отзыва.
+
+        Raises:
+            serializers.ValidationError: Если мастер-класс не найден или произошла ошибка при создании.
+        """
         try:
             master_class = validated_data.pop("master_class")
             print("Создание отзыва:", validated_data, "Master class:", master_class)
@@ -179,10 +292,28 @@ class VideoSerializer(serializers.ModelSerializer):
             "url",
         ]
 
-    def get_url(self, obj):
+    def get_url(self, obj: Video) -> str:
+        """
+        Получает абсолютный URL видео.
+
+        Args:
+            obj (Video): Объект видео.
+
+        Returns:
+            str: Абсолютный URL видео.
+        """
         return obj.get_absolute_url()
 
-    def get_duration(self, obj):
+    def get_duration(self, obj: Video) -> str:
+        """
+        Форматирует длительность видео в строку формата HH:MM:SS.
+
+        Args:
+            obj (Video): Объект видео.
+
+        Returns:
+            str: Форматированная длительность видео или '00:00:00', если длительность не указана.
+        """
         if obj.duration:
             total_seconds = int(obj.duration.total_seconds())
             hours = total_seconds // 3600
@@ -203,7 +334,19 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = ["id", "video", "video__id", "video__title", "created_at", "user"]
         read_only_fields = ["id", "created_at", "user"]
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> Like:
+        """
+        Создаёт новый лайк для видео.
+
+        Args:
+            validated_data (Dict[str, Any]): Проверенные данные для создания лайка.
+
+        Returns:
+            Like: Созданный объект лайка.
+
+        Raises:
+            serializers.ValidationError: Если видео не найдено, лайк уже существует или произошла ошибка.
+        """
         try:
             video = validated_data.pop("video")
             print("Создание лайка:", validated_data, "Video:", video)
@@ -230,7 +373,19 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ["id", "video", "text", "created_at", "user"]
         read_only_fields = ["id", "created_at", "user"]
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict[str, Any]) -> Comment:
+        """
+        Создаёт новый комментарий для видео.
+
+        Args:
+            validated_data (Dict[str, Any]): Проверенные данные для создания комментария.
+
+        Returns:
+            Comment: Созданный объект комментария.
+
+        Raises:
+            serializers.ValidationError: Если видео не найдено или произошла ошибка.
+        """
         try:
             video = validated_data.pop("video")
             print("Создание комментария:", validated_data, "Video:", video)

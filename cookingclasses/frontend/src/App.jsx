@@ -13,7 +13,8 @@ import MasterClassList from "./pages/MasterClassList";
 import MasterClassDetail from "./pages/MasterClassDetail";
 import VideoList from "./pages/VideoList";
 import VideoDetail from "./pages/VideoDetail";
-import Record from "./pages/Record";
+import RecordMasterClass from "./pages/Record";
+import AdminRecords from "./pages/AdminRecords";
 import "./styles/components/_skip-link.scss";
 
 function App() {
@@ -39,7 +40,8 @@ function App() {
         />
         <Route path="/video-list" element={<VideoList />} />
         <Route path="/video-detail/:id" element={<VideoDetail />} />
-        <Route path="/record" element={<Record />} />
+        <Route path="/record" element={<RecordMasterClass />} />
+        <Route path="/admin-record" element={<AdminRecords />} />
       </Routes>
       <Footer />
     </BrowserRouter>

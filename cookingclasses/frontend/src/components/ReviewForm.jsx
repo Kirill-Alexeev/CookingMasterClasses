@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { createReview } from "../api/workshops";
+import { useState, useEffect } from "react";
+import { createReview, getRecords } from "../api/workshops";
 import StarRating from "./StarRating";
 import PropTypes from "prop-types";
 
@@ -8,9 +8,39 @@ function ReviewForm({ masterClassId, onReviewAdded, currentUser }) {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [hasAttended, setHasAttended] = useState(null);
+
+  useEffect(() => {
+    const checkAttendance = async () => {
+      if (!currentUser) {
+        setHasAttended(false);
+        return;
+      }
+      try {
+        const records = await getRecords();
+        const attended = records.some(
+          (record) =>
+            record.master_class__id === parseInt(masterClassId) &&
+            record.payment_status === "Подтверждено"
+        );
+        setHasAttended(attended);
+      } catch (err) {
+        console.error("Ошибка при проверке записи:", err);
+        setError(err.response?.data?.error || "Ошибка при проверке посещения");
+        setHasAttended(false);
+      }
+    };
+    checkAttendance();
+  }, [masterClassId, currentUser]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!hasAttended) {
+      setError(
+        "Вы не можете оставить отзыв, так как не посещали это мероприятие"
+      );
+      return;
+    }
     setIsSubmitting(true);
     setError(null);
 
@@ -46,6 +76,14 @@ function ReviewForm({ masterClassId, onReviewAdded, currentUser }) {
           Чтобы оставить отзыв, пожалуйста, <a href="/login">войдите</a> или{" "}
           <a href="/register">зарегистрируйтесь</a>
         </p>
+      </div>
+    );
+  }
+
+  if (hasAttended === false) {
+    return (
+      <div className="error-message">
+        Вы не можете оставить отзыв, так как не посещали это мероприятие
       </div>
     );
   }

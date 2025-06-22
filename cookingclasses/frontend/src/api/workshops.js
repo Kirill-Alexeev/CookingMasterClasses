@@ -180,6 +180,36 @@ export const masterClassesApi = {
       );
     }
   },
+
+  createRecord: async (recordData) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/records/`,
+        recordData,
+        {
+          headers: { "X-CSRFToken": getCsrfToken() },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: "Не удалось создать запись" };
+    }
+  },
+
+  updateRecord: async (id, recordData) => {
+    try {
+      const response = await axios.patch(
+        `${API_BASE_URL}/records/${id}/`,
+        recordData,
+        {
+          headers: { "X-CSRFToken": getCsrfToken() },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { error: "Не удалось обновить запись" };
+    }
+  },
 };
 
 // Отзывы
@@ -361,9 +391,9 @@ export const getRecords = async () => {
   }
 };
 
-export const getReviews = async () => {
+export const getReviews = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/reviews/`);
+    const response = await axios.get(`${API_BASE_URL}/reviews/`, { params });
     console.log("API getReviews response:", response.data);
     return response.data.results || response.data || [];
   } catch (error) {
