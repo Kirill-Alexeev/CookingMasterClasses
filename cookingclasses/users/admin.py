@@ -66,6 +66,7 @@ class kaexamAdmin(admin.ModelAdmin):
     search_fields = ("title", "users__email")
     filter_horizontal = ("users",)
     date_hierarchy = "exam_date"
+    readonly_fields = ("created_at",)
 
     fieldsets = (
         (None, {"fields": ("title", "image", "is_public")}),
