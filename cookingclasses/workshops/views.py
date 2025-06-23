@@ -1,4 +1,4 @@
-from typing import Union, Optional, Dict, Any, List, Tuple
+from typing import Dict, Any, List
 from datetime import timedelta
 from django.db.models import Count, Sum, F, Q
 from django.db.models import QuerySet
@@ -34,9 +34,6 @@ from .serializers import (
 )
 from .filters import MasterClassFilter
 from django_filters import rest_framework as filters
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class MasterClassViewSet(viewsets.ModelViewSet):
@@ -347,7 +344,6 @@ class RecordViewSet(viewsets.ModelViewSet):
             serializers.ValidationError: Если данные невалидны.
             MasterClass.DoesNotExist: Если мастер-класс не найден.
         """
-        logger.debug(f"Request data: {request.data}")
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
@@ -362,14 +358,10 @@ class RecordViewSet(viewsets.ModelViewSet):
         try:
             master_class = MasterClass.objects.get(id=master_class_id)
         except MasterClass.DoesNotExist:
-            logger.error(f"MasterClass not found: {master_class_id}")
             return Response(
                 {"error": "Мастер-класс не найден"}, status=status.HTTP_404_NOT_FOUND
             )
         if master_class.seats_available < tickets:
-            logger.warning(
-                f"Insufficient seats: requested {tickets}, available {master_class.seats_available}"
-            )
             return Response(
                 {"error": f"Доступно только {master_class.seats_available} мест"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -379,7 +371,6 @@ class RecordViewSet(viewsets.ModelViewSet):
         )
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        logger.info(f"Record created successfully for master_class {master_class_id}")
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
@@ -456,7 +447,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         try:
             serializer.save(user=self.request.user)
         except Exception as e:
-            logger.error(f"Error creating review: {str(e)}")
             raise
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -474,20 +464,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
         Raises:
             Http404: Если отзыв не найден.
         """
-        logger.debug(f"Attempting to delete review with id: {self.kwargs.get('pk')}")
         instance = self.get_object()
         if instance.user != request.user and not (
             request.user.is_superuser or request.user.is_staff
         ):
-            logger.warning(
-                f"User {request.user} unauthorized to delete review {instance.id}"
-            )
             return Response(
                 {"error": "Нет прав для удаления отзыва"},
                 status=status.HTTP_403_FORBIDDEN,
             )
         self.perform_destroy(instance)
-        logger.info(f"Review {instance.id} deleted successfully by user {request.user}")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -523,7 +508,6 @@ class LikeViewSet(viewsets.ModelViewSet):
         try:
             serializer.save(user=self.request.user)
         except Exception as e:
-            logger.error(f"Error creating like: {str(e)}")
             raise
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -584,7 +568,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         try:
             serializer.save(user=self.request.user)
         except Exception as e:
-            logger.error(f"Error creating comment: {str(e)}")
             raise
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
