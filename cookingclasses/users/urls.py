@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     CurrentUserView,
+    ExamListView,
     RegisterView,
     LoginView,
     LogoutView,
@@ -15,4 +16,5 @@ urlpatterns = [
     path("profile/", UserProfileView.as_view(), name="profile"),
     path("current-user/", CurrentUserView.as_view(), name="current-user"),
     path("delete/", DeleteProfileView.as_view(), name="delete-profile"),
+    path("kaexam/", ExamListView.as_view(), name="exams-list"),
 ]

@@ -16,6 +16,7 @@ import VideoDetail from "./pages/VideoDetail";
 import RecordMasterClass from "./pages/Record";
 import AdminRecords from "./pages/AdminRecords";
 import "./styles/components/_skip-link.scss";
+import KAExam from "./components/KAExam";
 
 function App() {
   return (
@@ -42,6 +43,8 @@ function App() {
         <Route path="/video-detail/:id" element={<VideoDetail />} />
         <Route path="/record" element={<RecordMasterClass />} />
         <Route path="/admin-record" element={<AdminRecords />} />
+        <Route path="/admin-record" element={<AdminRecords />} />
+        <Route path="/kaexam" element={<KAExam />} />
       </Routes>
       <Footer />
     </BrowserRouter>
