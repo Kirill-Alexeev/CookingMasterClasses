@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, kaexam
 
 
 class CustomUserAdmin(UserAdmin):
@@ -8,7 +8,10 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Персональная информация", {"fields": ("first_name", "last_name", "email", "image")}),
+        (
+            "Персональная информация",
+            {"fields": ("first_name", "last_name", "email", "image")},
+        ),
         (
             "Разрешения",
             {
@@ -29,7 +32,17 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("username", "email", "first_name", "last_name", "password1", "password2", "is_staff", "is_superuser", "image"),
+                "fields": (
+                    "username",
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "password1",
+                    "password2",
+                    "is_staff",
+                    "is_superuser",
+                    "image",
+                ),
             },
         ),
     )
@@ -44,3 +57,29 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+@admin.register(kaexam)
+class kaexamAdmin(admin.ModelAdmin):
+    list_display = ("title", "created_at", "exam_date", "is_public")
+    list_filter = ("is_public", "created_at", "exam_date")
+    search_fields = ("title", "users__email")
+    filter_horizontal = ("users",)
+    date_hierarchy = "exam_date"
+
+    fieldsets = (
+        (None, {"fields": ("title", "image", "is_public")}),
+        (
+            "Даты",
+            {
+                "fields": ("created_at", "exam_date"),
+            },
+        ),
+        (
+            "Пользователи",
+            {
+                "fields": ("users",),
+                "classes": ("wide",),
+            },
+        ),
+    )
