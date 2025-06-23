@@ -35,9 +35,31 @@ from .serializers import (
 from .filters import MasterClassFilter
 from django_filters import rest_framework as filters
 from hawk_python_sdk import Hawk
+import hawk_python_sdk.core as hawk_core
+
+
+def custom_get_near_filelines(file_path, line_number):
+    return []
+
+
+hawk_core.Hawk.get_near_filelines = custom_get_near_filelines
+
+from hawk_python_sdk import Hawk
+
+
+def before_send(event):
+    if "exception" in event:
+        event["traceback"] = event.get("traceback", [])
+        event.pop("sourceCode", None)
+    return event
+
 
 hawk = Hawk(
-    "eyJpbnRlZ3JhdGlvbklkIjoiZDgwOTdlNWMtMDcwNy00NWVjLTg0YjctMTU4OWRkOTExNzE2Iiwic2VjcmV0IjoiM2Y1ZGJkZjctY2I0My00MTk5LWEwMDMtMzVlYmJjYTk0ZTBiIn0="
+    {
+        "token": "eyJpbnRlZ3JhdGlvbklkIjoiZDgwOTdlNWMtMDcwNy00NWVjLTg0YjctMTU4OWRkOTExNzE2Iiwic2VjcmV0IjoiM2Y1ZGJkZjctY2I0My00MTk5LWEwMDMtMzVlYmJjYTk0ZTBiIn0=",
+        "encoding": "utf-8",
+        "before_send": before_send,
+    }
 )
 
 
@@ -370,6 +392,7 @@ class RecordViewSet(viewsets.ModelViewSet):
         try:
             master_class = MasterClass.objects.get(id=master_class_id)
         except MasterClass.DoesNotExist:
+            hawk.send()
             return Response(
                 {"error": "Мастер-класс не найден"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -458,7 +481,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
         """
         try:
             serializer.save(user=self.request.user)
-        except Exception as e:
+        except Exception:
+            hawk.send()
             raise
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -519,7 +543,8 @@ class LikeViewSet(viewsets.ModelViewSet):
         """
         try:
             serializer.save(user=self.request.user)
-        except Exception as e:
+        except Exception:
+            hawk.send()
             raise
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -561,11 +586,17 @@ class CommentViewSet(viewsets.ModelViewSet):
             QuerySet[Comment]: QuerySet комментариев, отфильтрованный по video, если указан.
         """
         video_id = self.request.query_params.get("video")
-        if video_id:
-            return Comment.objects.filter(video__id=video_id).select_related(
-                "user", "video"
-            )
-        return Comment.objects.all().select_related("user", "video")
+        try:
+            a = 1 / 0  # Искусственная ошибка
+            if video_id:
+                return Comment.objects.filter(video__id=video_id).select_related(
+                    "user", "video"
+                )
+            return Comment.objects.all().select_related("user", "video")
+        except Exception as e:
+            print(e)
+            hawk.send(e)
+            raise
 
     def perform_create(self, serializer: CommentSerializer) -> None:
         """
@@ -579,7 +610,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         """
         try:
             serializer.save(user=self.request.user)
-        except Exception as e:
+        except Exception:
+            hawk.send()
             raise
 
     def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
