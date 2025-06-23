@@ -136,7 +136,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         Returns:
             QuerySet[Restaurant]: QuerySet ресторанов, отфильтрованный по поисковому запросу, если он указан.
         """
-        queryset = Restaurant.objects.all().exclude(masterclass__isnull=True)
+        queryset = Restaurant.objects.all()
         search = self.request.query_params.get("search")
         if search:
             queryset = queryset.filter(
