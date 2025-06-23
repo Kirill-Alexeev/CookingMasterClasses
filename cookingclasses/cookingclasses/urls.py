@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 urlpatterns = [
+    path("silk/", include("silk.urls", namespace="silk")),
     path("admin/", admin.site.urls),
     path("api/users/", include("users.urls")),
     path("api/workshops/", include("workshops.urls")),

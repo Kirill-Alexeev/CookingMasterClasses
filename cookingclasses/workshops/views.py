@@ -34,13 +34,18 @@ from .serializers import (
 )
 from .filters import MasterClassFilter
 from django_filters import rest_framework as filters
+from hawk_python_sdk import Hawk
+
+hawk = Hawk(
+    "eyJpbnRlZ3JhdGlvbklkIjoiZDgwOTdlNWMtMDcwNy00NWVjLTg0YjctMTU4OWRkOTExNzE2Iiwic2VjcmV0IjoiM2Y1ZGJkZjctY2I0My00MTk5LWEwMDMtMzVlYmJjYTk0ZTBiIn0="
+)
 
 
 class MasterClassViewSet(viewsets.ModelViewSet):
     queryset = (
         MasterClass.objects.all()
         .select_related("restaurant", "cuisine")
-        .prefetch_related("masterclasschef_set", "chefs")
+        .prefetch_related("masterclasschef_set", "chefs", "restaurant__images")
     )
     serializer_class = MasterClassSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -109,7 +114,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         Returns:
             QuerySet[Restaurant]: QuerySet ресторанов, отфильтрованный по поисковому запросу, если он указан.
         """
-        queryset = Restaurant.objects.all()
+        queryset = Restaurant.objects.all().exclude(masterclass__isnull=True)
         search = self.request.query_params.get("search")
         if search:
             queryset = queryset.filter(
@@ -124,7 +129,7 @@ class ChefViewSet(viewsets.ModelViewSet):
     queryset = (
         Chef.objects.all()
         .select_related("restaurant")
-        .prefetch_related("master_classes")
+        .prefetch_related("master_classes", "restaurant__images")
         .annotate(master_classes_count=Count("master_classes"))
     )
     serializer_class = ChefSerializer
@@ -157,10 +162,14 @@ class ChefViewSet(viewsets.ModelViewSet):
         """
         context = super().get_serializer_context()
         chefs = self.get_queryset() if self.action == "list" else [self.get_object()]
-        restaurants = {chef.restaurant for chef in chefs if chef.restaurant}
-        context["restaurants_data"] = {
-            r.id: RestaurantSerializer(r, context=context).data for r in restaurants
-        }
+        restaurant_ids = {chef.restaurant_id for chef in chefs if chef.restaurant_id}
+        if restaurant_ids:
+            restaurants = Restaurant.objects.filter(
+                id__in=restaurant_ids
+            ).prefetch_related("images")
+            context["restaurants_data"] = {
+                r.id: RestaurantSerializer(r, context=context).data for r in restaurants
+            }
         return context
 
 
@@ -239,6 +248,7 @@ class VideoViewSet(viewsets.ModelViewSet):
                 )
                 queryset = queryset.filter(duration__lte=max_duration)
             except ValueError:
+                hawk.send()
                 pass
         if "min_likes" in filter_params:
             try:
@@ -246,6 +256,7 @@ class VideoViewSet(viewsets.ModelViewSet):
                     likes_count__gte=int(filter_params.get("min_likes"))
                 )
             except ValueError:
+                hawk.send()
                 pass
         if "min_comments" in filter_params:
             try:
@@ -253,6 +264,7 @@ class VideoViewSet(viewsets.ModelViewSet):
                     comments_count__gte=int(filter_params.get("min_comments"))
                 )
             except ValueError:
+                hawk.send()
                 pass
         search = filter_params.get("search")
         if search:

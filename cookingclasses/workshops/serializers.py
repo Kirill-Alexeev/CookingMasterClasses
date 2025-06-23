@@ -57,8 +57,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         Returns:
             Optional[str]: URL первого изображения или None, если изображений нет.
         """
-        first_image = obj.images.values_list("image", flat=True).first()
-        return first_image if first_image else None
+        return getattr(obj, "_first_image", None)
 
 
 class ChefSerializer(serializers.ModelSerializer):
@@ -91,13 +90,18 @@ class ChefSerializer(serializers.ModelSerializer):
         Returns:
             Union[Dict[str, Any], None]: Сериализованные данные ресторана или None, если ресторан не указан.
         """
-        restaurant_serializer = self.context.get(
-            "restaurant_serializer",
-            RestaurantSerializer(obj.restaurant, context=self.context),
-        )
-        if isinstance(restaurant_serializer, serializers.BaseSerializer):
-            return restaurant_serializer.data
-        return restaurant_serializer
+        if obj.restaurant_id:
+            restaurants_data = self.context.get("restaurants_data", {})
+            if obj.restaurant_id not in restaurants_data:
+                # Сериализуем только необходимые поля, избегая повторных запросов
+                restaurant = Restaurant.objects.prefetch_related("images").get(
+                    id=obj.restaurant_id
+                )
+                restaurants_data[obj.restaurant_id] = RestaurantSerializer(
+                    restaurant, context=self.context
+                ).data
+            return restaurants_data[obj.restaurant_id]
+        return None
 
 
 class MasterClassSerializer(serializers.ModelSerializer):
