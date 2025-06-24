@@ -80,6 +80,10 @@ class ChefSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {"restaurant": {"write_only": True}}
 
+
+    def get_master_classes_count(self, obj):
+        return obj.master_classes.count()
+
     def get_restaurant_data(self, obj: Chef) -> Union[Dict[str, Any], None]:
         """
         Получает сериализованные данные о ресторане шеф-повара.
